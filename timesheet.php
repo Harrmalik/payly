@@ -40,25 +40,18 @@
         </div>
 
 	<section class="mainBtns">
-		<button type="button" class="btn btn-primary btn-lg" id="checkIn">Check In</button>
-		<button type="button" class="btn btn-primary btn-lg" id="checkOut">Check Out</button>
-		<button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button>
+		<button type="button" class="btn btn-primary btn-lg">Check In</button>
+		<button type="button" class="btn btn-primary btn-lg">Check Out</button>
+		<button type="button" class="btn btn-default btn-lg">View Timesheet</button>
 	</section>
 
-		<h3>Today's Hours</h3>
+		<h3>Timesheet</h3>
 
 		<table class="table">
 			<th>Date</th>
 			<th>Check In</th>
 			<th>Check Out</th>
-			<th>Hours</th>
-
-			<tbody>
-				<td id="today">Jan 26th</td>
-				<td id="timeIn">00:00</td>
-				<td id="timeOut">00:00</td>
-				<td id="hours">0</td>
-			</tbody>
+			<th><Hours</th>
 		</table>
 	</div>
 </body>
