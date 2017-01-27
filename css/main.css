@@ -4,5 +4,10 @@
 }
 
 section.mainBtns {
-	margin-top: 20%;
+	margin: 10% 20%;
+}
+
+section .btn {
+	height: 15em;
+	width: 15em;
 }
