@@ -1,5 +1,6 @@
 <?php   include_once "./layouts/header.php"; ?>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="./js/timesheet.js"></script>
 </head>
 
 <body>
@@ -10,7 +11,7 @@
         </div>
         <div class="panel-body">
             <div style="float: left">
-                <h2>mharrison Timesheet for Week of 1/21/2017 - 1/27/2017</h2>
+                <h2><?php echo USER::getFullName(); ?> Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
                 <h3>35 Total Hours</h3>
             </div>
             <div style="float: right">
@@ -20,7 +21,7 @@
                 <a href="../ApplicationPortal/dashboard.php" class="btn btn-primary" role="button">Dashboard</a>
             </div>
 
-        <table class="table table-condensed">
+        <table id="timesheet" class="table table-condensed">
             <tr>
                 <th>Date</th>
                 <th>Check In</th>
@@ -28,20 +29,20 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
-                <td>Jan 21</td>
+            <tr id="saturday">
+                <td></td>
                 <td>00:00 AM</td>
                 <td>00:00 PM</td>
                 <td>0</td>
             </tr>
-            
+
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td class="active">0</td>
             </tr>
-            
+
             <tr>
                 <th>Date</th>
                 <th>Check In</th>
@@ -49,7 +50,7 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
+            <tr id="sunday">
                 <td>Jan 22</td>
                 <td>00:00 AM</td>
                 <td>00:00 PM</td>
@@ -61,7 +62,7 @@
                 <td></td>
                 <td class="active">7</td>
             </tr>
-            
+
             <tr>
                 <th>Date</th>
                 <th>Check In</th>
@@ -69,7 +70,7 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
+            <tr id="monday">
                 <td>Jan 23</td>
                 <td>09:00 AM</td>
                 <td>12:00 PM</td>
@@ -95,7 +96,7 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
+            <tr id="tuesday">
                 <td>Jan 24</td>
                 <td>09:00 AM</td>
                 <td>12:00 PM</td>
@@ -121,7 +122,7 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
+            <tr id="wednesday">
                 <td>Jan 25</td>
                 <td>09:00 AM</td>
                 <td>12:00 PM</td>
@@ -147,7 +148,7 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
+            <tr id="thursday">
                 <td>Jan 26</td>
                 <td>09:00 AM</td>
                 <td>12:00 PM</td>
@@ -173,7 +174,7 @@
                 <th>Hours</th>
             </tr>
 
-            <tr>
+            <tr id="friday">
                 <td>Jan 27</td>
                 <td>09:00 AM</td>
                 <td>12:00 PM</td>
@@ -199,7 +200,7 @@
                 <td class="active">35</td>
             </tr>
         </table>
-        
+
         </div>
     </div>
 </body>

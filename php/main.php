@@ -1,8 +1,8 @@
 <?php
   header('content-type:application/json');
   require_once('/var/www/resources/core/index.php');
-  $core->inc('users'); 
-  $NodeServer = '/CheckIn';
+  $core->inc('users');
+  $NodeServer = ':9208/checkinclockserver';
   $response;
 
   // API
@@ -10,57 +10,31 @@
     case 'GET':
       switch ($_REQUEST['action']) {
         case 'getInitialState':
-          $response = doGetRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
+          $response = doGetRequest(API_SERVER . $NodeServer . "/getinitialstate?startDate=" . urlencode($_REQUEST['startDate'])
+                                    . "&endDate=" . urlencode($_REQUEST['endDate']), USER::getUsername(),USER::getPassword());
           break;
-          
+
         case 'getTimesheet':
-          $response = doGetRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
-          break;
-          
-        case 'getWorkers':
-          $response = doGetRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
+          $response = doGetRequest(API_SERVER . $NodeServer . "/getinitialstate", USER::getUsername(),USER::getPassword());
           break;
       }
-      
+
       break;
-      
-    case 'POST': 
-      switch ($_REQUEST['action']) {
-        case 'initialCheckIn':
-          $response = doPostRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
-          break;
-      }
-    
-      break;
-      
-    case 'PUT':
+
+    case 'POST':
       switch ($_REQUEST['action']) {
         case 'checkIn':
-          $response = doPutRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
+          $response = doPostRequest(API_SERVER . $NodeServer . "/checkin?time=" . urlencode($_REQUEST['time']), USER::getUsername(),USER::getPassword());
           break;
 
         case 'checkOut':
-          $response = doPutRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
-          break;
-
-        case 'editTimesheet'
-          $response = doPutRequestWithData(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
-          break;
-        
+            $response = doPostRequestWithData(API_SERVER . $NodeServer . "/checkout?id=" . $_REQUEST['id'] . '&time=' . urlencode($_REQUEST['time']),json_encode($_POST), USER::getUsername(),USER::getPassword());
+            break;
       }
 
-      break;
-
-    case 'DELETE':
-      switch ($_REQUEST['action']) {
-        case 'deleteTime':
-          $response = doDeleteRequest(API_SERVER . NodeServer . "/function",json_encode($_POST), USER::getUsername(),USER::getPassword());
-          break;
-      }
-      
       break;
   }
 
-  echo $response;
+  http_response_code($response->code);
+  echo $response->raw_body;
 ?>
-
