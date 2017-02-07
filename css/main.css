@@ -7,6 +7,10 @@ h2 {
 	margin: 0 !important;
 }
 
+#app {
+    display: none;
+}
+
 section.mainBtns {
 	margin: 10% 20%;
 }
@@ -14,4 +18,29 @@ section.mainBtns {
 section .btn {
 	height: 15em;
 	width: 15em;
+}
+
+#message {
+    margin-top: 5em;
+}
+
+#numpad {
+    margin-left: 35%;
+}
+
+#numpad button.btn.btn-default {
+  width: 100px;
+  height: 100px;
+}
+
+#numpad button.btn.btn-default:hover {
+ background-color: #5894D1 !important;
+ color: white;
+}
+
+#login {
+    width: 310px;
+    height: 100px;
+    margin-left: 35%;
+    margin-top: 1em;
 }

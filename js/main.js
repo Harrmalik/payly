@@ -1,4 +1,41 @@
+let employeeID;
+let getInitialState;
+function update(input) {
+	$('#inputID').val($('#inputID').val() + input);
+}
+
+let back = () => {
+	$('#inputID').val($('#inputID').val().slice(0, -1));
+}
+
+let empty = () => {
+	$('#inputID').val('');
+}
+
+let login = () => {
+	employeeID = $('#inputID').val();
+	$.ajax({
+		url: `./php/main.php?action=validateUser&id=${employeeID}`
+	}).done((result) => {
+		if (result.user) {
+			// TODO: show application
+			getInitialState();
+			$('#auth').toggle();
+			$('#app').toggle();
+		} else {
+			errMessage = result;
+			$('#message').append(
+				`<div class="alert alert-danger alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Bad Credentials</strong> Entered invalid employee id
+</div>`
+			)
+		}
+	});
+}
+
 $(document).ready(function(){
+	$('#inputID').focus();
 	//Javascript letiables
 	let date = moment(),
 		time = '',
@@ -29,10 +66,10 @@ $(document).ready(function(){
 	$checkInBtn.on("click", () => {
 		$.ajax({
 			url: `./php/main.php?action=checkIn`,
-			dataType: 'json',
 			method: 'POST',
 			data: {
-				time: moment().format('YYYY-MM-DD HH:mm:ss')
+				time: moment().format('YYYY-MM-DD HH:mm:ss'),
+				id: employeeID
 			}
 		}).done((result) => {
 			checkInIds.push(result.id);
@@ -48,13 +85,14 @@ $(document).ready(function(){
 
 	$checkOutBtn.on("click", () => {
 		$.ajax({
-			url: `./php/main.php?action=checkOut&id=${checkInIds[checkInIds.length - 1]}&time=${moment().format('YYYY-MM-DD HH:mm:ss')}`,
+			url: `./php/main.php?action=checkOut`,
 			method: 'POST',
 			data: {
-				id: checkInIds[checkInIds.length - 1]
+				time: moment().format('YYYY-MM-DD HH:mm:ss'),
+				timeid: checkInIds[checkInIds.length - 1],
+				id: employeeID
 			}
 		}).done((hours) => {
-			console.log(hours);
 			if ($timeOut.text() !== "00:00") {
 				checkOutTime2 = moment();
 				makeUpdate('#timeOut2', 'calculate hour2', 'check out');
@@ -70,15 +108,21 @@ $(document).ready(function(){
 	});
 
 	// Functions
-	let getInitialState = () => {
+	getInitialState = () => {
 		$.ajax({
-			url: `./php/main.php?action=getInitialState&startDate=${date.format('YYYY-MM-DD') + ' 00:00:00'}&endDate=${moment().add(1,'days').format('YYYY-MM-DD') + ' 00:00:00'}`
+			url: `./php/main.php?action=getInitialState`,
+			method: 'POST',
+			data: {
+				id: employeeID,
+				startDate: date.format('YYYY-MM-DD') + ' 00:00:00',
+				endDate: moment().add(1,'days').format('YYYY-MM-DD') + ' 00:00:00'
+			}
 		}).done((hours) => {
 			var hours = hours.clockedHours;
 			if (hours.length > 0) {
-				checkInTime = hours[0].punch_in_time ? moment(hours[0].punch_in_time) : null;
-				checkOutTime = hours[0].punch_out_time ? moment(hours[0].punch_out_time) : null;
-				checkInIds.push(hours[0].punch_in_id);
+				checkInTime = hours[0].punchintime ? moment(hours[0].punchintime) : null;
+				checkOutTime = hours[0].punchouttime ? moment(hours[0].punchouttime) : null;
+				checkInIds.push(hours[0].timeid);
 				populateElement(checkInTime.format('h:mm a'), $timeIn);
 				if (checkOutTime !== null)
 					populateElement(checkOutTime.format('h:mm a'), $timeOut);
@@ -95,9 +139,9 @@ $(document).ready(function(){
 
 				if (hours.length > 1) {
 					newRow(time);
-					checkInTime2 = hours[1].punch_in_time ? moment(hours[1].punch_in_time) : null;
-					checkOutTime2 = hours[1].punch_out_time ? moment(hours[1].punch_out_time) : null;
-					checkInIds.push(hours[1].punch_in_id);
+					checkInTime2 = hours[1].punchintime ? moment(hours[1].punchintime) : null;
+					checkOutTime2 = hours[1].punchouttime ? moment(hours[1].punchouttime) : null;
+					checkInIds.push(hours[1].timeid);
 					populateElement(checkInTime2.format('h:mm a'), $timeIn2);
 					if (checkOutTime2 !== null)
 						populateElement(checkOutTime2.format('h:mm a'), $timeOut2);
@@ -107,7 +151,6 @@ $(document).ready(function(){
 					if (checkOutTime2) {
 						let hoursSum = checkOutTime2.diff(checkInTime2, 'minutes') / 60;
 						totalTime += hoursSum;
-						console.log(totalTime);
 						populateElement(hoursSum.toFixed(2),$hours2);
 						populateElement(totalTime.toFixed(2),$totalHours);
 						counter++;
@@ -115,7 +158,7 @@ $(document).ready(function(){
 				}
 
 				toggleButtons();
-				$today.html(moment(hours[0].punch_in_time).format('MMM Do'));
+				$today.html(moment(hours[0].punchintime).format('MMM Do'));
 			} else {
 				toggleButtons();
 				$today.html(date.format('MMM Do'));
@@ -157,7 +200,6 @@ $(document).ready(function(){
 		} else if (extraAction == 'calculate hour2') {
 			let hoursSum = checkOutTime2.diff(checkInTime2, 'minutes') / 60;
 			totalTime += hoursSum;
-			console.log(totalTime);
 			populateElement(hoursSum.toFixed(2),$hours2);
 			populateElement(totalTime.toFixed(2),$totalHours);
 			$checkInBtn.toggle();
@@ -179,7 +221,4 @@ $(document).ready(function(){
 		$timeOut2 = $('#timeOut2');
 		$hours2 = $('#hours2');
 	}
-
-	getInitialState();
-
 });

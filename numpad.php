@@ -11,7 +11,7 @@
 
         <div class="panel-body">
             <div style="float: left">
-                <h2>Welcome <?php echo USER::getFullName(); ?></h2>
+                <h2>Please Enter your Employee ID</h2>
             </div>
 
             <div style="float: right">
@@ -19,43 +19,7 @@
                 <a href="../ApplicationPortal/dashboard.php" class="btn btn-primary" role="button">Dashboard</a>
             </div>
 
-            <section class="mainBtns">
-                <button type="button" class="btn btn-primary btn-lg" id="checkIn">Punch In</button>
-                <button type="button" class="btn btn-primary btn-lg" id="checkOut">Punch Out</button>
-                <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button>
-            </section>
 
-            <h3>Today's Hours</h3>
-
-            <table class="table">
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
-
-                <tbody id="todayHours">
-                    <tr>
-                        <td id="today"></td>
-                        <td id="timeIn">00:00</td>
-                        <td id="timeOut">00:00</td>
-                        <td id="hours">0</td>
-                    </tr>
-                </tbody>
-
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th>Total Hours</th>
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="totalHours">0</td>
-                </tr>
-            </table>
         </div>
     </div>
 </body>
