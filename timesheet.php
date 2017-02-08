@@ -12,7 +12,6 @@
         <div class="panel-body">
             <div style="float: left">
                 <h2><?php echo USER::getFullName(); ?> Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
-                <h3>35 Total Hours</h3>
             </div>
             <div style="float: right">
                 <a href="./" class="btn btn-primary" role="button">
@@ -22,169 +21,77 @@
             </div>
 
         <table id="timesheet" class="table table-condensed">
-            <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
-            </tr>
-
             <tr id="saturday">
-                <td></td>
-                <td>00:00 AM</td>
-                <td>00:00 PM</td>
-                <td>0</td>
             </tr>
 
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="active">0</td>
-            </tr>
-
-            <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
+                <td id="saturdayHours" class="info"></td>
             </tr>
 
             <tr id="sunday">
-                <td>Jan 22</td>
-                <td>00:00 AM</td>
-                <td>00:00 PM</td>
-                <td>0</td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="active">7</td>
-            </tr>
-
-            <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
+                <td id="sundayHours" class="info"></td>
             </tr>
 
             <tr id="monday">
-                <td>Jan 23</td>
-                <td>09:00 AM</td>
-                <td>12:00 PM</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>01:00 AM</td>
-                <td>05:00 PM</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="active">7</td>
             </tr>
 
             <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="mondayHours" class="info"></td>
             </tr>
 
             <tr id="tuesday">
-                <td>Jan 24</td>
-                <td>09:00 AM</td>
-                <td>12:00 PM</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>01:00 AM</td>
-                <td>05:00 PM</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="active">7</td>
             </tr>
 
             <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="tuesdayHours" class="info"></td>
             </tr>
 
             <tr id="wednesday">
-                <td>Jan 25</td>
-                <td>09:00 AM</td>
-                <td>12:00 PM</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>01:00 AM</td>
-                <td>05:00 PM</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="active">7</td>
             </tr>
 
             <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="wednesdayHours" class="info"></td>
             </tr>
+
+
 
             <tr id="thursday">
-                <td>Jan 26</td>
-                <td>09:00 AM</td>
-                <td>12:00 PM</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>01:00 AM</td>
-                <td>05:00 PM</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="active">7</td>
             </tr>
 
             <tr>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Hours</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="thursdayHours" class="info"></td>
             </tr>
+
+
 
             <tr id="friday">
-                <td>Jan 27</td>
-                <td>09:00 AM</td>
-                <td>12:00 PM</td>
-                <td>3</td>
             </tr>
+
             <tr>
                 <td></td>
-                <td>01:00 AM</td>
-                <td>05:00 PM</td>
-                <td>4</td>
+                <td></td>
+                <td></td>
+                <td id="fridayHours" class="info"></td>
             </tr>
 
             <tr>
@@ -197,7 +104,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="active">35</td>
+                <td id="totalHours" class="info"><b>0</b></td>
             </tr>
         </table>
 
