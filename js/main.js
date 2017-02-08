@@ -45,7 +45,8 @@ $(document).ready(function(){
 		checkInTime2,
 		checkOutTime2,
 		checkInIds = [],
-		totalTime = 0;
+		totalTime = 0,
+		logoutUrl = 'logout.php';
 
 	// HTML Buttons
 	let $checkInBtn = $('#checkIn'),
@@ -63,6 +64,8 @@ $(document).ready(function(){
 		$totalHours = $('#totalHours');
 
 	// Event Listeners
+	setTimeout(IdleTimeout, 300000);
+	
 	$checkInBtn.on("click", () => {
 		$.ajax({
 			url: `./php/main.php?action=checkIn`,
@@ -221,4 +224,10 @@ $(document).ready(function(){
 		$timeOut2 = $('#timeOut2');
 		$hours2 = $('#hours2');
 	}
+
+	// Logout the user.
+	function IdleTimeout() {
+	    window.location = logoutUrl;
+	}
+
 });

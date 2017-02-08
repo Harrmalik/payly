@@ -44,3 +44,18 @@ section .btn {
     margin-left: 35%;
     margin-top: 1em;
 }
+
+@media (max-width: 600px) {
+	section.mainBtns {
+		margin: auto;
+	}
+
+	section .btn {
+		width: 100%;
+		height: 5em;
+	}
+
+	#numpad, #login {
+		margin-left: 10%;
+	}
+}

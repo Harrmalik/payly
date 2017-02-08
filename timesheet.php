@@ -15,7 +15,7 @@
             </div>
             <div style="float: right">
                 <a href="./" class="btn btn-primary" role="button">
-			Back
+			Sign Out
                 </a>
                 <a href="../ApplicationPortal/dashboard.php" class="btn btn-primary" role="button">Dashboard</a>
             </div>

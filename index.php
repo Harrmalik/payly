@@ -15,7 +15,7 @@
             </div>
 
             <div style="float: right">
-                <a href="logout.php" class="btn btn-primary" role="button">Sign out</a>
+                <a href="./" class="btn btn-primary" role="button">Sign out</a>
                 <a href="../ApplicationPortal/dashboard.php" class="btn btn-primary" role="button">Dashboard</a>
             </div>
         <section id="auth">
@@ -24,7 +24,7 @@
               <div class="form-group">
                 <label for="inputID" class="col-sm-2 control-label">Employee ID</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="inputID" placeholder="Employee ID">
+                  <input type="number" class="form-control" id="inputID" placeholder="Employee ID">
                 </div>
               </div>
             </form>
