@@ -20,6 +20,10 @@ section .btn {
 	width: 15em;
 }
 
+table#timesheet {
+	margin-top: 5%;
+}
+
 #message {
     margin-top: 5em;
 }

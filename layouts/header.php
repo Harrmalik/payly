@@ -1,7 +1,5 @@
 <?php 
 	include_once("/var/www/resources/core/index.php");
-        $core->inc('users');
-        USER::authPage();
         $assets = "./../DSCommons";
 ?>
 <!doctype html>

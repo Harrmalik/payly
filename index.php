@@ -11,7 +11,6 @@
 
         <div class="panel-body">
             <div style="float: left">
-                <h2>Welcome <?php echo USER::getFullName(); ?></h2>
             </div>
 
             <div style="float: right">

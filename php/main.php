@@ -10,7 +10,7 @@
     case 'GET':
       switch ($_REQUEST['action']) {
         case 'validateUser':
-            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?code=" . $_REQUEST['code'], USER::getUsername(),USER::getPassword());
+            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?code=" . $_REQUEST['code'], EUSER, EUSERPASSWORD);
             break;
       }
 
@@ -19,15 +19,15 @@
     case 'POST':
       switch ($_REQUEST['action']) {
       case 'getInitialState':
-          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/getinitialstate",array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
+          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/getinitialstate",array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
           break;
 
         case 'checkIn':
-          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkin",array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
+          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkin",array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
           break;
 
         case 'checkOut':
-            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
+            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
             break;
       }
 
