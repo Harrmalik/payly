@@ -11,7 +11,7 @@
         </div>
         <div class="panel-body">
             <div style="float: left">
-                <h2><?php echo USER::getFullName(); ?> Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
+                <h2>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
             </div>
             <div style="float: right">
                 <a href="./" class="btn btn-primary" role="button">
