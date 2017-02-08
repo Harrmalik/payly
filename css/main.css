@@ -20,7 +20,7 @@ section .btn {
 	width: 15em;
 }
 
-#timesheet {
+table#timesheet {
 	margin-top: 5%;
 }
 
