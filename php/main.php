@@ -2,7 +2,7 @@
   header('content-type:application/json');
   require_once('/var/www/resources/core/index.php');
   $core->inc('users');
-  $NodeServer = ':9208/checkinclockserver';
+  $NodeServer = '/checkinclockserver';
   $response;
 
   // API
@@ -10,7 +10,7 @@
     case 'GET':
       switch ($_REQUEST['action']) {
         case 'validateUser':
-            $response = doGetRequest(API_SERVER . $NodeServer . "/validate?id=" . $_REQUEST['id'], USER::getUsername(),USER::getPassword());
+            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?code=" . $_REQUEST['code'], USER::getUsername(),USER::getPassword());
             break;
       }
 
@@ -19,15 +19,15 @@
     case 'POST':
       switch ($_REQUEST['action']) {
       case 'getInitialState':
-          $response = doPostRequestWithData(API_SERVER . $NodeServer . "/getinitialstate",array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
+          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/getinitialstate",array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
           break;
-          
+
         case 'checkIn':
-          $response = doPostRequestWithData(API_SERVER . $NodeServer . "/checkin",array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
+          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkin",array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
           break;
 
         case 'checkOut':
-            $response = doPostRequestWithData(API_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
+            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), USER::getUsername(),USER::getPassword());
             break;
       }
 

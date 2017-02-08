@@ -1,19 +1,28 @@
 $(document).ready(() => {
     // Javascript letiables
+    let params = getQueryParams(document.location.search);
     let startDate = moment().weekday(-1).hour(0);
     let endDate = moment().weekday(5).hour(0);
-    let totalTime = 0;
+    let totalTime = 0,
+    saturdayHours = 0,
+    sundayHours = 0,
+    mondayHours = 0,
+    tuesdayHours = 0,
+    wednesdayHours = 0,
+    thursdayHours = 0,
+    fridayHours = 0;
 
     // HTML Elements
     let $timesheet = $('#timesheet');
+    let $totalHours = $('#totalHours');
     let days = [
-        [$('#saturday'), $('#saturdayHours')],
-        [$('#sunday'), $('#sundayHours')],
-        [$('#monday'), $('#mondayHours')],
-        [$('#tuesday'), $('#tuesdayHours')],
-        [$('#wednesday'), $('#wednesdayHours')],
-        [$('#thursday'), $('#thursdayHours')],
-        [$('#friday'), $('#fridayHours')],
+        [$('#saturday'), $('#saturdayHours'), saturdayHours],
+        [$('#sunday'), $('#sundayHours'), sundayHours],
+        [$('#monday'), $('#mondayHours'), mondayHours],
+        [$('#tuesday'), $('#tuesdayHours'), tuesdayHours],
+        [$('#wednesday'), $('#wednesdayHours'), wednesdayHours],
+        [$('#thursday'), $('#thursdayHours'), thursdayHours],
+        [$('#friday'), $('#fridayHours'), fridayHours],
     ];
 
     getInitialState(days);
@@ -21,6 +30,20 @@ $(document).ready(() => {
 
 
     // Functions
+    function getQueryParams(qs) {
+        qs = qs.split('+').join(' ');
+
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
     function getInitialState(days) {
         $('#startDate').html(startDate.format('M/D/YYYY'));
         $('#endDate').html(endDate.format('M/D/YYYY'));
@@ -49,21 +72,24 @@ $(document).ready(() => {
             url: `./php/main.php?action=getInitialState`,
             method: 'post',
             data: {
-                id: 2523526,
+                code: params.code,
                 startDate: startDate.format('YYYY-MM-DD HH:mm:ss'),
                 endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
-            let hours = data.clockedHours;
-            hours.forEach((timeslot) => {
+            let timeslots = data.clockedHours;
+            let hours = 0;
+            timeslots.forEach((timeslot) => {
                 let hoursSum = 0;
                 weekday = moment(timeslot.created).weekday();
                 $htmlDay = days[weekday + 1][0];
-                $hours = days[weekday + 1][1]
+                $htmlhours = days[weekday + 1][1];
+                hours += days[weekday + 1][2];
 
                 if (timeslot.punchouttime) {
                     hoursSum = moment(timeslot.punchouttime).diff(moment(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
+                    hours += hoursSum;
                 }
 
                 if (!$htmlDay.attr('clocked')) {
@@ -72,7 +98,9 @@ $(document).ready(() => {
                 } else {
                     addExtraRow($htmlDay, timeslot, hoursSum)
                 }
-                $hours.html(totalTime);
+
+                $htmlhours.html(hours.toFixed(2));
+                $totalHours.html(totalTime.toFixed(2));
             });
         });
     }
@@ -99,16 +127,4 @@ $(document).ready(() => {
             </tr>`
         ).insertAfter($element);
     }
-
-    function calculateHours() {
-        // TODO: calculate hours for current timeslot
-
-    }
-
-    function calculateDay() {
-        // TODO: calculate hours for entire day
-
-    }
-
-
 });

@@ -1,4 +1,4 @@
-let employeeID;
+let employeeCode;
 let getInitialState;
 function update(input) {
 	$('#inputID').val($('#inputID').val() + input);
@@ -13,9 +13,9 @@ let empty = () => {
 }
 
 let login = () => {
-	employeeID = $('#inputID').val();
+	employeeCode = $('#inputID').val();
 	$.ajax({
-		url: `./php/main.php?action=validateUser&id=${employeeID}`
+		url: `./php/main.php?action=validateUser&code=${employeeCode}`
 	}).done((result) => {
 		if (result.user) {
 			// TODO: show application
@@ -46,7 +46,7 @@ $(document).ready(function(){
 		checkOutTime2,
 		checkInIds = [],
 		totalTime = 0,
-		logoutUrl = 'logout.php';
+		logoutUrl = './';
 
 	// HTML Buttons
 	let $checkInBtn = $('#checkIn'),
@@ -65,14 +65,14 @@ $(document).ready(function(){
 
 	// Event Listeners
 	setTimeout(IdleTimeout, 300000);
-	
+
 	$checkInBtn.on("click", () => {
 		$.ajax({
 			url: `./php/main.php?action=checkIn`,
 			method: 'POST',
 			data: {
 				time: moment().format('YYYY-MM-DD HH:mm:ss'),
-				id: employeeID
+				code: employeeCode
 			}
 		}).done((result) => {
 			checkInIds.push(result.id);
@@ -92,8 +92,8 @@ $(document).ready(function(){
 			method: 'POST',
 			data: {
 				time: moment().format('YYYY-MM-DD HH:mm:ss'),
-				timeid: checkInIds[checkInIds.length - 1],
-				id: employeeID
+				id: checkInIds[checkInIds.length - 1],
+				code: employeeCode
 			}
 		}).done((hours) => {
 			if ($timeOut.text() !== "00:00") {
@@ -107,7 +107,7 @@ $(document).ready(function(){
 	});
 
 	$timesheetBtn.on("click", () => {
-		window.location.href = 'timesheet.php';
+		window.location.href = `timesheet.php?code=${employeeCode}`;
 	});
 
 	// Functions
@@ -116,7 +116,7 @@ $(document).ready(function(){
 			url: `./php/main.php?action=getInitialState`,
 			method: 'POST',
 			data: {
-				id: employeeID,
+				code: employeeCode,
 				startDate: date.format('YYYY-MM-DD') + ' 00:00:00',
 				endDate: moment().add(1,'days').format('YYYY-MM-DD') + ' 00:00:00'
 			}
