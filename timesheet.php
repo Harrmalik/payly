@@ -20,7 +20,7 @@
                 <a href="../ApplicationPortal/dashboard.php" class="btn btn-primary" role="button">Dashboard</a>
             </div>
 
-        <table id="timesheet" class="table table-condensed">
+        <table id="timesheet" class="table">
             <tr id="saturday">
             </tr>
 
@@ -28,7 +28,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="saturdayHours" class="info"></td>
+                <td id="saturdayHours" class="info"><b>0</b></td>
             </tr>
 
             <tr id="sunday">
@@ -37,7 +37,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="sundayHours" class="info"></td>
+                <td id="sundayHours" class="info"><b>0</b></td>
             </tr>
 
             <tr id="monday">
@@ -47,7 +47,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="mondayHours" class="info"></td>
+                <td id="mondayHours" class="info"><b>0</b></td>
             </tr>
 
             <tr id="tuesday">
@@ -57,7 +57,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="tuesdayHours" class="info"></td>
+                <td id="tuesdayHours" class="info"><b>0</b></td>
             </tr>
 
             <tr id="wednesday">
@@ -67,7 +67,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="wednesdayHours" class="info"></td>
+                <td id="wednesdayHours" class="info"><b>0</b></td>
             </tr>
 
 
@@ -79,7 +79,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="thursdayHours" class="info"></td>
+                <td id="thursdayHours" class="info"><b>0</b></td>
             </tr>
 
 
@@ -91,7 +91,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td id="fridayHours" class="info"></td>
+                <td id="fridayHours" class="info"><b>0</b></td>
             </tr>
 
             <tr>

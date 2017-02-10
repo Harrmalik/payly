@@ -1,8 +1,8 @@
 $(document).ready(() => {
     // Javascript letiables
     let params = getQueryParams(document.location.search);
-    let startDate = moment().weekday(-1).hour(0);
-    let endDate = moment().weekday(5).hour(0);
+    let startDate = moment().weekday(-1).hour(0).minute(0);
+    let endDate = moment().weekday(5).hour(23).minute(59);
     let totalTime = 0,
     saturdayHours = 0,
     sundayHours = 0,
@@ -50,7 +50,7 @@ $(document).ready(() => {
 
         days.forEach((day,index) => {
             $(`
-                <tr>
+                <tr class="active">
                     <th>Date</th>
                     <th>Check In</th>
                     <th>Check Out</th>
@@ -59,9 +59,9 @@ $(document).ready(() => {
             `).insertBefore(day[0]);
 
             day[0].first().html(`
-                <td>${moment().weekday(index-1).format('MMM Do')}</td>
-                <td>00:00 AM</td>
-                <td>00:00 PM</td>
+                <td>${moment().weekday(index-1).format('dddd, MMM Do')}</td>
+                <td>- -</td>
+                <td>- -</td>
                 <td>0</td>
             `);
         });
@@ -84,12 +84,11 @@ $(document).ready(() => {
                 weekday = moment(timeslot.created).weekday();
                 $htmlDay = days[weekday + 1][0];
                 $htmlhours = days[weekday + 1][1];
-                hours += days[weekday + 1][2];
 
                 if (timeslot.punchouttime) {
                     hoursSum = moment(timeslot.punchouttime).diff(moment(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
-                    hours += hoursSum;
+                    days[weekday + 1][2] += hoursSum;
                 }
 
                 if (!$htmlDay.attr('clocked')) {
@@ -99,8 +98,8 @@ $(document).ready(() => {
                     addExtraRow($htmlDay, timeslot, hoursSum)
                 }
 
-                $htmlhours.html(hours.toFixed(2));
-                $totalHours.html(totalTime.toFixed(2));
+                $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
+                $totalHours.html(`<b>${totalTime.toFixed(2)}</b>`);
             });
         });
     }
@@ -108,7 +107,7 @@ $(document).ready(() => {
         // TODO: add an row for timeslot
         $element.html(
             `
-                <td>${moment(timeslot.created).format('MMM Do')}</td>
+                <td>${moment(timeslot.created).format('dddd, MMM Do')}</td>
                 <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
                 <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '00:00 PM'}</td>
                 <td>${sum.toFixed(2)}</td>
