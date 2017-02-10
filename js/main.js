@@ -177,19 +177,22 @@ $(document).ready(function(){
 	};
 
 	let makeUpdate = (field, extraAction, state) => {
+		counter++;
 		time = moment().format('h:mm a');
 		updateToday(time, field, extraAction);
-		toggleButtons(true);
+		toggleButtons();
 	};
 
-	let toggleButtons = (toggle) => {
-		if (toggle || counter == 4) {
-			$checkInBtn.toggle();
-			$checkOutBtn.toggle();
-		} else if (counter == 0 || counter == 2) {
-			$checkOutBtn.toggle();
+	let toggleButtons = () => {
+		if (counter == 0 || counter == 2) {
+			$checkInBtn.show();
+			$checkOutBtn.hide();
 		} else if (counter == 1 || counter == 3) {
-			$checkInBtn.toggle();
+			$checkInBtn.hide();
+			$checkOutBtn.show();
+		} else {
+			$checkInBtn.hide();
+			$checkOutBtn.hide();
 		}
 	};
 

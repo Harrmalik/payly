@@ -1,3 +1,7 @@
+body {
+	font-size: 16px;
+}
+
 .panel-primary.container {
     border-color: #337ab7;
     padding: 0;
@@ -15,6 +19,10 @@ section.mainBtns {
 	margin: 10% 20%;
 }
 
+#checkIn, #checkOut {
+	display: none;
+}
+
 section .btn {
 	height: 15em;
 	width: 15em;
@@ -22,6 +30,10 @@ section .btn {
 
 table#timesheet {
 	margin-top: 5%;
+}
+
+tr, th {
+	width: 25%;
 }
 
 #message {
@@ -51,7 +63,7 @@ table#timesheet {
 
 @media (max-width: 600px) {
 	section.mainBtns {
-		margin: auto;
+		margin: 10% auto;
 	}
 
 	section .btn {
@@ -60,6 +72,6 @@ table#timesheet {
 	}
 
 	#numpad, #login {
-		margin-left: 10%;
+		margin:auto  5%;
 	}
 }
