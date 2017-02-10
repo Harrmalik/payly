@@ -2,7 +2,7 @@ $(document).ready(() => {
     // Javascript letiables
     let params = getQueryParams(document.location.search);
     let startDate = moment().weekday(-1).hour(0);
-    let endDate = moment().weekday(5).hour(23);
+    let endDate = moment().weekday(5).hour(23).minute(59);
     let totalTime = 0,
     saturdayHours = 0,
     sundayHours = 0,
