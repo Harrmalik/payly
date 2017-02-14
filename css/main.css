@@ -1,5 +1,5 @@
 body {
-	font-size: 16px;
+	font-size: 16px!important;
 }
 
 .panel-primary.container {
@@ -9,6 +9,10 @@ body {
 
 h2 {
 	margin: 0 !important;
+}
+
+.red {
+	color: red;
 }
 
 #app {

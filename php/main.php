@@ -10,7 +10,7 @@
     case 'GET':
       switch ($_REQUEST['action']) {
         case 'validateUser':
-            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?code=" . $_REQUEST['code'], EUSER, EUSERPASSWORD);
+            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?empid=" . $_REQUEST['empid'], EUSER, EUSERPASSWORD);
             break;
       }
 

@@ -1,4 +1,4 @@
-let employeeCode;
+let empid;
 let getInitialState;
 function update(input) {
 	$('#inputID').val($('#inputID').val() + input);
@@ -13,9 +13,9 @@ let empty = () => {
 }
 
 let login = () => {
-	employeeCode = $('#inputID').val();
+	empid = $('#inputID').val();
 	$.ajax({
-		url: `./php/main.php?action=validateUser&code=${employeeCode}`
+		url: `./php/main.php?action=validateUser&empid=${empid}`
 	}).done((result) => {
 		if (result.user) {
 			// TODO: show application
@@ -35,6 +35,7 @@ let login = () => {
 }
 
 $(document).ready(function(){
+	$('#inputID').val('');
 	$('#inputID').focus();
 	//Javascript letiables
 	let date = moment(),
@@ -72,7 +73,7 @@ $(document).ready(function(){
 			method: 'POST',
 			data: {
 				time: moment().format('YYYY-MM-DD HH:mm:ss'),
-				code: employeeCode
+				empid: empid
 			}
 		}).done((result) => {
 			checkInIds.push(result.id);
@@ -93,7 +94,7 @@ $(document).ready(function(){
 			data: {
 				time: moment().format('YYYY-MM-DD HH:mm:ss'),
 				id: checkInIds[checkInIds.length - 1],
-				code: employeeCode
+				empid: empid
 			}
 		}).done((hours) => {
 			if ($timeOut.text() !== "00:00") {
@@ -107,7 +108,7 @@ $(document).ready(function(){
 	});
 
 	$timesheetBtn.on("click", () => {
-		window.location.href = `timesheet.php?code=${employeeCode}`;
+		window.location.href = `timesheet.php?empid=${empid}`;
 	});
 
 	// Functions
@@ -116,7 +117,7 @@ $(document).ready(function(){
 			url: `./php/main.php?action=getInitialState`,
 			method: 'POST',
 			data: {
-				code: employeeCode,
+				empid: empid,
 				startDate: date.format('YYYY-MM-DD') + ' 00:00:00',
 				endDate: moment().add(1,'days').format('YYYY-MM-DD') + ' 00:00:00'
 			}
