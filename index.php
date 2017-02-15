@@ -67,12 +67,6 @@
                 <th>Hours</th>
 
                 <tbody id="todayHours">
-                    <tr>
-                        <td id="today"></td>
-                        <td id="timeIn">00:00</td>
-                        <td id="timeOut">00:00</td>
-                        <td id="hours">0</td>
-                    </tr>
                 </tbody>
 
                 <tr>
