@@ -94,15 +94,16 @@ $(document).ready(() => {
                     if (!breakSum) {
                         breakSum = true;
                     } else {
-                        console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
+                        //console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
                     }
                 }
 
                 if (!$htmlDay.attr('clocked')) {
-                    $htmlDay.attr('clocked', true);
+                    $htmlDay.html('');
                     addRow($htmlDay, timeslot, hoursSum);
+                    $htmlDay.attr('clocked', true);
                 } else {
-                    addExtraRow($htmlDay, timeslot, hoursSum)
+                    addRow($htmlDay, timeslot, hoursSum)
                 }
 
 
@@ -114,25 +115,15 @@ $(document).ready(() => {
     }
     function addRow($element, timeslot, sum) {
         // TODO: add an row for timeslot
-        $element.html(
-            `
-                <td>${moment(timeslot.created).format('dddd, MMM Do')}</td>
-                <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
-                <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '00:00 PM'}</td>
-                <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
-            `
-        );
-    }
-
-    function addExtraRow($element, timeslot, sum) {
-        // TODO: add an extra row to same day
         $(
-            `<tr>
-                <td></td>
-                <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
-                <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '00:00 PM'}</td>
-                <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
-            </tr>`
-        ).insertAfter($element);
+            `
+                <tr>
+                    <td>${!$element.attr('clocked') ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
+                    <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
+                    <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+                    <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
+                </tr>
+            `
+        ).insertBefore($element);
     }
 });
