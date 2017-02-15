@@ -14,6 +14,7 @@ let empty = () => {
 
 let login = () => {
 	empid = $('#inputID').val();
+
 	$.ajax({
 		url: `./php/main.php?action=validateUser&empid=${empid}`
 	}).done((result) => {
@@ -39,12 +40,9 @@ $(document).ready(function(){
 	$('#inputID').focus();
 	//Javascript letiables
 	let date = moment(),
-		time = '',
 		counter = 0,
 		checkInTime,
 		checkOutTime,
-		checkInTime2,
-		checkOutTime2,
 		checkInIds = [],
 		totalTime = 0,
 		logoutUrl = './';
@@ -53,15 +51,7 @@ $(document).ready(function(){
 	let $checkInBtn = $('#checkIn'),
 		$checkOutBtn = $('#checkOut'),
 		$timesheetBtn = $('#timesheet'),
-		$timesheet = $('#timesheet'),
 		$todayHours = $('#todayHours'),
-		$today = $('#today'),
-		$timeIn = $('#timeIn'),
-		$timeOut = $('#timeOut'),
-		$hours = $('#hours'),
-		$timeIn2,
-		$timeOut2,
-		$hours2,
 		$totalHours = $('#totalHours');
 
 	// Event Listeners
@@ -77,13 +67,8 @@ $(document).ready(function(){
 			}
 		}).done((result) => {
 			checkInIds.push(result.id);
-			if ($timeIn.text() !== '00:00') {
-				checkInTime2 = moment();
-				makeUpdate('#timeIn2', 'create new row', 'check in');
-			} else {
-				checkInTime = moment();
-				makeUpdate('#timeIn', null, 'check in');
-			}
+			checkInTime = moment();
+			makeUpdate();
 		});
 	});
 
@@ -97,13 +82,8 @@ $(document).ready(function(){
 				empid: empid
 			}
 		}).done((hours) => {
-			if ($timeOut.text() !== "00:00") {
-				checkOutTime2 = moment();
-				makeUpdate('#timeOut2', 'calculate hour2', 'check out');
-			} else {
-				checkOutTime = moment();
-				makeUpdate('#timeOut', 'calculate hours', 'check out');
-			}
+			checkOutTime = moment();
+			makeUpdate(true);
 		});
 	});
 
@@ -122,50 +102,27 @@ $(document).ready(function(){
 				endDate: moment().add(1,'days').format('YYYY-MM-DD') + ' 00:00:00'
 			}
 		}).done((hours) => {
-			var hours = hours.clockedHours;
-			if (hours.length > 0) {
-				checkInTime = hours[0].punchintime ? moment(hours[0].punchintime) : null;
-				checkOutTime = hours[0].punchouttime ? moment(hours[0].punchouttime) : null;
-				checkInIds.push(hours[0].timeid);
-				populateElement(checkInTime.format('h:mm a'), $timeIn);
-				if (checkOutTime !== null)
-					populateElement(checkOutTime.format('h:mm a'), $timeOut);
-
-				counter++;
-
-				if (checkOutTime) {
-					let hoursSum = checkOutTime.diff(checkInTime, 'minutes') / 60;
-					totalTime += hoursSum;
-					populateElement(hoursSum.toFixed(2),$hours);
-					populateElement(totalTime.toFixed(2),$totalHours);
-					counter++;
-				}
-
-				if (hours.length > 1) {
-					newRow(time);
-					checkInTime2 = hours[1].punchintime ? moment(hours[1].punchintime) : null;
-					checkOutTime2 = hours[1].punchouttime ? moment(hours[1].punchouttime) : null;
-					checkInIds.push(hours[1].timeid);
-					populateElement(checkInTime2.format('h:mm a'), $timeIn2);
-					if (checkOutTime2 !== null)
-						populateElement(checkOutTime2.format('h:mm a'), $timeOut2);
-
+			let timeslots = hours.clockedHours;
+			if (timeslots.length > 0) {
+				timeslots.forEach((timeslot, index) => {
+					let hoursSum;
+					checkInTime = timeslot.punchintime ? moment(timeslot.punchintime) : null;
+					checkOutTime = timeslot.punchouttime ? moment(timeslot.punchouttime) : null;
+					checkInIds.push(timeslot.timeid);
 					counter++;
 
-					if (checkOutTime2) {
-						let hoursSum = checkOutTime2.diff(checkInTime2, 'minutes') / 60;
-						totalTime += hoursSum;
-						populateElement(hoursSum.toFixed(2),$hours2);
+					if (checkOutTime) {
+						hoursSum = calculateHours(checkInTime, checkOutTime);
 						populateElement(totalTime.toFixed(2),$totalHours);
 						counter++;
 					}
-				}
+
+					addRow(checkInTime, checkOutTime, hoursSum);
+				});
 
 				toggleButtons();
-				$today.html(moment(hours[0].punchintime).format('MMM Do'));
 			} else {
 				toggleButtons();
-				$today.html(date.format('MMM Do'));
 			}
 	    });
 	};
@@ -177,61 +134,49 @@ $(document).ready(function(){
 		field.html(time);
 	};
 
-	let makeUpdate = (field, extraAction, state) => {
+	let makeUpdate = (checkOut) => {
+		let hoursSum;
 		counter++;
-		time = moment().format('h:mm a');
-		updateToday(time, field, extraAction);
+		if (checkOut) {
+			hoursSum = calculateHours(checkInTime, checkOutTime);
+			populateElement(totalTime.toFixed(2),$totalHours);
+			$(`#${checkInIds[checkInIds.length - 1]}timeout`).html(checkOutTime.format('h:mm a'));
+			$(`#${checkInIds[checkInIds.length - 1]}hours`).html(hoursSum.toFixed(2));
+		} else {
+			addRow(checkInTime, null, null);
+		}
 		toggleButtons();
 	};
 
 	let toggleButtons = () => {
-		if (counter == 0 || counter == 2) {
+		if (counter % 2 == 0) {
 			$checkInBtn.show();
 			$checkOutBtn.hide();
-		} else if (counter == 1 || counter == 3) {
-			$checkInBtn.hide();
-			$checkOutBtn.show();
 		} else {
 			$checkInBtn.hide();
-			$checkOutBtn.hide();
+			$checkOutBtn.show();
 		}
 	};
 
-	let updateToday = (time, field, extraAction) => {
-		$(field).html(time);
-		if (extraAction == 'calculate hours') {
-			let hoursSum = checkOutTime.diff(checkInTime, 'minutes') / 60;
-			totalTime += hoursSum;
-			populateElement(hoursSum.toFixed(2),$hours);
-			populateElement(totalTime.toFixed(2),$totalHours);
-		} else if (extraAction == 'calculate hour2') {
-			let hoursSum = checkOutTime2.diff(checkInTime2, 'minutes') / 60;
-			totalTime += hoursSum;
-			populateElement(hoursSum.toFixed(2),$hours2);
-			populateElement(totalTime.toFixed(2),$totalHours);
-			$checkInBtn.toggle();
-		} else if (extraAction == 'create new row') {
-			newRow(time);
-		}
+	let calculateHours = (start, end) => {
+		let hours = end.diff(start, 'minutes') / 60;
+		totalTime += hours;
+		return hours;
 	};
 
-	let newRow = (time) => {
+	let addRow = (start, end, total) => {
 		$todayHours.append(`
 			<tr>
-				<td></td>
-				<td id="timeIn2">${time}</td>
-				<td id="timeOut2">00:00</td>
-				<td id="hours2">0</td>
+				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''}</td>
+				<td>${start.format('h:mm a')}</td>
+				<td id="${checkInIds[checkInIds.length - 1] + 'timeout'}">${ end ? end.format('h:mm a') : '- -'}</td>
+				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : 0}</td>
 			</tr>
 		`);
-		$timeIn2 = $('#timeIn2');
-		$timeOut2 = $('#timeOut2');
-		$hours2 = $('#hours2');
 	}
 
 	// Logout the user.
 	function IdleTimeout() {
 	    window.location = logoutUrl;
 	}
-
 });
