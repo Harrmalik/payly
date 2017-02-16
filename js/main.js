@@ -12,7 +12,9 @@ let empty = () => {
 	$('#inputID').val('');
 }
 
-let login = () => {
+let login = (e) => {
+	if (e)
+		e.preventDefault();
 	empid = $('#inputID').val();
 
 	$.ajax({
@@ -33,6 +35,7 @@ let login = () => {
 			)
 		}
 	});
+	return false;
 }
 
 $(document).ready(function(){
