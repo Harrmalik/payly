@@ -5,13 +5,13 @@ $(document).ready(() => {
     let endDate = moment().weekday(5).hour(23).minute(59);
     let totalTime = 0,
     breaks = 0,
-    saturdayHours = 0, saturdayBreaks = false,
-    sundayHours = 0, sundayBreaks = false,
-    mondayHours = 0, mondayBreaks = false,
-    tuesdayHours = 0, tuesdayBreaks = false,
-    wednesdayHours = 0, wednesdayBreaks = false,
-    thursdayHours = 0, thursdayBreaks = false,
-    fridayHours = 0, fridayBreaks = false;
+    saturdayHours = 0, saturdayBreaks = 0,
+    sundayHours = 0, sundayBreaks = 0,
+    mondayHours = 0, mondayBreaks = 0,
+    tuesdayHours = 0, tuesdayBreaks = 0,
+    wednesdayHours = 0, wednesdayBreaks = 0,
+    thursdayHours = 0, thursdayBreaks = 0,
+    fridayHours = 0, fridayBreaks = 0;
 
     // HTML Elements
     let $timesheet = $('#timesheet');
@@ -85,24 +85,35 @@ $(document).ready(() => {
                     weekday = moment(timeslot.created).weekday() === 6 ? -1 : moment(timeslot.created).weekday(),
                     $htmlDay = days[weekday + 1][0],
                     $htmlhours = days[weekday + 1][1],
-                    breakSum = days[weekday + 1][2];
+                    breakSum = days[weekday + 1][3];
 
                 if (timeslot.punchouttime) {
                     hoursSum = moment(timeslot.punchouttime).diff(moment(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
                     days[weekday + 1][2] += hoursSum;
-                    if (!breakSum) {
-                        breakSum = true;
-                    } else {
-                        console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
+                    if (timeslots[index -1]) {
+                        previousWeekday = moment(timeslots[index -1].created).weekday() === 6 ? -1 : moment(timeslots[index -1].created).weekday();
+                        if (weekday === previousWeekday) {
+                            if (timeslots[index-1].punchouttime) {
+                                days[weekday + 1][3] += moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes');
+                                console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
+                            }
+                        } else if (!timeslots[index + 1]) {
+                            console.log(days[previousWeekday + 1][0]);
+                            console.log(' total: ' + days[previousWeekday + 1][3]);
+                        } else {
+                            console.log(days[previousWeekday + 1][0]);
+                            console.log(' total: ' + days[previousWeekday + 1][3]);
+                        }
                     }
                 }
 
                 if (!$htmlDay.attr('clocked')) {
-                    $htmlDay.attr('clocked', true);
+                    $htmlDay.html('');
                     addRow($htmlDay, timeslot, hoursSum);
+                    $htmlDay.attr('clocked', true);
                 } else {
-                    addExtraRow($htmlDay, timeslot, hoursSum)
+                    addRow($htmlDay, timeslot, hoursSum)
                 }
 
 
@@ -113,26 +124,15 @@ $(document).ready(() => {
         });
     }
     function addRow($element, timeslot, sum) {
-        // TODO: add an row for timeslot
-        $element.html(
-            `
-                <td>${moment(timeslot.created).format('dddd, MMM Do')}</td>
-                <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
-                <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '00:00 PM'}</td>
-                <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
-            `
-        );
-    }
-
-    function addExtraRow($element, timeslot, sum) {
-        // TODO: add an extra row to same day
         $(
-            `<tr>
-                <td></td>
-                <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
-                <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '00:00 PM'}</td>
-                <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
-            </tr>`
-        ).insertAfter($element);
+            `
+                <tr>
+                    <td>${!$element.attr('clocked') ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
+                    <td>${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
+                    <td>${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+                    <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
+                </tr>
+            `
+        ).insertBefore($element);
     }
 });
