@@ -58,7 +58,7 @@ $(document).ready(function(){
 		$totalHours = $('#totalHours');
 
 	// Event Listeners
-	setTimeout(IdleTimeout, 300000);
+	setTimeout(IdleTimeout, 60000);
 
 	$checkInBtn.on("click", () => {
 		$.ajax({
