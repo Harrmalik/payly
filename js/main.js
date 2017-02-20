@@ -25,6 +25,7 @@ let login = (e) => {
 			getInitialState();
 			$('#auth').toggle();
 			$('#app').toggle();
+			setTimeout(IdleTimeout, 60000);
 		} else {
 			errMessage = result;
 			$('#message').append(
@@ -58,8 +59,6 @@ $(document).ready(function(){
 		$totalHours = $('#totalHours');
 
 	// Event Listeners
-	setTimeout(IdleTimeout, 60000);
-
 	$checkInBtn.on("click", () => {
 		$.ajax({
 			url: `./php/main.php?action=checkIn`,
