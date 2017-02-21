@@ -125,7 +125,9 @@
                 <td id="totalHours" class="info"><b>0</b></td>
             </tr>
         </table>
-
+        <p>Yellow Background: Used phone system</p>
+        <p>Red Time: Break over 30 minutes</p>
+        <p>Red Hours: Work period over 6 Hours</p>
         </div>
     </div>
 </body>
