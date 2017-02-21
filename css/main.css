@@ -33,7 +33,7 @@ section .btn {
 }
 
 table#timesheet {
-	margin-top: 5%;
+	margin-top: 1em;
 }
 
 tr, th {
@@ -41,7 +41,7 @@ tr, th {
 }
 
 #message {
-    margin-top: 5em;
+    margin-top: 1em;
 }
 
 #numpad {
