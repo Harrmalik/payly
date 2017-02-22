@@ -97,11 +97,11 @@ $(document).ready(() => {
                             if (timeslots[index-1].punchouttime) {
                                 days[weekday + 1][3] += moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes');
                                 console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
-                                if (days[previousWeekday + 1][3] > 30) {
+                                if (days[previousWeekday + 1][3] < 30) {
                                     timeslot.overBreak = true;
                                 }
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -121,7 +121,6 @@ $(document).ready(() => {
         });
     }
     function addRow($element, timeslot, sum) {
-        console.log(timeslot.overBreak);
         $(
             `
                 <tr>

@@ -25,6 +25,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
                   <li class="active"><a href="./" role="button">Home</a></li>
+                  <li><a href="./admin.php" role="button">Admin</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="./" role="button">Sign Out</a></li>

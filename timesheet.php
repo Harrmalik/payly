@@ -26,6 +26,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
                   <li class="active"><a href="./" role="button">Home</a></li>
+                  <li><a href="./admin.php" role="button">Admin</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="./" role="button">Sign Out</a></li>
@@ -126,7 +127,7 @@
             </tr>
         </table>
         <p>Yellow Background: Used phone system</p>
-        <p>Red Time: Break over 30 minutes</p>
+        <p>Red Time: Break under 30 minutes</p>
         <p>Red Hours: Work period over 6 Hours</p>
         </div>
     </div>
