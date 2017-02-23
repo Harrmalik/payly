@@ -14,42 +14,6 @@ $(document).ready(function(){
 			url: `./php/main.php?action=getEmployees`
 		}).done((result) => {
 			let employees = result.employees;
- employees = [{
- 	id: 23112,
- 	name: "Dockery Ken"
- },
- {
- 	id: 25345,
- 	name: "Johannes, Robert"
- },
- {
- 	id: 25348,
- 	name: "Reichert, Norman"
- },
- {
- 	id: 25850,
- 	name: "Zimmerman, James"
- },
- {
- 	id: 26011,
- 	name: "Donna R. Kull"
- },
- {
- 	id: 28627,
- 	name: "Noworyta, Stephen"
- },
- {
- 	id: 80372,
- 	name: "Pinkney, Jonathan"
- },
- {
- 	id: 80592,
- 	name: "Panepinto, Nichol"
- },
- {
- 	id: 82821,
- 	name: "Treat, Robert"
- }]
 			if (employees.length > 0) {
 				employees.forEach((employee) => {
 					$('#list').append(`
