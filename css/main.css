@@ -66,8 +66,28 @@ tr, th {
 }
 
 @media (max-width: 600px) {
+	body {
+		font-size: 14px !important;
+	}
+
+	img {
+		width: 100px;
+	}
+
+	.panel .panel-heading {
+		padding: 0;
+	}
+
+	.navbar.navbar-default {
+		margin-bottom: 0;
+	}
+
+	#message {
+		margin-top: 0;	
+	}
+ 
 	section.mainBtns {
-		margin: 10% auto;
+		margin: 0 auto;
 	}
 
 	section .btn {
@@ -76,6 +96,20 @@ tr, th {
 	}
 
 	#numpad, #login {
-		margin:auto  5%;
+		margin: 0;
 	}
+
+	#numpad button.btn.btn-default {
+		width: 100%;
+	}
+
+	#login {
+		height: 3em;
+		width: 100%;
+	}
+
+	.btn-group-vertical.btn-group-lg {
+		width: 32%;
+	}
+
 }

@@ -13,6 +13,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="<?php echo $assets; ?>/css/bootstrap.min.css">
 
+	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
         <script src="<?php echo $assets; ?>/js/jquery-1.12.4.min.js"></script>
         <script src="<?php echo $assets; ?>/js/bootstrap.min.js"></script>
         <script src="<?php echo $assets; ?>/js/moment.min.js"></script>

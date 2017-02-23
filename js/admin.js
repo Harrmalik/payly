@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function(){
 	//Javascript letiables
 	let date = moment();
@@ -7,11 +9,11 @@ $(document).ready(function(){
 	// Event Listeners
 
 	// Functions
-	getInitialState = () => {
+	let getInitialState = () => {
 		$.ajax({
 			url: `./php/main.php?action=getEmployees`
 		}).done((result) => {
-			employees = result.employees;
+			let employees = result.employees;
 			if (employees.length > 0) {
 				employees.forEach((employee) => {
 					$('#list').append(`

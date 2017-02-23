@@ -1,6 +1,6 @@
 <?php   include_once "./layouts/header.php"; ?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
-    <script src="./js/timesheet.js"></script>
+    <script type="text/babel" src="./js/timesheet.js"></script>
 </head>
 
 <body>
