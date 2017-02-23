@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(() => {
     // Javascript letiables
     let params = getQueryParams(document.location.search);
@@ -92,11 +94,10 @@ $(document).ready(() => {
                     totalTime += hoursSum;
                     days[weekday + 1][2] += hoursSum;
                     if (timeslots[index -1]) {
-                        previousWeekday = moment(timeslots[index -1].created).weekday() === 6 ? -1 : moment(timeslots[index -1].created).weekday();
+                        let previousWeekday = moment(timeslots[index -1].created).weekday() === 6 ? -1 : moment(timeslots[index -1].created).weekday();
                         if (weekday === previousWeekday) {
                             if (timeslots[index-1].punchouttime) {
                                 days[weekday + 1][3] += moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes');
-                                console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
                                 if (days[previousWeekday + 1][3] < 30) {
                                     timeslot.overBreak = true;
                                 }

@@ -1,5 +1,5 @@
 <?php include_once './layouts/header.php' ?>
-        <script src="./js/main.js"></script>
+        <script type="text/babel" src="./js/main.js"></script>
 </head>
 
 <body>

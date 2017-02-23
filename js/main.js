@@ -1,3 +1,5 @@
+'use strict';
+
 let empid;
 let getInitialState;
 function update(input) {
@@ -27,7 +29,7 @@ let login = (e) => {
 			$('#app').toggle();
 			setTimeout(IdleTimeout, 60000);
 		} else {
-			errMessage = result;
+			let errMessage = result;
 			$('#message').append(
 				`<div class="alert alert-danger alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -37,6 +39,11 @@ let login = (e) => {
 		}
 	});
 	return false;
+}
+
+// Logout the user.
+function IdleTimeout() {
+	window.location = logoutUrl;
 }
 
 $(document).ready(function(){
@@ -175,10 +182,5 @@ $(document).ready(function(){
 				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : 0}</td>
 			</tr>
 		`);
-	}
-
-	// Logout the user.
-	function IdleTimeout() {
-	    window.location = logoutUrl;
 	}
 });

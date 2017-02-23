@@ -66,6 +66,26 @@ tr, th {
 }
 
 @media (max-width: 600px) {
+	body {
+		font-size: 14px !important;
+	}
+
+	img {
+		width: 100px;
+	}
+
+	.panel .panel-heading {
+		padding: 0;
+	}
+
+	.navbar.navbar-default {
+		margin-bottom: 0;
+	}
+
+	#message {
+		margin-top: 0;	
+	}
+ 
 	section.mainBtns {
 		margin: 10% auto;
 	}
@@ -78,4 +98,14 @@ tr, th {
 	#numpad, #login {
 		margin:auto  5%;
 	}
+
+	#numpad button.btn.btn-default {
+		width: 4.5em;
+		width: 4.5em;
+	}
+
+	#login {
+		height: 3em;
+	}
+
 }
