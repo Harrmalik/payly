@@ -97,13 +97,10 @@ $(document).ready(() => {
                             if (timeslots[index-1].punchouttime) {
                                 days[weekday + 1][3] += moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes');
                                 console.log(moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes'));
+                                if (days[previousWeekday + 1][3] < 30) {
+                                    timeslot.overBreak = true;
+                                }
                             }
-                        } else if (!timeslots[index + 1]) {
-                            console.log(days[previousWeekday + 1][0]);
-                            console.log(' total: ' + days[previousWeekday + 1][3]);
-                        } else {
-                            console.log(days[previousWeekday + 1][0]);
-                            console.log(' total: ' + days[previousWeekday + 1][3]);
                         }
                     }
                 }
@@ -128,7 +125,7 @@ $(document).ready(() => {
             `
                 <tr>
                     <td>${!$element.attr('clocked') ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
-                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
+                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
                     <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
                 </tr>

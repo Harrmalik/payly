@@ -12,6 +12,9 @@
         case 'validateUser':
             $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?empid=" . $_REQUEST['empid'], EUSER, EUSERPASSWORD);
             break;
+        case 'getEmployees':
+            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/getemployees", USER::getUsername(), User::getPassword());
+            break;
       }
 
       break;
