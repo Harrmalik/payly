@@ -87,7 +87,7 @@ tr, th {
 	}
  
 	section.mainBtns {
-		margin: 10% auto;
+		margin: 0 auto;
 	}
 
 	section .btn {
@@ -96,16 +96,20 @@ tr, th {
 	}
 
 	#numpad, #login {
-		margin:auto  5%;
+		margin: 0;
 	}
 
 	#numpad button.btn.btn-default {
-		width: 4.5em;
-		width: 4.5em;
+		width: 100%;
 	}
 
 	#login {
 		height: 3em;
+		width: 100%;
+	}
+
+	.btn-group-vertical.btn-group-lg {
+		width: 32%;
 	}
 
 }
