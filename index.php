@@ -1,5 +1,6 @@
 <?php include_once './layouts/header.php' ?>
         <script type="text/babel" src="./js/main.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
 </head>
 
 <body>
@@ -71,6 +72,7 @@
         </section>
 
         <section id="app">
+            <h3 id="name"></h3>
             <section class="mainBtns">
                 <button type="button" class="btn btn-primary btn-lg" id="checkIn">Punch In</button>
                 <button type="button" class="btn btn-primary btn-lg" id="checkOut">Punch Out</button>

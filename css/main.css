@@ -27,7 +27,7 @@ section.mainBtns {
 	display: none;
 }
 
-section .btn {
+section#app .btn {
 	height: 15em;
 	width: 15em;
 }
@@ -63,6 +63,10 @@ tr, th {
     height: 100px;
     margin-left: 35%;
     margin-top: 1em;
+}
+
+#userTimesheet {
+	display:none;
 }
 
 @media (max-width: 600px) {

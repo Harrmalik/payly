@@ -3,8 +3,15 @@
 $(document).ready(() => {
     // Javascript letiables
     let params = getQueryParams(document.location.search);
-    let startDate = moment().weekday(-1).hour(0).minute(0);
-    let endDate = moment().weekday(5).hour(23).minute(59);
+    let startDate;
+    let endDate;
+    if (params.week) {
+        startDate = moment().weekday(-8).hour(0).minute(0);
+        endDate = moment().weekday(-2).hour(23).minute(59);
+    } else {
+        startDate = moment().weekday(-1).hour(0).minute(0);
+        endDate = moment().weekday(5).hour(23).minute(59);
+    }
     let totalTime = 0,
     breaks = 0,
     saturdayHours = 0, saturdayBreaks = 0,

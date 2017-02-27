@@ -4,7 +4,8 @@
     $core->inc('users');
     USER::authPage();
 ?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
@@ -42,13 +43,172 @@
         </nav>
 
         <div class="panel-body">
-            <h2>Employees</h2>
-            <hr/>
-            <section id="employees">
-                <ul id="list" class="list-group">
+            <?php if (USER::getUserId() === 648 || USER::getUserId() === 1183) { ?>
+                <h3>Find User</h3>
+                <form class="form-horizontal" onsubmit="return getTimesheet();">
+                  <div class="form-group">
+                    <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
+                    <div class="col-sm-10">
+                      <input type="number" class="form-control" id="employeeID" placeholder="Employee ID">
+                    </div>
+                  </div>
+                </form>
 
-                </ul>
-            </section>
+                <div class="modal fade" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modal-title">Edit Timeslot</h4>
+                      </div>
+
+                      <div class="modal-body">
+                          <form class="form-horizontal" onsubmit="return getTimesheet();">
+                              <div class="form-group" id="typefield">
+                                  <select class="form-control" id="type">
+                                      <option value="regular">Regular</option>
+                                      <option value="pto">Paid Time Off</option>
+                                      <option value="personal">Personal</option>
+                                      <option value="floating">Floating</option>
+                                    </select>
+                              </div>
+                              <div class="form-group">
+                                  <div class='input-group date' id='punchintime'>
+                                      <input type='text' class="form-control" />
+                                      <span class="input-group-addon">
+                                          <span class="glyphicon glyphicon-calendar"></span>
+                                      </span>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <div class='input-group date' id='punchouttime'>
+                                      <input type='text' class="form-control" />
+                                      <span class="input-group-addon">
+                                          <span class="glyphicon glyphicon-calendar"></span>
+                                      </span>
+                                  </div>
+                              </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <span id="modal-button"></span>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                  <section id="userTimesheet">
+                      <h2>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
+                      <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-primary" id="addTimeslot">Add Time</button>
+                      </div>
+
+                      <table id="timesheet" class="table">
+                      <tr id="saturday">
+                      </tr>
+
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="saturdayHours" class="info" colspan="2"><b>0</b></td>
+                      </tr>
+
+                      <tr id="sunday">
+                      </tr>
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="sundayHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+
+                      <tr id="monday">
+                      </tr>
+
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="mondayHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+
+                      <tr id="tuesday">
+                      </tr>
+
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="tuesdayHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+
+                      <tr id="wednesday">
+                      </tr>
+
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="wednesdayHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+
+
+
+                      <tr id="thursday">
+                      </tr>
+
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="thursdayHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+
+
+
+                      <tr id="friday">
+                      </tr>
+
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="fridayHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+
+                      <tr>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                          <th>Total Hours</th>
+                          <th></th>
+                      </tr>
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td id="totalHours" class="info"><b>0</b></td>
+                          <td></td>
+                      </tr>
+                      </table>
+                  </section>
+            <?php } else { ?>
+                <h2>Employees</h2>
+                <hr/>
+                <section id="employees">
+                    <ul id="list" class="list-group">
+
+                    </ul>
+                </section>
+            <?php } ?>
         </div>
     </div>
 </body>
