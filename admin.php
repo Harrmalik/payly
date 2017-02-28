@@ -44,7 +44,6 @@
 
         <div class="panel-body">
             <?php if (USER::getUserId() === 648 || USER::getUserId() === 1183) { ?>
-                <h3>Find User</h3>
                 <form class="form-horizontal" onsubmit="return getTimesheet();">
                   <div class="form-group">
                     <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
@@ -66,10 +65,11 @@
                           <form class="form-horizontal" onsubmit="return getTimesheet();">
                               <div class="form-group" id="typefield">
                                   <select class="form-control" id="type">
-                                      <option value="regular">Regular</option>
-                                      <option value="pto">Paid Time Off</option>
-                                      <option value="personal">Personal</option>
-                                      <option value="floating">Floating</option>
+                                      <option value="0">Regular</option>
+                                      <option value="1">Paid Time Off</option>
+                                      <option value="2">Personal</option>
+                                      <option value="3">Floating</option>
+                                      <option value="4">Holiday</option>
                                     </select>
                               </div>
                               <div class="form-group">
@@ -121,8 +121,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="sundayHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="sundayHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
 
                       <tr id="monday">
@@ -132,8 +131,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="mondayHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="mondayHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
 
                       <tr id="tuesday">
@@ -143,8 +141,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="tuesdayHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="tuesdayHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
 
                       <tr id="wednesday">
@@ -154,8 +151,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="wednesdayHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="wednesdayHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
 
 
@@ -167,8 +163,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="thursdayHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="thursdayHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
 
 
@@ -180,8 +175,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="fridayHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="fridayHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
 
                       <tr>
@@ -195,8 +189,7 @@
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td id="totalHours" class="info"><b>0</b></td>
-                          <td></td>
+                          <td id="totalHours" class="info" colspan="2"><b>0</b></td>
                       </tr>
                       </table>
                   </section>

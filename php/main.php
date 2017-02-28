@@ -32,6 +32,9 @@
         case 'checkOut':
             $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
             break;
+        default :
+            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/posthandler", array("data" => json_encode($_POST)), USER::getUsername(), User::getPassword());
+            break;
       }
 
       break;

@@ -6,6 +6,8 @@ let empid,
 	$('#punchintime').datetimepicker();
 	$('#punchouttime').datetimepicker();
 
+console.log(location);
+
 let getTimesheet = (e) => {
 	if (e)
 		e.preventDefault();
@@ -36,24 +38,19 @@ $('#addTimeslot').on('click', () => {
 });
 
 let addTimeslot = () => {
-	console.log({
-		userid: empid,
-		punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-		punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-		type: $('#type').val()
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data: {
+			userid: empid,
+			punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
+			punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
+			type: $('#type').val(),
+			action: 'addTimeslot'
+		}
+	}).done((data) => {
+		//TODO: Update table, send message of success
 	});
-	// $.ajax({
-	// 	url: `./php/main.php?action=newTimeslot`,
-	// 	method: 'post',
-	// 	data: {
-	// 		userid: empid,
-	// 		punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-	// 		punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-	// 		type: $('#type').val()
-	// 	}
-	// }).done((data) => {
-	//
-	// });
 }
 
 let makeEdit = (row) => {
