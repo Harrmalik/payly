@@ -45,9 +45,20 @@
         <div class="panel-body">
             <?php if (USER::getUserId() === 648 || USER::getUserId() === 1183) { ?>
                 <form class="form-horizontal" onsubmit="return getTimesheet();">
+                    <div class="form-group">
+                      <label for="end" class="col-sm-2 control-label">Week Ending</label>
+                      <div class="col-sm-4">
+                          <div class='input-group date' id='end'>
+                              <input type='text' class="form-control" />
+                              <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                              </span>
+                          </div>
+                      </div>
+                    </div>
                   <div class="form-group">
                     <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-4">
                       <input type="number" class="form-control" id="employeeID" placeholder="Employee ID">
                     </div>
                   </div>

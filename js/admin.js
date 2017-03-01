@@ -5,6 +5,11 @@ let empid,
 	timeslot;
 	$('#punchintime').datetimepicker();
 	$('#punchouttime').datetimepicker();
+	$('#end').datetimepicker({
+		defaultDate: moment().weekday(-5),
+		format: 'MMMM Do',
+		daysOfWeekDisabled: [0,1,2,3,4,6]
+	});
 
 let getTimesheet = (e) => {
 	if (e)
@@ -86,8 +91,6 @@ $(document).ready(function(){
 	// Javascript letiables
     let startDate;
     let endDate;
-        startDate = moment().weekday(-8).hour(0).minute(0);
-        endDate = moment().weekday(-2).hour(23).minute(59);
     let timeslots,
 	totalTime = 0,
     breaks = 0,
@@ -114,7 +117,8 @@ $(document).ready(function(){
 
     // Functions
     buildTable = () => {
-
+		startDate = $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0);
+        endDate = $('#end').data("DateTimePicker").date().hour(23).minute(59);
         $('#startDate').html(startDate.format('M/D/YYYY'));
         $('#endDate').html(endDate.format('M/D/YYYY'));
 
@@ -154,8 +158,8 @@ $(document).ready(function(){
             method: 'post',
             data: {
                 empid: empid,
-                startDate: startDate.format('YYYY-MM-DD HH:mm:ss'),
-                endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
+                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
+                endDate: $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
             timeslots = data.clockedHours;
