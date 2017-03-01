@@ -6,8 +6,6 @@ let empid,
 	$('#punchintime').datetimepicker();
 	$('#punchouttime').datetimepicker();
 
-console.log(location);
-
 let getTimesheet = (e) => {
 	if (e)
 		e.preventDefault();
@@ -68,12 +66,16 @@ let saveChange = () => {
 
 	// TODO: Make api call
 	$.ajax({
-		url: `./php/main.php?action=updateTimeslot`,
+		url: `./php/main.php`,
 		method: 'post',
 		data: {
 			timeid: timeslot.id,
+			oldin: moment(timeslot.in).format('YYYY-MM-DD HH:mm:ss'),
 			punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-			punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss')
+			oldout: moment(timeslot.out).format('YYYY-MM-DD HH:mm:ss'),
+			punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
+			timenow: moment().format('YYYY-MM-DD HH:mm:ss'),
+			action: 'editTimeslot'
 		}
 	}).done((data) => {
 
@@ -86,7 +88,8 @@ $(document).ready(function(){
     let endDate;
         startDate = moment().weekday(-8).hour(0).minute(0);
         endDate = moment().weekday(-2).hour(23).minute(59);
-    let totalTime = 0,
+    let timeslots,
+	totalTime = 0,
     breaks = 0,
     saturdayHours = 0, saturdayBreaks = 0,
     sundayHours = 0, sundayBreaks = 0,
@@ -116,15 +119,23 @@ $(document).ready(function(){
         $('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
-            $(`
-                <tr class="active">
-                    <th>Date</th>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Hours</th>
-					<th>Action</th>
-                </tr>
-            `).insertBefore(day[0]);
+			if (timeslots) {
+				$('.timeslots').remove();
+				day[0].first().html('');
+				day[0].attr('clocked', false);
+				day[2] = 0;
+				day[3] = 0;
+			} else {
+				$(`
+					<tr class="active headers">
+						<th>Date</th>
+						<th>Check In</th>
+						<th>Check Out</th>
+						<th>Hours</th>
+						<th>Action</th>
+					</tr>
+				`).insertBefore(day[0]);
+			}
 
             day[0].first().html(`
                 <td>${moment().weekday(index-1).format('dddd, MMM Do')}</td>
@@ -147,7 +158,7 @@ $(document).ready(function(){
                 endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
-            let timeslots = data.clockedHours;
+            timeslots = data.clockedHours;
             let hours = 0;
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
@@ -173,7 +184,7 @@ $(document).ready(function(){
                     }
                 }
 
-                if (!$htmlDay.attr('clocked')) {
+                if (!$htmlDay.attr('clocked') || $htmlDay.attr('clocked') === 'false') {
                     $htmlDay.html('');
                     addRow($htmlDay, timeslot, hoursSum);
                     $htmlDay.attr('clocked', true);
@@ -191,8 +202,8 @@ $(document).ready(function(){
     function addRow($element, timeslot, sum) {
         $(
             `
-                <tr>
-                    <td>${!$element.attr('clocked') ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
+                <tr class="timeslots">
+                    <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
                     <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
                     <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>

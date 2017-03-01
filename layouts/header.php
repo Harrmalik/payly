@@ -17,10 +17,6 @@
 		  } else {
 			  ga = console.log
 		  }
-
-		  ga('send', 'event', 'link', 'click', 'http://example.com', {
-		  nonInteraction: true
-		});
 		</script>
         <meta charset="utf-8" />
 
