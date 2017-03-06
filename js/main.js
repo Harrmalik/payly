@@ -1,7 +1,8 @@
 'use strict';
 
-let empid;
-let getInitialState;
+let empid,
+	getInitialState,
+	logoutUrl = './';
 function update(input) {
 	$('#inputID').val($('#inputID').val() + input);
 }
@@ -27,6 +28,7 @@ let login = (e) => {
 			getInitialState();
 			$('#auth').toggle();
 			$('#app').toggle();
+			$('#name').html(result.user.empname);
 			setTimeout(IdleTimeout, 60000);
 		} else {
 			let errMessage = result;
@@ -55,8 +57,7 @@ $(document).ready(function(){
 		checkInTime,
 		checkOutTime,
 		checkInIds = [],
-		totalTime = 0,
-		logoutUrl = './';
+		totalTime = 0;
 
 	// HTML Buttons
 	let $checkInBtn = $('#checkIn'),
