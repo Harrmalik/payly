@@ -5,14 +5,8 @@ $(document).ready(() => {
     let params = getQueryParams(document.location.search);
     let startDate;
     let endDate;
-    if (params.week) {
-        startDate = moment().weekday(-8).hour(0).minute(0);
-        endDate = moment().weekday(-2).hour(23).minute(59);
-    } else {
-        startDate = moment().weekday(-1).hour(0).minute(0);
-        endDate = moment().weekday(5).hour(23).minute(59);
-    }
-    let totalTime = 0,
+    let timeslots,
+    totalTime = 0,
     breaks = 0,
     saturdayHours = 0, saturdayBreaks = 0,
     sundayHours = 0, sundayBreaks = 0,
@@ -34,10 +28,14 @@ $(document).ready(() => {
         [$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks],
         [$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks],
     ];
+    $('#end').datetimepicker({
+        defaultDate: moment().weekday(2),
+        format: 'MMMM Do',
+        daysOfWeekDisabled: [0,1,2,3,4,6]
+    });
 
-    getInitialState(days);
+    buildTable();
     makeTimesheet();
-
 
     // Functions
     function getQueryParams(qs) {
@@ -54,22 +52,29 @@ $(document).ready(() => {
         return params;
     }
 
-    function getInitialState(days) {
-        $('#startDate').html(startDate.format('M/D/YYYY'));
-        $('#endDate').html(endDate.format('M/D/YYYY'));
-
+    function buildTable() {
         days.forEach((day,index) => {
-            $(`
-                <tr class="active">
-                    <th>Date</th>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Hours</th>
-                </tr>
-            `).insertBefore(day[0]);
+            if (timeslots) {
+                $('.timeslots').remove();
+                day[0].first().html('');
+                day[0].attr('clocked', false);
+                day[1].html('<b>0</b>');
+                day[2] = 0;
+                day[3] = 0;
+                totalTime = 0;
+            } else {
+                $(`
+                    <tr class="active">
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Hours</th>
+                    </tr>
+                `).insertBefore(day[0]);
+            }
 
             day[0].first().html(`
-                <td>${moment().weekday(index-1).format('dddd, MMM Do')}</td>
+                <td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
                 <td>- -</td>
                 <td>- -</td>
                 <td>0</td>
@@ -83,12 +88,13 @@ $(document).ready(() => {
             method: 'post',
             data: {
                 empid: params.empid,
-                startDate: startDate.format('YYYY-MM-DD HH:mm:ss'),
-                endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
+                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
+                endDate: $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
-            let timeslots = data.clockedHours;
+            timeslots = data.clockedHours;
             let hours = 0;
+
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
                     weekday = moment(timeslot.created).weekday() === 6 ? -1 : moment(timeslot.created).weekday(),
@@ -113,15 +119,13 @@ $(document).ready(() => {
                     }
                 }
 
-                if (!$htmlDay.attr('clocked')) {
+                if (!$htmlDay.attr('clocked') || $htmlDay.attr('clocked') === 'false') {
                     $htmlDay.html('');
                     addRow($htmlDay, timeslot, hoursSum);
                     $htmlDay.attr('clocked', true);
                 } else {
                     addRow($htmlDay, timeslot, hoursSum)
                 }
-
-
 
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
                 $totalHours.html(`<b>${totalTime.toFixed(2)}</b>`);
@@ -131,13 +135,73 @@ $(document).ready(() => {
     function addRow($element, timeslot, sum) {
         $(
             `
-                <tr>
-                    <td>${!$element.attr('clocked') ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
+                <tr class="timeslots">
+                    <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
                     <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
                     <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
-                    <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
+                    <td class=
+                        ${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}
+                        ${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
+                    </td>
                 </tr>
             `
-        ).insertBefore($element);
-    }
+        ).insertAfter($element);
+        setPopover(timeslot.timeid);
+    };
+
+	function setPopover(id) {
+		$.ajax({
+			url: `./php/main.php?action=getChanges`,
+			method: 'post',
+			data: {
+				id
+			}
+		}).done((result) => {
+				let changes = result.changes;
+				let html = '';
+				if (changes.length == 0) {
+					html += 'No Changes tracked';
+				} else {
+					changes.forEach((c) => {
+						if (c.oldintime !== c.newintime) {
+							html += `
+								<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
+							`;
+						} else if (c.oldouttime !== c.newouttime) {
+							html += `
+								<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
+							`;
+						}
+
+					});
+				}
+
+				$(`#${id}info`).popover({
+						template: `<div id=${id} class="popover" role="tooltip">
+							<div class="arrow"></div>
+							<h3 class="popover-title"></h3>
+							<div class="popover-content"></div>
+						</div>`,
+						html: true,
+						container: `#${id}info`,
+						title: 'Change Log',
+						content: html
+				});
+				$(`#${id}info`).on('click', () => {
+					$(`#${id}`).popover('show');
+				});
+
+				$(`.popover`).on('show.bs.popover', function () {
+					setTimeout(function () {
+						$(`#${id}`).popover('hide');
+					}, 2000);
+				})
+		});
+	};
+
+    $('#end').on('dp.change', () => {
+        buildTable();
+        makeTimesheet();
+    });
+
 });

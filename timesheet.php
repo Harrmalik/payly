@@ -1,5 +1,7 @@
 <?php   include_once "./layouts/header.php"; ?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/babel" src="./js/timesheet.js"></script>
 </head>
 
@@ -37,95 +39,110 @@
         </nav>
 
         <div class="panel-body">
-            <h2>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="end" class="col-sm-2 control-label">Week Ending</label>
+                    <div class="col-sm-4">
+                    <div class='input-group date' id='end'>
+                      <input type='text' class="form-control" />
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                    </div>
+                    </div>
+                </div>
+            </form>
+            <!-- <h2>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2> -->
 
-        <table id="timesheet" class="table">
-            <tr id="saturday">
-            </tr>
+            <table id="timesheet" class="table">
+                <tr id="saturday">
+                </tr>
 
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="saturdayHours" class="info"><b>0</b></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="saturdayHours" class="info"><b>0</b></td>
+                </tr>
 
-            <tr id="sunday">
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="sundayHours" class="info"><b>0</b></td>
-            </tr>
+                <tr id="sunday">
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="sundayHours" class="info"><b>0</b></td>
+                </tr>
 
-            <tr id="monday">
-            </tr>
+                <tr id="monday">
+                </tr>
 
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="mondayHours" class="info"><b>0</b></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="mondayHours" class="info"><b>0</b></td>
+                </tr>
 
-            <tr id="tuesday">
-            </tr>
+                <tr id="tuesday">
+                </tr>
 
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="tuesdayHours" class="info"><b>0</b></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="tuesdayHours" class="info"><b>0</b></td>
+                </tr>
 
-            <tr id="wednesday">
-            </tr>
+                <tr id="wednesday">
+                </tr>
 
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="wednesdayHours" class="info"><b>0</b></td>
-            </tr>
-
-
-
-            <tr id="thursday">
-            </tr>
-
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="thursdayHours" class="info"><b>0</b></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="wednesdayHours" class="info"><b>0</b></td>
+                </tr>
 
 
 
-            <tr id="friday">
-            </tr>
+                <tr id="thursday">
+                </tr>
 
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="fridayHours" class="info"><b>0</b></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="thursdayHours" class="info"><b>0</b></td>
+                </tr>
 
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>Total Hours</th>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td id="totalHours" class="info"><b>0</b></td>
-            </tr>
-        </table>
+
+
+                <tr id="friday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="fridayHours" class="info"><b>0</b></td>
+                </tr>
+
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>Total Hours</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="totalHours" class="info"><b>0</b></td>
+                </tr>
+            </table>
+        <!-- <div id="react-timesheet"></div>
+        <script src="<?php echo $assets; ?>/js/react/timesheet.js"></script> -->
         <p>Yellow Background: Used phone system</p>
         <p>Red Time: Break under 30 minutes</p>
         <p>Red Hours: Work period over 6 Hours</p>
