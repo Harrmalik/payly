@@ -145,7 +145,7 @@ $(document).ready(() => {
                     </td>
                 </tr>
             `
-        ).insertAfter($element);
+        ).insertBefore($element);
         setPopover(timeslot.timeid);
     };
 
