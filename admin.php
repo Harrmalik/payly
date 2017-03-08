@@ -44,7 +44,7 @@
 
         <div class="panel-body">
             <?php if (USER::getUserId() === 648 || USER::getUserId() === 1183) { ?>
-                <form class="form-horizontal" onsubmit="return getTimesheet();">
+                <form class="form-horizontal">
                     <div class="form-group">
                       <label for="end" class="col-sm-2 control-label">Week Ending</label>
                       <div class="col-sm-4">
@@ -56,6 +56,8 @@
                           </div>
                       </div>
                     </div>
+                </form>
+                <form class="form-horizontal" onsubmit="return getTimesheet();">
                   <div class="form-group">
                     <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
                     <div class="col-sm-4">

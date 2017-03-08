@@ -36,7 +36,7 @@ $('#addTimeslot').on('click', () => {
 	$('#typefield').show();
 	$('#punchintime').data("DateTimePicker").date('');
 	$('#punchouttime').data("DateTimePicker").date('');
-	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="addTimeslot()" data-dismiss="modal">Save changes</button>');
+	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="addTimeslot()" data-dismiss="modal">Add Timeslot</button>');
 	$('.modal').modal('show');
 });
 
@@ -127,8 +127,10 @@ $(document).ready(function(){
 				$('.timeslots').remove();
 				day[0].first().html('');
 				day[0].attr('clocked', false);
+				day[1].html('<b>0</b>');
 				day[2] = 0;
 				day[3] = 0;
+				totalTime = 0;
 			} else {
 				$(`
 					<tr class="active headers">
@@ -142,7 +144,7 @@ $(document).ready(function(){
 			}
 
             day[0].first().html(`
-                <td>${moment().weekday(index-1).format('dddd, MMM Do')}</td>
+                <td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
                 <td>- -</td>
                 <td>- -</td>
                 <td>0</td>
@@ -164,6 +166,7 @@ $(document).ready(function(){
         }).done((data) => {
             timeslots = data.clockedHours;
             let hours = 0;
+
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
                     weekday = moment(timeslot.created).weekday() === 6 ? -1 : moment(timeslot.created).weekday(),
@@ -196,8 +199,6 @@ $(document).ready(function(){
                     addRow($htmlDay, timeslot, hoursSum)
                 }
 
-
-
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
                 $totalHours.html(`<b>${totalTime.toFixed(2)}</b>`);
             });
@@ -208,9 +209,14 @@ $(document).ready(function(){
             `
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
-                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}</td>
+                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''}">
+						${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}
+					</td>
                     <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
-                    <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}</td>
+                    <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>
+						${sum.toFixed(2)}
+						${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
+					</td>
 					<td><button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
 						data-id=${timeslot.timeid}
 						data-in=${timeslot.punchintime}
@@ -218,8 +224,65 @@ $(document).ready(function(){
                 </tr>
             `
         ).insertBefore($element);
+		setPopover(timeslot.timeid);
 		$('.datetime').datetimepicker();
     }
+
+	function setPopover(id) {
+		$.ajax({
+			url: `./php/main.php?action=getChanges`,
+			method: 'post',
+			data: {
+				id
+			}
+		}).done((result) => {
+				let changes = result.changes;
+				let html = '';
+				if (changes.length == 0) {
+					html += 'No Changes tracked';
+				} else {
+					changes.forEach((c) => {
+						if (c.oldintime !== c.newintime) {
+							html += `
+								<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
+							`;
+						} else if (c.oldouttime !== c.newouttime) {
+							html += `
+								<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
+							`;
+						}
+
+					});
+				}
+
+				$(`#${id}info`).popover({
+						template: `<div id=${id} class="popover" role="tooltip">
+							<div class="arrow"></div>
+							<h3 class="popover-title"></h3>
+							<div class="popover-content"></div>
+						</div>`,
+						html: true,
+						container: `#${id}info`,
+						title: 'Change Log',
+						content: html
+				});
+				$(`#${id}info`).on('click', () => {
+					$(`#${id}`).popover('show');
+				});
+
+				$(`.popover`).on('show.bs.popover', function () {
+					setTimeout(function () {
+						$(`#${id}`).popover('hide');
+					}, 2000);
+				})
+		});
+	}
+
+	$('#end').on('dp.change', () => {
+		if (empid) {
+			getTimesheet();
+		}
+	});
 
 	let getInitialState = () => {
 		$.ajax({
@@ -229,7 +292,7 @@ $(document).ready(function(){
 			if (employees.length > 0) {
 				employees.forEach((employee) => {
 					$('#list').append(`
-						<li class="list-group-item">${employee.name} <br><a class="label label-primary" href="./timesheet.php?empid=${employee.id}&week=0" target="_blank">View Timesheet</a></li>
+						<li class="list-group-item">${employee.name} <br><a class="label label-primary" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></li>
 					`)
 				});
 			} else {
