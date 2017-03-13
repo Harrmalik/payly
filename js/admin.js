@@ -21,6 +21,7 @@ let getTimesheet = (e) => {
 	}).done((result) => {
 		if (result.user) {
 			// TODO: show application
+			$('#username').html(result.user.empname);
 			buildTable();
 			makeTimesheet();
 		} else {
@@ -34,11 +35,20 @@ let getTimesheet = (e) => {
 $('#addTimeslot').on('click', () => {
 	$('#modal-title').html('Add Timeslot');
 	$('#typefield').show();
-	$('#punchintime').data("DateTimePicker").date('');
-	$('#punchouttime').data("DateTimePicker").date('');
+	$('#punchintime').data("DateTimePicker").date(moment().hour(9).minute(0).second(0));
+	$('#punchouttime').hide();
+	$('.adding').show();
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="addTimeslot()" data-dismiss="modal">Add Timeslot</button>');
 	$('.modal').modal('show');
 });
+
+let fullday = () => {
+	$('#selectHours').val(8);
+}
+
+let halfday = () => {
+	$('#selectHours').val(4);
+}
 
 let addTimeslot = () => {
 	$.ajax({
@@ -47,12 +57,13 @@ let addTimeslot = () => {
 		data: {
 			userid: empid,
 			punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-			punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
+			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val()[0], 'hours').format('YYYY-MM-DD HH:mm:ss'),
 			type: $('#type').val(),
 			action: 'addTimeslot'
 		}
 	}).done((data) => {
 		//TODO: Update table, send message of success
+		getTimesheet();
 	});
 }
 
@@ -63,6 +74,8 @@ let makeEdit = (row) => {
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="saveChange()" data-dismiss="modal">Save changes</button>');
 	$('#punchintime').data("DateTimePicker").date(moment(timeslot.in));
 	$('#punchouttime').data("DateTimePicker").date(moment(timeslot.out));
+	$('#punchouttime').show();
+	$('.adding').hide();
 	$('.modal').modal('show');
 };
 
@@ -83,7 +96,7 @@ let saveChange = () => {
 			action: 'editTimeslot'
 		}
 	}).done((data) => {
-
+		getTimesheet();
 	});
 }
 
@@ -209,10 +222,10 @@ $(document).ready(function(){
             `
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
-                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''}">
+                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''}">
 						${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}
 					</td>
-                    <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+                    <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>
 						${sum.toFixed(2)}
 						${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}

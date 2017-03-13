@@ -64,7 +64,7 @@
                       <input type="number" class="form-control" id="employeeID" placeholder="Employee ID">
                     </div>
                   </div>
-                </form>
+              </form>
 
                 <div class="modal fade" tabindex="-1" role="dialog">
                   <div class="modal-dialog" role="document">
@@ -79,8 +79,8 @@
                               <div class="form-group" id="typefield">
                                   <select class="form-control" id="type">
                                       <option value="0">Regular</option>
-                                      <option value="1">Paid Time Off</option>
-                                      <option value="2">Personal</option>
+                                      <option value="1">Vacation</option>
+                                      <option value="2">Sick</option>
                                       <option value="3">Floating</option>
                                       <option value="4">Holiday</option>
                                     </select>
@@ -101,6 +101,23 @@
                                       </span>
                                   </div>
                               </div>
+                              <div class="form-group adding">
+                                  <h4>Hours</h4>
+                                  <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
+                                  <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
+                              </div>
+                              <div class="form-group adding">
+                                    <select multiple class="form-control selectHours" id="selectHours">
+                                      <option val="1">1</option>
+                                      <option val="2">2</option>
+                                      <option val="3">3</option>
+                                      <option val="4">4</option>
+                                      <option val="5">5</option>
+                                      <option val="6">6</option>
+                                      <option val="7">7</option>
+                                      <option val="8">8</option>
+                                    </select>
+                              </div>
                           </form>
                       </div>
                       <div class="modal-footer">
@@ -112,7 +129,8 @@
                 </div><!-- /.modal -->
 
                   <section id="userTimesheet">
-                      <h2>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2>
+                      <h2 id="username"></h2>
+                      <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3>
                       <div class="btn-group" role="group">
                           <button type="button" class="btn btn-primary" id="addTimeslot">Add Time</button>
                       </div>

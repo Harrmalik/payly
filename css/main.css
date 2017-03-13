@@ -79,12 +79,24 @@ tr, th {
 	margin:1em !important;
 }
 
+.vacation {
+	background-color: #FCE4EC;
+}
+
 .modal .modal-dialog {
 	margin-top: 30%;
 }
 
 .modal-content {
 	padding: 1em;
+}
+
+.popover, .glyphicon-info-sign {
+	color: black;
+}
+
+.selectHours.form-control {
+	height: 150px;
 }
 
 @media (max-width: 600px) {
@@ -107,14 +119,18 @@ tr, th {
 	#message {
 		margin-top: 0;	
 	}
+
+	#name {
+		margin: 0;
+	}
  
 	section.mainBtns {
 		margin: 0 auto;
 	}
 
-	section .btn {
-		width: 100%;
-		height: 5em;
+	section.mainBtns .btn {
+		width: 100% !important;
+		height: 5em !important;
 	}
 
 	#numpad, #login {
