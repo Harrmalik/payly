@@ -144,8 +144,10 @@
         <!-- <div id="react-timesheet"></div>
         <script src="<?php echo $assets; ?>/js/react/timesheet.js"></script> -->
         <p>Yellow Background: Used phone system</p>
+        <p>Pick Backgroun: Vacation Time</p>
         <p>Red Time: Break under 30 minutes</p>
         <p>Red Hours: Work period over 6 Hours</p>
+        <p>*: Called using personal phone</p>
         </div>
     </div>
 </body>

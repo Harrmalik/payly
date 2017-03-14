@@ -25,8 +25,12 @@ let getTimesheet = (e) => {
 			buildTable();
 			makeTimesheet();
 		} else {
-			let errMessage = result;
-			console.log(errMessage);
+			$('#alert').html(`
+				<div class="alert alert-warning alert-dismissible" role="alert">
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				  ${empid} is not a valid employee id, Please try again!.
+				</div>
+			`)
 		}
 	});
 	return false;
@@ -225,10 +229,12 @@ $(document).ready(function(){
                     <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''}">
 						${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}
 					</td>
-                    <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+                    <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''}">
+						${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}
+					</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>
 						${sum.toFixed(2)}
-						${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
+						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
 					<td><button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
 						data-id=${timeslot.timeid}

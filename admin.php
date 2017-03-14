@@ -44,6 +44,7 @@
 
         <div class="panel-body">
             <?php if (USER::getUserId() === 648 || USER::getUserId() === 1183) { ?>
+                <span id="alert"></span>
                 <form class="form-horizontal">
                     <div class="form-group">
                       <label for="end" class="col-sm-2 control-label">Week Ending</label>
