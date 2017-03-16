@@ -55,13 +55,15 @@ let halfday = () => {
 }
 
 let addTimeslot = () => {
+	let minutes = (60 / (100/$('#selectHours').val().split('.')[1]))
+	
 	$.ajax({
 		url: `./php/main.php`,
 		method: 'post',
 		data: {
 			userid: empid,
 			punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val()[0], 'hours').format('YYYY-MM-DD HH:mm:ss'),
+			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).format('YYYY-MM-DD HH:mm:ss'),
 			type: $('#type').val(),
 			action: 'addTimeslot'
 		}
