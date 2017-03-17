@@ -108,16 +108,7 @@
                                   <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
                               </div>
                               <div class="form-group adding">
-                                    <select multiple class="form-control selectHours" id="selectHours">
-                                      <option val="1">1</option>
-                                      <option val="2">2</option>
-                                      <option val="3">3</option>
-                                      <option val="4">4</option>
-                                      <option val="5">5</option>
-                                      <option val="6">6</option>
-                                      <option val="7">7</option>
-                                      <option val="8">8</option>
-                                    </select>
+                                  <input type="number" class="form-control" id="selectHours">
                               </div>
                           </form>
                       </div>
