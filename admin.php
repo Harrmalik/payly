@@ -225,9 +225,16 @@
                 <h2>Employees</h2>
                 <hr/>
                 <section id="employees">
-                    <ul id="list" class="list-group">
+                    <table class="table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Hours</th>
+                            <th></th>
+                        </thead>
+                        <tbody id="list">
 
-                    </ul>
+                        </tbody>
+                    </table>
                 </section>
             <?php } ?>
         </div>

@@ -324,7 +324,11 @@ $(document).ready(function(){
 			if (employees.length > 0) {
 				employees.forEach((employee) => {
 					$('#list').append(`
-						<li class="list-group-item">${employee.name} <br><a class="label label-primary" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></li>
+						<tr>
+							<td>${employee.name}</td>
+							<td>${employee.hours}</td>
+							<td><a class="btn btn-default" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></td>
+						</tr>
 					`)
 				});
 			} else {
