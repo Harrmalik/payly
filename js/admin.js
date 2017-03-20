@@ -3,8 +3,12 @@ let empid,
 	buildTable,
 	makeTimesheet,
 	timeslot;
-	$('#punchintime').datetimepicker();
-	$('#punchouttime').datetimepicker();
+	$('#punchintime').datetimepicker({
+		sideBySide: true
+	});
+	$('#punchouttime').datetimepicker({
+		sideBySide: true
+	});
 	$('#end').datetimepicker({
 		defaultDate: moment().weekday(-5),
 		format: 'MMMM Do',
@@ -40,7 +44,7 @@ $('#addTimeslot').on('click', () => {
 	$('#modal-title').html('Add Timeslot');
 	$('#typefield').show();
 	$('#punchintime').data("DateTimePicker").date(moment().hour(9).minute(0).second(0));
-	$('#punchouttime').hide();
+	$('#punchingout').hide();
 	$('.adding').show();
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="addTimeslot()" data-dismiss="modal">Add Timeslot</button>');
 	$('.modal').modal('show');
@@ -56,7 +60,7 @@ let halfday = () => {
 
 let addTimeslot = () => {
 	let minutes = (60 / (100/$('#selectHours').val().split('.')[1]))
-	
+
 	$.ajax({
 		url: `./php/main.php`,
 		method: 'post',
@@ -80,7 +84,7 @@ let makeEdit = (row) => {
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="saveChange()" data-dismiss="modal">Save changes</button>');
 	$('#punchintime').data("DateTimePicker").date(moment(timeslot.in));
 	$('#punchouttime').data("DateTimePicker").date(moment(timeslot.out));
-	$('#punchouttime').show();
+	$('#punchingout').show();
 	$('.adding').hide();
 	$('.modal').modal('show');
 };
@@ -260,19 +264,26 @@ $(document).ready(function(){
 				let changes = result.changes;
 				let html = '';
 				if (changes.length == 0) {
-					html += 'No Changes tracked';
+					html += 'This timeslot was created for you';
 				} else {
 					changes.forEach((c) => {
 						if (c.oldintime !== c.newintime) {
-							html += `
-								<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
-							`;
+							if (c.editedby == "99999") {
+								html += '<p>You were autosigned out at midnight</p>'
+							} else {
+								html += `
+									<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
+								`;
+							}
 						} else if (c.oldouttime !== c.newouttime) {
-							html += `
-								<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
-							`;
+							if (c.editedBy == "99999") {
+								html += '<p>You were autosigned out at midnight</p>'
+							} else {
+								html += `
+									<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
+								`;
+							}
 						}
-
 					});
 				}
 
@@ -313,7 +324,11 @@ $(document).ready(function(){
 			if (employees.length > 0) {
 				employees.forEach((employee) => {
 					$('#list').append(`
-						<li class="list-group-item">${employee.name} <br><a class="label label-primary" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></li>
+						<tr>
+							<td>${employee.name}</td>
+							<td>${employee.hours}</td>
+							<td><a class="btn btn-default" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></td>
+						</tr>
 					`)
 				});
 			} else {

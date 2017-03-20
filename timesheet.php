@@ -41,7 +41,7 @@
         <div class="panel-body">
             <form class="form-horizontal">
                 <div class="form-group">
-                    <label for="end" class="col-sm-2 control-label">Week Ending</label>
+                    <label for="end" style="text-align: left;" class="col-sm-2 control-label">Week Ending</label>
                     <div class="col-sm-4">
                     <div class='input-group date' id='end'>
                       <input type='text' class="form-control" />
@@ -52,7 +52,8 @@
                     </div>
                 </div>
             </form>
-            <!-- <h2>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h2> -->
+            <h2 id="username"></h2>
+            <!-- <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3> -->
 
             <table id="timesheet" class="table">
                 <tr id="saturday">
@@ -143,6 +144,8 @@
             </table>
         <!-- <div id="react-timesheet"></div>
         <script src="<?php echo $assets; ?>/js/react/timesheet.js"></script> -->
+
+        <hr>
         <p>Yellow Background: Used phone system</p>
         <p>Pink Background: Vacation Time</p>
         <p>Red Time: Break under 30 minutes</p>

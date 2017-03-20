@@ -79,7 +79,6 @@
                           <form class="form-horizontal" onsubmit="return getTimesheet();">
                               <div class="form-group" id="typefield">
                                   <select class="form-control" id="type">
-                                      <option value="0">Regular</option>
                                       <option value="1">Vacation</option>
                                       <option value="2">Sick</option>
                                       <option value="3">Floating</option>
@@ -87,19 +86,25 @@
                                     </select>
                               </div>
                               <div class="form-group">
-                                  <div class='input-group date' id='punchintime'>
-                                      <input type='text' class="form-control" />
-                                      <span class="input-group-addon">
-                                          <span class="glyphicon glyphicon-calendar"></span>
-                                      </span>
+                                  <label for="punchintime" style="text-align: left;" class="col-sm-3 control-label">Punch In</label>
+                                  <div class="col-sm-9">
+                                      <div class='input-group date' id='punchintime'>
+                                          <input type='text' class="form-control" />
+                                          <span class="input-group-addon">
+                                              <span class="glyphicon glyphicon-calendar"></span>
+                                          </span>
+                                      </div>
                                   </div>
                               </div>
-                              <div class="form-group">
-                                  <div class='input-group date' id='punchouttime'>
-                                      <input type='text' class="form-control" />
-                                      <span class="input-group-addon">
-                                          <span class="glyphicon glyphicon-calendar"></span>
-                                      </span>
+                              <div class="form-group" id="punchingout">
+                                  <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Punch Out</label>
+                                  <div class="col-sm-9">
+                                      <div class='input-group date' id='punchouttime'>
+                                          <input type='text' class="form-control" />
+                                          <span class="input-group-addon">
+                                              <span class="glyphicon glyphicon-calendar"></span>
+                                          </span>
+                                      </div>
                                   </div>
                               </div>
                               <div class="form-group adding">
@@ -220,9 +225,16 @@
                 <h2>Employees</h2>
                 <hr/>
                 <section id="employees">
-                    <ul id="list" class="list-group">
+                    <table class="table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Hours</th>
+                            <th></th>
+                        </thead>
+                        <tbody id="list">
 
-                    </ul>
+                        </tbody>
+                    </table>
                 </section>
             <?php } ?>
         </div>
