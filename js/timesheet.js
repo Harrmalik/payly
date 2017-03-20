@@ -34,9 +34,6 @@ $(document).ready(() => {
         daysOfWeekDisabled: [0,1,2,3,4,6]
     });
 
-    buildTable();
-    makeTimesheet();
-
     // Functions
     function getQueryParams(qs) {
         qs = qs.split('+').join(' ');
@@ -51,6 +48,17 @@ $(document).ready(() => {
 
         return params;
     }
+
+    $.ajax({
+        url: `./php/main.php?action=validateUser&empid=${params.empid}`
+    }).done((result) => {
+        if (result.user) {
+            // TODO: show application
+            $('#username').html(result.user.empname);
+            buildTable();
+            makeTimesheet();
+        }
+    });
 
     function buildTable() {
         days.forEach((day,index) => {
@@ -92,6 +100,8 @@ $(document).ready(() => {
                 endDate: $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
+            // $('#startDate').html($('#end').data("DateTimePicker").date().weekday(-1).format('M/D/YYYY'));
+            // $('#endDate').html($('#end').data("DateTimePicker").date().format('M/D/YYYY'));
             timeslots = data.clockedHours;
             let hours = 0;
 
@@ -160,19 +170,26 @@ $(document).ready(() => {
 				let changes = result.changes;
 				let html = '';
 				if (changes.length == 0) {
-					html += 'No Changes tracked';
+					html += 'This timeslot was created for you';
 				} else {
-					changes.forEach((c) => {
+                    changes.forEach((c) => {
 						if (c.oldintime !== c.newintime) {
-							html += `
-								<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
-							`;
+							if (c.editedby == "99999") {
+								html += '<p>You were autosigned out at midnight</p>'
+							} else {
+								html += `
+									<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
+								`;
+							}
 						} else if (c.oldouttime !== c.newouttime) {
-							html += `
-								<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
-							`;
+							if (c.editedBy == "99999") {
+								html += '<p>You were autosigned out at midnight</p>'
+							} else {
+								html += `
+									<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
+								`;
+							}
 						}
-
 					});
 				}
 
