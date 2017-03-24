@@ -182,7 +182,7 @@ $(document).ready(() => {
 								`;
 							}
 						} else if (c.oldouttime !== c.newouttime) {
-							if (c.editedBy == "99999") {
+							if (c.editedby == "99999") {
 								html += '<p>You were autosigned out at midnight</p>'
 							} else {
 								html += `
