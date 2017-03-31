@@ -40,6 +40,10 @@ tr, th {
 	width: 25%;
 }
 
+#userTimesheet th {
+	width: 20%;
+}
+
 #message {
     margin-top: 1em;
 }

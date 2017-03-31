@@ -10,7 +10,7 @@ let empid,
 		sideBySide: true
 	});
 	$('#end').datetimepicker({
-		defaultDate: moment().weekday(-5),
+		defaultDate: moment().weekday(5),
 		format: 'MMMM Do',
 		daysOfWeekDisabled: [0,1,2,3,4,6]
 	});
@@ -59,7 +59,7 @@ let halfday = () => {
 }
 
 let addTimeslot = () => {
-	let minutes = (60 / (100/$('#selectHours').val().split('.')[1]))
+	let minutes = $('#selectHours').val().split('.')[1] > 0 ? (60 / (100/$('#selectHours').val().split('.')[1])) : 0
 
 	$.ajax({
 		url: `./php/main.php`,
@@ -72,7 +72,7 @@ let addTimeslot = () => {
 			action: 'addTimeslot'
 		}
 	}).done((data) => {
-		//TODO: Update table, send message of success
+		sendAlert('success', data.result)
 		getTimesheet();
 	});
 }
@@ -90,9 +90,6 @@ let makeEdit = (row) => {
 };
 
 let saveChange = () => {
-	// TODO: update table
-
-	// TODO: Make api call
 	$.ajax({
 		url: `./php/main.php`,
 		method: 'post',
@@ -106,8 +103,33 @@ let saveChange = () => {
 			action: 'editTimeslot'
 		}
 	}).done((data) => {
+		sendAlert('info', data.result)
 		getTimesheet();
 	});
+}
+
+let deleteTimeslot = (row) => {
+	let timeid = $(row).data('id');
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data: {
+			timeid: timeid,
+			action: 'deleteTimeslot'
+		}
+	}).done((data) => {
+		sendAlert('info', data.result)
+		getTimesheet();
+	});
+}
+
+let sendAlert = (type, message) => {
+	$('#alert').html(`
+		<div class="alert alert-${type} alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  ${message}
+		</div>
+	`)
 }
 
 $(document).ready(function(){
@@ -157,11 +179,11 @@ $(document).ready(function(){
 			} else {
 				$(`
 					<tr class="active headers">
-						<th>Date</th>
-						<th>Check In</th>
-						<th>Check Out</th>
-						<th>Hours</th>
-						<th>Action</th>
+						<th style="width: 20%;">Date</th>
+						<th style="width: 20%;">Check In</th>
+						<th style="width: 20%;">Check Out</th>
+						<th style="width: 20%;">Hours</th>
+						<th style="width: 20%;">Actions</th>
 					</tr>
 				`).insertBefore(day[0]);
 			}
@@ -242,7 +264,8 @@ $(document).ready(function(){
 						${sum.toFixed(2)}
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
-					<td><button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
+					<td><button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}>Delete</button>
+					<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
 						data-id=${timeslot.timeid}
 						data-in=${timeslot.punchintime}
 						data-out=${timeslot.punchouttime}>Edit Time</button></td>
