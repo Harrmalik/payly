@@ -72,7 +72,7 @@ $(document).ready(function(){
 			url: `./php/main.php?action=checkIn`,
 			method: 'POST',
 			data: {
-				time: moment().format('YYYY-MM-DD HH:mm:ss'),
+				time: moment().seconds(0).format('YYYY-MM-DD HH:mm:ss'),
 				empid: empid
 			}
 		}).done((result) => {
@@ -87,7 +87,7 @@ $(document).ready(function(){
 			url: `./php/main.php?action=checkOut`,
 			method: 'POST',
 			data: {
-				time: moment().format('YYYY-MM-DD HH:mm:ss'),
+				time: moment().seconds(0).format('YYYY-MM-DD HH:mm:ss'),
 				id: checkInIds[checkInIds.length - 1],
 				empid: empid
 			}
