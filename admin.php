@@ -4,8 +4,6 @@
     $core->inc('users');
     USER::authPage();
 ?>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
@@ -81,6 +79,7 @@
                                   <select class="form-control" id="type">
                                       <option value="1">Vacation</option>
                                       <option value="2">Sick</option>
+                                      <option value="0">Regular</option>
                                       <option value="3">Floating</option>
                                       <option value="4">Holiday</option>
                                     </select>
