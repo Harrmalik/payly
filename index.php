@@ -1,12 +1,11 @@
 <?php include_once './layouts/header.php' ?>
         <script type="text/babel" src="./js/main.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
 </head>
 
 <body>
     <div class="panel panel-primary container">
         <div class="panel-heading">
-            <p class="text-center"><img src="../CognosReports/images/delta_logo.png" width="150px" /></p>
+            <p class="text-center"><img src="<?php echo $assets; ?>../images/delta_logo.png" width="150px" /></p>
         </div>
 
         <nav class="navbar navbar-default">
@@ -47,6 +46,23 @@
                 </div>
               </div>
             </form>
+
+            <div class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">User not found!</h4>
+                  </div>
+                  <div class="modal-body">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-warning btn-lg" onclick="unknownSignin()">Yes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
 
             <section id="numpad">
                 <div class="btn-group-vertical btn-group-lg btn-group-primary" role="group" aria-label="...">

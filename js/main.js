@@ -2,7 +2,13 @@
 
 let empid,
 	getInitialState,
-	logoutUrl = './';
+	logoutUrl = './',
+	timer = () => {
+		setTimeout(IdleTimeout, 60000)
+	},
+	removeTimer = () => {
+		clearTimeout(timeout)
+	};
 function update(input) {
 	$('#inputID').val($('#inputID').val() + input);
 }
@@ -29,18 +35,25 @@ let login = (e) => {
 			$('#auth').toggle();
 			$('#app').toggle();
 			$('#name').html(result.user.empname);
-			setTimeout(IdleTimeout, 60000);
+			timer()
 		} else {
-			let errMessage = result;
-			$('#message').append(
-				`<div class="alert alert-danger alert-dismissible" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Bad Credentials</strong> Entered invalid employee id
-</div>`
-			)
+			$(".modal-title").html(`User not found for employee ID: ${empid}`)
+			$(".modal-body").html(`
+				  <p>The Employee number <b>${empid}</b> Was not found in the system. Would you like to punch it in anyway</p>
+			`)
+			$('.modal').modal('toggle')
 		}
 	});
 	return false;
+}
+
+let unknownSignin = () => {
+	$('.modal').modal('toggle')
+	getInitialState();
+	$('#auth').toggle();
+	$('#app').toggle();
+	$('#name').html(empid);
+	timer()
 }
 
 // Logout the user.

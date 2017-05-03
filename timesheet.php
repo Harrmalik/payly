@@ -1,7 +1,4 @@
 <?php   include_once "./layouts/header.php"; ?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/babel" src="./js/timesheet.js"></script>
 </head>
 
@@ -142,8 +139,6 @@
                     <td id="totalHours" class="info"><b>0</b></td>
                 </tr>
             </table>
-        <!-- <div id="react-timesheet"></div>
-        <script src="<?php echo $assets; ?>/js/react/timesheet.js"></script> -->
 
         <hr>
         <p>Yellow Background: Used phone system</p>
