@@ -1,4 +1,5 @@
-'use strict';
+
+console.log('hey');
 
 let empid,
 	getInitialState,

@@ -132,8 +132,8 @@ function addRow($element, timeslot, sum) {
         `
             <tr class="timeslots">
                 <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
-                <td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
-                <td class="${(timeslot.outsource == 1 || timeslot.outsource == 2) ? 'warning' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+                <td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
+                <td class="${(timeslot.outsource == 1 || timeslot.outsource == 2) ? 'warning' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
                 <td class=
                     ${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}
                     ${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}

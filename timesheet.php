@@ -143,6 +143,7 @@
         <hr>
         <p>Yellow Background: Used phone system</p>
         <p>Pink Background: Vacation Time</p>
+        <p>Green Background: Paid time off</p>
         <p>Red Time: Break under 30 minutes</p>
         <p>Red Hours: Work period over 6 Hours</p>
         <p>*: Called using personal phone</p>
