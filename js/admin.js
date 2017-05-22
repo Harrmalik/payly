@@ -254,10 +254,10 @@ $(document).ready(function(){
             `
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
-                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''}">
+                    <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
 						${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}
 					</td>
-                    <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''}">
+                    <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
 						${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}
 					</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>

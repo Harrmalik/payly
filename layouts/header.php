@@ -25,7 +25,7 @@
 		<link rel="stylesheet" href="<?php echo $assets; ?>css/main.css"/>
 		<link rel="stylesheet" href="css/styles.css"/>
 
-		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.min.js"></script>
 		<?php include_once($assets . "js/scripts.php"); ?>
 	    <script src="<?php echo $assets; ?>Helpers.js"></script>
 
