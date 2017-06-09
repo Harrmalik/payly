@@ -38,7 +38,7 @@ $.ajax({
     url: `./php/main.php?action=validateUser&empid=${params.empid}`
 }).done((result) => {
     if (result.user) {
-        // TODO: show application
+        $('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
         $('#username').html(result.user.empname);
         buildTable();
         makeTimesheet();

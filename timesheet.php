@@ -4,11 +4,11 @@
 
 <body>
     <div class="panel panel-primary container">
-        <div class="panel-heading">
-            <p class="text-center"><img src="../CognosReports/images/delta_logo.png" width="150px" /></p>
+        <div class="panel-heading" style="display:none">
+            <p class="text-center"><img src="<?php echo $assets; ?>../images/delta_logo.png" width="150px" /></p>
         </div>
 
-        <nav class="navbar navbar-default">
+        <nav class="navbar navbar-inverse">
           <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -18,7 +18,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#"><b>Punch In Clock</b></a>
+              <a class="navbar-brand" href="./"><b>Punch In Clock</b></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -28,8 +28,8 @@
                   <li><a href="./admin.php" role="button">Admin</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
+                  <p class="navbar-text" id="name"></p>
                   <li><a href="./" role="button">Sign Out</a></li>
-                <li><a href="../ApplicationPortal/dashboard.php" role="button">Application Portal</a></li>
               </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container-fluid -->
