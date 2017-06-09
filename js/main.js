@@ -1,6 +1,3 @@
-
-console.log('hey');
-
 let empid,
 	getInitialState,
 	logoutUrl = './',
@@ -25,7 +22,7 @@ let empty = () => {
 let login = (e) => {
 	if (e)
 		e.preventDefault();
-	empid = $('#inputID').val();
+	empid = empid ? empid : $('#inputID').val();
 
 	$.ajax({
 		url: `./php/main.php?action=validateUser&empid=${empid}`
@@ -33,10 +30,19 @@ let login = (e) => {
 		if (result.user) {
 			// TODO: show application
 			getInitialState();
-			$('#auth').toggle();
-			$('#app').toggle();
-			$('#name').html(result.user.empname);
-			timer()
+			$('#auth').hide();
+			$('#app').show();
+			$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
+			// timer()
+			if (localStorage) {
+				if (!localStorage.getItem('empid')) {
+					$('#setuser').show()
+				}
+			}
+			if ($( window ).width() >1300) {
+				$('#clockdate').show()
+				startTime()
+			}
 		} else {
 			$(".modal-title").html(`User not found for employee ID: ${empid}`)
 			$(".modal-body").html(`
@@ -46,6 +52,13 @@ let login = (e) => {
 		}
 	});
 	return false;
+}
+
+if (localStorage.getItem('empid')) {
+	empid = localStorage.getItem('empid')
+	login()
+} else {
+	$('#auth').show()
 }
 
 let unknownSignin = () => {
@@ -199,3 +212,18 @@ $(document).ready(function(){
 		`);
 	}
 });
+
+function startTime() {
+    var today = moment();
+	$('#clock').html(today.format('HH:mm:ss') + `<span>${today.format('A')}</span>`)
+	$('#date').text(today.format('Do, dddd MMMM YYYY'))
+    var time = setTimeout(function(){ startTime() }, 500);
+}
+
+function openWarning() {
+	$('#warning').modal()
+}
+function setUser() {
+	localStorage.setItem('empid', empid)
+	$('#warning').modal('hide')
+}

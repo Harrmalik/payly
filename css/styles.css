@@ -3,8 +3,13 @@ body {
 }
 
 .panel-primary.container {
-    border-color: #337ab7;
+    border: none;
     padding: 0;
+}
+
+.navbar.navbar-inverse {
+	margin-bottom: 0;
+	border-radius: 0px;
 }
 
 h2 {
@@ -15,12 +20,14 @@ h2 {
 	color: red;
 }
 
-#app {
+#app, section#auth {
     display: none;
+    position: relative;
 }
 
 section.mainBtns {
-	margin: 10% 20%;
+	margin: 10% auto 5%;
+    max-width: 35em;
 }
 
 #checkIn, #checkOut {
@@ -49,7 +56,8 @@ tr, th {
 }
 
 #numpad {
-    margin-left: 35%;
+    max-width: 310px;
+	margin: auto;
 }
 
 #numpad button.btn.btn-default {
@@ -65,8 +73,7 @@ tr, th {
 #login {
     width: 310px;
     height: 100px;
-    margin-left: 35%;
-    margin-top: 1em;
+    margin: 1em auto;
 }
 
 #userTimesheet {
@@ -107,6 +114,40 @@ tr, th {
 	height: 150px;
 }
 
+.clockdate-wrapper {
+    position: absolute;
+    top: -1em;
+    left: 35%;
+    background-color: black;
+    padding:25px;
+    text-align:center;
+    border-radius:5px;
+    margin:0 auto;
+}
+
+#clock{
+    font-family: sans-serif;
+    font-size:60px;
+    text-shadow:0px 0px 1px #fff;
+    color:#fff;
+}
+
+#clock span {
+    color:#888;
+    text-shadow:0px 0px 1px #333;
+    font-size:30px;
+    position:relative;
+    top:-27px;
+}
+
+#date {
+    letter-spacing:10px;
+    font-size: 1em;
+	font-weight: bold;
+    font-family:arial,sans-serif;
+    color:#fff;
+}
+
 @media (max-width: 600px) {
 	body {
 		font-size: 14px !important;
@@ -125,13 +166,13 @@ tr, th {
 	}
 
 	#message {
-		margin-top: 0;	
+		margin-top: 0;
 	}
 
 	#name {
 		margin: 0;
 	}
- 
+
 	section.mainBtns {
 		margin: 0 auto;
 	}
@@ -143,6 +184,10 @@ tr, th {
 
 	#numpad, #login {
 		margin: 0;
+	}
+
+	#numpad {
+	    max-width: 600px;
 	}
 
 	#numpad button.btn.btn-default {
