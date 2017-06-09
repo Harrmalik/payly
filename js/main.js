@@ -215,7 +215,7 @@ $(document).ready(function(){
 
 function startTime() {
     var today = moment();
-	$('#clock').html(today.format('HH:mm:ss') + `<span>${today.format('A')}</span>`)
+	$('#clock').html(today.format('hh:mm:ss') + `<span>${today.format('A')}</span>`)
 	$('#date').text(today.format('Do, dddd MMMM YYYY'))
     var time = setTimeout(function(){ startTime() }, 500);
 }
