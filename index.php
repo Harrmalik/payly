@@ -88,7 +88,6 @@
         </section>
 
         <section id="app">
-            <h3 style="color: white">holder</h3>
             <div id="clockdate" style="display:none">
               <div class="clockdate-wrapper">
                 <div id="clock"></div>
