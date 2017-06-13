@@ -48,7 +48,7 @@ let login = (e) => {
 			$(".modal-body").html(`
 				  <p>The Employee number <b>${empid}</b> Was not found in the system. Would you like to punch it in anyway</p>
 			`)
-			$('.modal').modal('toggle')
+			$('#unknownusermodal').modal('toggle')
 		}
 	});
 	return false;
@@ -62,7 +62,7 @@ if (localStorage.getItem('empid')) {
 }
 
 let unknownSignin = () => {
-	$('.modal').modal('toggle')
+	$('#unknownusermodal').modal('toggle')
 	getInitialState();
 	$('#auth').toggle();
 	$('#app').toggle();
