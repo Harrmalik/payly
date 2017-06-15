@@ -33,7 +33,7 @@ let login = (e) => {
 			$('#auth').hide();
 			$('#app').show();
 			$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
-			// timer()
+			timer()
 			if (localStorage) {
 				if (!localStorage.getItem('empid')) {
 					$('#setuser').show()
