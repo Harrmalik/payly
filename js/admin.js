@@ -1,5 +1,6 @@
 'use strict';
 let empid,
+	userData = $('title').data(),
 	buildTable,
 	makeTimesheet,
 	timeslot;
@@ -14,6 +15,8 @@ let empid,
 		format: 'MMMM Do',
 		daysOfWeekDisabled: [0,1,2,3,4,6]
 	});
+
+userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 
 let getTimesheet = (e) => {
 	if (e)
@@ -72,6 +75,7 @@ let addTimeslot = () => {
 			action: 'addTimeslot'
 		}
 	}).done((data) => {
+		ga('send', 'event', 'addTimeslot', empid, 'type', $('#type').val())
 		sendAlert('success', data.result)
 		getTimesheet();
 	});
@@ -103,6 +107,7 @@ let saveChange = () => {
 			action: 'editTimeslot'
 		}
 	}).done((data) => {
+		ga('send', 'event', 'editTimeslot', empid)
 		sendAlert('info', data.result)
 		getTimesheet();
 	});
@@ -134,6 +139,7 @@ let addLunchslot = (row) => {
 				action: 'editTimeslot'
 			}
 		}).done((data) => {
+			ga('send', 'event', 'addLunchslot', empid)
 			sendAlert('success', data.result)
 			getTimesheet();
 		});
@@ -150,6 +156,7 @@ let deleteTimeslot = (row) => {
 			action: 'deleteTimeslot'
 		}
 	}).done((data) => {
+		ga('send', 'event', 'deleteTimeslot', empid)
 		sendAlert('info', data.result)
 		getTimesheet();
 	});
@@ -360,6 +367,7 @@ $(document).ready(function(){
 						content: html
 				});
 				$(`#${id}info`).on('click', () => {
+					ga('send', 'event', 'Timeclock', 'showChangeLog')
 					$(`#${id}`).popover('show');
 				});
 
@@ -379,22 +387,26 @@ $(document).ready(function(){
 
 	let getInitialState = () => {
 		$.ajax({
-			url: `./php/main.php?action=getEmployees`
+			url: `./php/main.php?action=getManager`
 		}).done((result) => {
-			let employees = result.employees;
-			if (employees.length > 0) {
-				employees.forEach((employee) => {
-					$('#list').append(`
-						<tr>
-							<td>${employee.name}</td>
-							<td>${employee.hours}</td>
-							<td><a class="btn btn-default" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></td>
-						</tr>
-					`)
-				});
-			} else {
-				$('#employees').html('You are in charge of no employees');
-			}
+			$.ajax({
+				url: `./php/main.php?action=getEmployees&empid=${result[0].employeeid}`
+			}).done((result) => {
+				let employees = result.employees
+				if (employees.length > 0) {
+					employees.forEach((employee) => {
+						$('#list').append(`
+							<tr>
+								<td>${employee.name}</td>
+								<td>${employee.hours}</td>
+								<td><a class="btn btn-default" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></td>
+							</tr>
+						`)
+					});
+				} else {
+					$('#employees').html('You are in charge of no employees');
+				}
+			})
 	    });
 	};
 
