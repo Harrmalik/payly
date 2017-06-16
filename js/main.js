@@ -107,7 +107,7 @@ $(document).ready(function(){
 			url: `./php/main.php?action=checkIn`,
 			method: 'POST',
 			data: {
-				time: moment().seconds(0).format('YYYY-MM-DD HH:mm:ss'),
+				time: moment().seconds(0).unix(),
 				empid: empid
 			}
 		}).done((result) => {
@@ -124,7 +124,7 @@ $(document).ready(function(){
 			url: `./php/main.php?action=checkOut`,
 			method: 'POST',
 			data: {
-				time: moment().seconds(0).format('YYYY-MM-DD HH:mm:ss'),
+				time: moment().seconds(0).unix(),
 				id: checkInIds[checkInIds.length - 1],
 				empid: empid
 			}
@@ -154,8 +154,8 @@ $(document).ready(function(){
 			if (timeslots.length > 0) {
 				timeslots.forEach((timeslot, index) => {
 					let hoursSum;
-					checkInTime = timeslot.punchintime ? moment(timeslot.punchintime) : null;
-					checkOutTime = timeslot.punchouttime ? moment(timeslot.punchouttime) : null;
+					checkInTime = timeslot.punchintime ? moment.unix(timeslot.punchintime) : null;
+					checkOutTime = timeslot.punchouttime ? moment.unix(timeslot.punchouttime) : null;
 					checkInIds.push(timeslot.timeid);
 					counter++;
 

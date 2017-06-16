@@ -69,8 +69,8 @@ let addTimeslot = () => {
 		method: 'post',
 		data: {
 			userid: empid,
-			punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).format('YYYY-MM-DD HH:mm:ss'),
+			punchintime: moment($('#punchintime').data("DateTimePicker").date()).unix(),
+			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).unix(),
 			type: $('#type').val(),
 			action: 'addTimeslot'
 		}
@@ -86,8 +86,8 @@ let makeEdit = (row) => {
 	$('#modal-title').html('Edit Timeslot');
 	$('#typefield').hide();
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="saveChange()" data-dismiss="modal">Save changes</button>');
-	$('#punchintime').data("DateTimePicker").date(moment(timeslot.in));
-	$('#punchouttime').data("DateTimePicker").date(moment(timeslot.out));
+	$('#punchintime').data("DateTimePicker").date(moment.unix(timeslot.in));
+	$('#punchouttime').data("DateTimePicker").date(moment.unix(timeslot.out));
 	$('#punchingout').show();
 	$('.adding').hide();
 	$('.modal').modal('show');
@@ -99,11 +99,11 @@ let saveChange = () => {
 		method: 'post',
 		data: {
 			timeid: timeslot.id,
-			oldin: moment(timeslot.in).format('YYYY-MM-DD HH:mm:ss'),
-			punchintime: moment($('#punchintime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-			oldout: moment(timeslot.out).format('YYYY-MM-DD HH:mm:ss'),
-			punchouttime: moment($('#punchouttime').data("DateTimePicker").date()).format('YYYY-MM-DD HH:mm:ss'),
-			timenow: moment().format('YYYY-MM-DD HH:mm:ss'),
+			oldin: timeslot.in,
+			punchintime: $('#punchintime').data("DateTimePicker").date().unix(),
+			oldout: timeslot.out,
+			punchouttime: $('#punchouttime').data("DateTimePicker").date().unix(),
+			timenow: moment().unix(),
 			action: 'editTimeslot'
 		}
 	}).done((data) => {
@@ -120,8 +120,8 @@ let addLunchslot = (row) => {
 		method: 'post',
 		data: {
 			userid: empid,
-			punchintime: moment(timeslot.out).hour(13).minutes(0).format('YYYY-MM-DD HH:mm:ss'),
-			punchouttime: moment(timeslot.out).format('YYYY-MM-DD HH:mm:ss'),
+			punchintime: moment.unix(timeslot.out).hour(13).minutes(0).unix(),
+			punchouttime: timeslot.out,
 			type: 0,
 			action: 'addTimeslot'
 		}
@@ -131,11 +131,11 @@ let addLunchslot = (row) => {
 			method: 'post',
 			data: {
 				timeid: timeslot.id,
-				oldin: moment(timeslot.in).format('YYYY-MM-DD HH:mm:ss'),
-				punchintime: moment(timeslot.in).format('YYYY-MM-DD HH:mm:ss'),
-				oldout: moment(timeslot.out).format('YYYY-MM-DD HH:mm:ss'),
-				punchouttime: moment(timeslot.out).hour(12).minutes(30).format('YYYY-MM-DD HH:mm:ss'),
-				timenow: moment().format('YYYY-MM-DD HH:mm:ss'),
+				oldin: timeslot.in,
+				punchintime: timeslot.in,
+				oldout: timeslot.out,
+				punchouttime: moment.unix(timeslot.out).hour(12).minutes(30).unix(),
+				timenow: moment().unix(),
 				action: 'editTimeslot'
 			}
 		}).done((data) => {
@@ -253,20 +253,20 @@ $(document).ready(function(){
 
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
-                    weekday = moment(timeslot.created).weekday() === 6 ? -1 : moment(timeslot.created).weekday(),
+                    weekday = moment.unix(timeslot.created).weekday() === 6 ? -1 : moment.unix(timeslot.created).weekday(),
                     $htmlDay = days[weekday + 1][0],
                     $htmlhours = days[weekday + 1][1],
                     breakSum = days[weekday + 1][3];
 
                 if (timeslot.punchouttime) {
-                    hoursSum = moment(timeslot.punchouttime).diff(moment(timeslot.punchintime), 'minutes') / 60;
+                    hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
                     days[weekday + 1][2] += hoursSum;
                     if (timeslots[index -1]) {
-                        let previousWeekday = moment(timeslots[index -1].created).weekday() === 6 ? -1 : moment(timeslots[index -1].created).weekday();
+                        let previousWeekday = moment.unix(timeslots[index -1].created).weekday() === 6 ? -1 : moment.unix(timeslots[index -1].created).weekday();
                         if (weekday === previousWeekday) {
                             if (timeslots[index-1].punchouttime) {
-                                days[weekday + 1][3] += moment(timeslot.punchintime).diff(moment(timeslots[index-1].punchouttime), 'minutes');
+                                days[weekday + 1][3] += moment.unix(timeslot.punchintime).diff(moment.unix(timeslots[index-1].punchouttime), 'minutes');
                                 if (days[previousWeekday + 1][3] < 30) {
                                     timeslot.overBreak = true;
                                 }
@@ -294,10 +294,10 @@ $(document).ready(function(){
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment(timeslot.created).format('dddd, MMM Do') : ''}</td>
                     <td class="${timeslot.insource === 'phone' ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
-						${timeslot.punchintime ? moment(timeslot.punchintime).format('h:mm a') : '00:00 AM'}
+						${timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM'}
 					</td>
                     <td class="${timeslot.outsource === 'phone' ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
-						${timeslot.punchouttime ? moment(timeslot.punchouttime).format('h:mm a') : '- -'}
+						${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -'}
 					</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>
 						${sum.toFixed(2)}
@@ -340,7 +340,7 @@ $(document).ready(function(){
 								html += '<p>You were autosigned out at midnight</p>'
 							} else {
 								html += `
-									<p>Check in changed from <b>${moment(c.oldintime).format('h:mm a')}</b> to <b>${moment(c.newintime).format('h:mm a')}</b></p>
+									<p>Check in changed from <b>${moment.unix(c.oldintime).format('h:mm a')}</b> to <b>${moment.unix(c.newintime).format('h:mm a')}</b></p>
 								`;
 							}
 						} else if (c.oldouttime !== c.newouttime) {
@@ -348,7 +348,7 @@ $(document).ready(function(){
 								html += '<p>You were autosigned out at midnight</p>'
 							} else {
 								html += `
-									<p>Check out changed from <b>${moment(c.oldouttime).format('h:mm a')}</b> to <b>${moment(c.newouttime).format('h:mm a')}</b></p>
+									<p>Check out changed from <b>${moment.unix(c.oldouttime).format('h:mm a')}</b> to <b>${moment.unix(c.newouttime).format('h:mm a')}</b></p>
 								`;
 							}
 						}
