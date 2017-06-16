@@ -12,8 +12,11 @@
         case 'validateUser':
             $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?empid=" . $_REQUEST['empid'], EUSER, EUSERPASSWORD);
             break;
+        case 'getManager':
+            $response = doGetRequest("https://api1.dscws.com/universalaccess/users?fields=userid,realname,position,employeeid&filter=employeeid=" . $_SESSION['userid'], USER::getUsername(), User::getPassword());
+            break;
         case 'getEmployees':
-            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/getemployees", USER::getUsername(), User::getPassword());
+            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/getemployees?empid=" . $_REQUEST['empid'], USER::getUsername(), User::getPassword());
             break;
       }
 
