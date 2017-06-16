@@ -108,6 +108,38 @@ let saveChange = () => {
 	});
 }
 
+let addLunchslot = (row) => {
+	let timeslot = $(row).data();
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data: {
+			userid: empid,
+			punchintime: moment(timeslot.out).hour(13).minutes(0).format('YYYY-MM-DD HH:mm:ss'),
+			punchouttime: moment(timeslot.out).format('YYYY-MM-DD HH:mm:ss'),
+			type: 0,
+			action: 'addTimeslot'
+		}
+	}).done((data) => {
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data: {
+				timeid: timeslot.id,
+				oldin: moment(timeslot.in).format('YYYY-MM-DD HH:mm:ss'),
+				punchintime: moment(timeslot.in).format('YYYY-MM-DD HH:mm:ss'),
+				oldout: moment(timeslot.out).format('YYYY-MM-DD HH:mm:ss'),
+				punchouttime: moment(timeslot.out).hour(12).minutes(30).format('YYYY-MM-DD HH:mm:ss'),
+				timenow: moment().format('YYYY-MM-DD HH:mm:ss'),
+				action: 'editTimeslot'
+			}
+		}).done((data) => {
+			sendAlert('success', data.result)
+			getTimesheet();
+		});
+	});
+}
+
 let deleteTimeslot = (row) => {
 	let timeid = $(row).data('id');
 	$.ajax({
@@ -182,8 +214,8 @@ $(document).ready(function(){
 						<th style="width: 20%;">Date</th>
 						<th style="width: 20%;">Check In</th>
 						<th style="width: 20%;">Check Out</th>
-						<th style="width: 20%;">Hours</th>
-						<th style="width: 20%;">Actions</th>
+						<th style="width: 10%;">Hours</th>
+						<th style="width: 30%;">Actions</th>
 					</tr>
 				`).insertBefore(day[0]);
 			}
@@ -264,11 +296,17 @@ $(document).ready(function(){
 						${sum.toFixed(2)}
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
-					<td><button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}>Delete</button>
-					<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
-						data-id=${timeslot.timeid}
-						data-in=${timeslot.punchintime}
-						data-out=${timeslot.punchouttime}>Edit Time</button></td>
+					<td>
+						<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}><i class="glyphicon glyphicon-remove"></i></button>
+						<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
+							data-id=${timeslot.timeid}
+							data-in=${timeslot.punchintime}
+							data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-pencil"></i></button>
+						<button type="button" class="btn btn-default btn-small" onclick='addLunchslot(this)'
+							data-id=${timeslot.timeid}
+							data-in=${timeslot.punchintime}
+							data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-apple"></i></button>
+					</td>
                 </tr>
             `
         ).insertBefore($element);
