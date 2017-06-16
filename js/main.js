@@ -1,12 +1,14 @@
 let empid,
 	getInitialState,
 	logoutUrl = './',
+	userData = $('title').data(),
 	timer = () => {
 		setTimeout(IdleTimeout, 60000)
 	},
 	removeTimer = () => {
 		clearTimeout(timeout)
 	};
+
 function update(input) {
 	$('#inputID').val($('#inputID').val() + input);
 }
@@ -29,11 +31,14 @@ let login = (e) => {
 	}).done((result) => {
 		if (result.user) {
 			// TODO: show application
+
 			getInitialState();
 			$('#auth').hide();
 			$('#app').show();
 			$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
+			ga('send', 'event', 'Login', empid)
 			timer()
+			userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 			if (localStorage) {
 				if (!localStorage.getItem('empid')) {
 					$('#setuser').show()
@@ -67,11 +72,13 @@ let unknownSignin = () => {
 	$('#auth').toggle();
 	$('#app').toggle();
 	$('#name').html(empid);
+	ga('send', 'event', 'Login', empid, 'Failed')
 	timer()
 }
 
 // Logout the user.
 function IdleTimeout() {
+	ga('send', 'event', 'Logout', empid, 'Timedout')
 	window.location = logoutUrl;
 }
 
@@ -95,6 +102,7 @@ $(document).ready(function(){
 
 	// Event Listeners
 	$checkInBtn.on("click", () => {
+		ga('send', 'event', 'CheckIn', empid, 'Attempted')
 		$.ajax({
 			url: `./php/main.php?action=checkIn`,
 			method: 'POST',
@@ -106,10 +114,12 @@ $(document).ready(function(){
 			checkInIds.push(result.id);
 			checkInTime = moment();
 			makeUpdate();
+			ga('send', 'event', 'CheckIn', empid, 'Successful')
 		});
 	});
 
 	$checkOutBtn.on("click", () => {
+		ga('send', 'event', 'CheckOut', empid, 'Attempted')
 		$.ajax({
 			url: `./php/main.php?action=checkOut`,
 			method: 'POST',
@@ -121,6 +131,7 @@ $(document).ready(function(){
 		}).done((hours) => {
 			checkOutTime = moment();
 			makeUpdate(true);
+			ga('send', 'event', 'CheckOut', empid, 'Successful')
 		});
 	});
 
@@ -225,5 +236,6 @@ function openWarning() {
 }
 function setUser() {
 	localStorage.setItem('empid', empid)
+	ga('send', 'event', 'LocalMachine', empid)
 	$('#warning').modal('hide')
 }
