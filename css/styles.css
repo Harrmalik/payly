@@ -20,7 +20,7 @@ h2 {
 	color: red;
 }
 
-#app, section#auth {
+#app, section#auth, #timesheetPage {
     display: none;
     position: relative;
 }
