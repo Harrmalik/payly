@@ -88,7 +88,6 @@
         </section>
 
         <section id="app">
-            <img src="https://s-media-cache-ak0.pinimg.com/736x/50/5d/fe/505dfef8849627b94688cd6a49dec187.jpg"/>
             <div id="clockdate" style="display:none">
               <div class="clockdate-wrapper">
                 <div id="clock"></div>

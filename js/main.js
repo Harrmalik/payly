@@ -140,7 +140,7 @@ $(document).ready(function(){
 	});
 
 	$timesheetBtn.on("click", () => {
-		window.location.href = `timesheet.php?empid=${empid}`;
+		window.location.href = `timesheet.php`;
 	});
 
 	// Functions
