@@ -11,6 +11,7 @@
       switch ($_REQUEST['action']) {
         case 'validateUser':
             $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?empid=" . $_REQUEST['empid'], EUSER, EUSERPASSWORD);
+            $_SESSION['employeeid'] = $response->body->user->employeeid;
             break;
         case 'getManager':
             $response = doGetRequest("https://api1.dscws.com/universalaccess/users?fields=userid,realname,position,employeeid&filter=userid=" . $_SESSION['userid'], USER::getUsername(), User::getPassword());

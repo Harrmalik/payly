@@ -1,9 +1,7 @@
 'use strict';
 
 // Javascript letiables
-let Url = new UrlParams,
-    params = Url.getParams,
-    startDate,
+let startDate,
     endDate,
     timeslots,
     totalTime = 0,
@@ -34,8 +32,9 @@ $('#end').datetimepicker({
     daysOfWeekDisabled: [0,1,2,3,4,6]
 });
 
+let empid = $('body').attr('id')
 $.ajax({
-    url: `./php/main.php?action=validateUser&empid=${params.empid}`
+    url: `./php/main.php?action=validateUser&empid=${empid}`
 }).done((result) => {
     if (result.user) {
         $('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
@@ -80,7 +79,7 @@ function makeTimesheet() {
         url: `./php/main.php?action=getInitialState`,
         method: 'post',
         data: {
-            empid: params.empid,
+            empid,
             startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
             endDate: $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD HH:mm:ss')
         }
