@@ -358,6 +358,8 @@ $(document).ready(function(){
 				endDate: moment().add(1,'days').format('YYYY-MM-DD') + ' 00:00:00'
 			}
 		}).done((hours) => {
+			$('#todayHours').empty()
+			checkInIds = []
 			let timeslots = hours.clockedHours;
 			if (timeslots.length > 0) {
 				timeslots.forEach((timeslot, index) => {
