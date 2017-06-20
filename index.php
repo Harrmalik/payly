@@ -24,8 +24,7 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
-                  <li class="active"><a href="./" role="button">Home</a></li>
-                  <li><a href="./admin.php" role="button">Admin</a></li>
+                  <li class="active"><a href="./" role="button"><i class="glyphicon glyphicon-home"></i> Home</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <p class="navbar-text" id="name"></p>
@@ -110,7 +109,7 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal" style="width:auto;height:100%;">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="setUser()" style="width:auto;height:100%;">Accept</button>
                   </div>
-                </div><!-- /.modal-content -->
+              </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
@@ -146,6 +145,121 @@
                     <td id="totalHours">0</td>
                 </tr>
             </table>
+        </section>
+
+        <section id="timesheetPage">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="end" style="text-align: left;" class="col-sm-2 control-label">Week Ending</label>
+                    <div class="col-sm-4">
+                    <div class='input-group date' id='end'>
+                      <input type='text' class="form-control" />
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                    </div>
+                    </div>
+                </div>
+            </form>
+            <h2 id="username"></h2>
+            <!-- <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3> -->
+
+            <table id="timesheet" class="table">
+                <tr id="saturday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="saturdayHours" class="info"><b>0</b></td>
+                </tr>
+
+                <tr id="sunday">
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="sundayHours" class="info"><b>0</b></td>
+                </tr>
+
+                <tr id="monday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="mondayHours" class="info"><b>0</b></td>
+                </tr>
+
+                <tr id="tuesday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="tuesdayHours" class="info"><b>0</b></td>
+                </tr>
+
+                <tr id="wednesday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="wednesdayHours" class="info"><b>0</b></td>
+                </tr>
+
+
+
+                <tr id="thursday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="thursdayHours" class="info"><b>0</b></td>
+                </tr>
+
+
+
+                <tr id="friday">
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="fridayHours" class="info"><b>0</b></td>
+                </tr>
+
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>Total Hours</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="totalHours" class="info"><b>0</b></td>
+                </tr>
+            </table>
+
+        <hr>
+        <p>Yellow Background: Used phone system</p>
+        <p>Pink Background: Vacation Time</p>
+        <p>Green Background: Paid time off</p>
+        <p>Red Time: Break under 30 minutes</p>
+        <p>Red Hours: Work period over 6 Hours</p>
+        <p>*: Called using personal phone</p>
+
         </section>
         </div>
     </div>
