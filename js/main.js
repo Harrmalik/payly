@@ -9,6 +9,12 @@ let empid,
 		clearTimeout(timeout)
 	};
 
+if (!ga) {
+	var ga = function(arg1, arg2, category = '', action = '', label = '') {
+		console.log(`${arg2} - category: ${category}, action: ${action}, label: ${label}`);
+	}
+}
+
 function update(input) {
 	$('#inputID').val($('#inputID').val() + input);
 }
@@ -30,8 +36,6 @@ let login = (e) => {
 		url: `./php/main.php?action=validateUser&empid=${empid}`
 	}).done((result) => {
 		if (result.user) {
-			// TODO: show application
-
 			getInitialState();
 			$('#auth').hide();
 			$('#app').show();
