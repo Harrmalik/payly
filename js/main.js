@@ -360,6 +360,8 @@ $(document).ready(function(){
 		}).done((hours) => {
 			$('#todayHours').empty()
 			checkInIds = []
+			totalTime = 0
+			counter = 0
 			let timeslots = hours.clockedHours;
 			if (timeslots.length > 0) {
 				timeslots.forEach((timeslot, index) => {
