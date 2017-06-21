@@ -2,7 +2,15 @@
     <script type="text/babel" src="./js/timesheet.js"></script>
 </head>
 
-<body id="<?php echo $_SESSION['employeeid']; ?>">
+<?php
+
+if (strpos($_SERVER['HTTP_REFERER'],"admin.php") === false) {
+	$id = $_SESSION["employeeid"];
+} else {
+	$id = $_GET["empid"];
+} 
+?>
+<body id="<?php echo $id; ?>">
     <div class="panel panel-primary container">
         <div class="panel-heading" style="display:none">
             <p class="text-center"><img src="<?php echo $assets; ?>../images/delta_logo.png" width="150px" /></p>

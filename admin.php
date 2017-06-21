@@ -10,7 +10,7 @@
 <body>
     <div class="panel panel-primary container">
         <div class="panel-heading">
-            <p class="text-center"><img src="../CognosReports/images/delta_logo.png" width="150px" /></p>
+            <p class="text-center"><img src="../DSCommons/public/images/delta_logo.png" width="150px" /></p>
         </div>
 
         <nav class="navbar navbar-default">
