@@ -1,7 +1,7 @@
 'use strict';
 let empid,
 	userData = $('title').data(),
-	isManager,
+	isManager = $('body').data('ismanager'),
 	buildTable,
 	makeTimesheet,
 	timeslot;
@@ -20,8 +20,7 @@ let empid,
 userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 
 let getTimesheet = (userid) => {
-	empid = $('#employeeID').val() ? $('#employeeID').val() : userid;
-
+	empid = $('#employeeID').val() ? $('#employeeID').val() : userid ? userid : empid;
 	if (userid)	{
 		$('#userTimesheet').show()
 		$('#employees').hide()
@@ -210,17 +209,14 @@ $(document).ready(function(){
 
     // Functions
     buildTable = () => {
-		if ($('#end').data()){
+		if (!isManager){
 			$('#back').hide()
-			startDate = $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0);
-			endDate = $('#end').data("DateTimePicker").date().hour(23).minute(59);
 		} else {
-			isManager = true
 			$('#addTimeslot').hide()
-			startDate = moment().weekday(-1).hour(0).minute(0);
-			endDate = moment().weekday(5).hour(23).minute(59);
 		}
 
+		startDate = $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0);
+		endDate = $('#end').data("DateTimePicker").date().hour(23).minute(59);
 		$('#startDate').html(startDate.format('M/D/YYYY'));
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
@@ -243,13 +239,6 @@ $(document).ready(function(){
 							<th style="width: 25%;">Hours</th>
 						</tr>
 					`).insertBefore(day[0]);
-
-					day[0].first().html(`
-						<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
-						<td>- -</td>
-						<td>- -</td>
-						<td>0</td>
-					`);
 				} else {
 					$(`
 						<tr class="active headers">
@@ -260,31 +249,41 @@ $(document).ready(function(){
 							<th style="width: 30%;">Actions</th>
 						</tr>
 					`).insertBefore(day[0]);
-
-					day[0].first().html(`
-						<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
-						<td>- -</td>
-						<td>- -</td>
-						<td>0</td>
-						<td>_</td>
-					`);
 				}
+			}
 
+			if (isManager) {
+				day[0].first().html(`
+					<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
+					<td>- -</td>
+					<td>- -</td>
+					<td>0</td>
+				`);
+			} else {
+				day[0].first().html(`
+					<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
+					<td>- -</td>
+					<td>- -</td>
+					<td>0</td>
+					<td>_</td>
+				`);
 			}
         });
 		$('#userTimesheet').show();
     }
 
     makeTimesheet = () => {
+		$('#loader').addClass('loader')
         $.ajax({
             url: `./php/main.php?action=getInitialState`,
             method: 'post',
             data: {
                 empid: empid,
-                startDate: startDate.format('YYYY-MM-DD HH:mm:ss'),
+                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
                 endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
+			$('#loader2').hide()
             timeslots = data.clockedHours;
             let hours = 0;
 
@@ -325,6 +324,7 @@ $(document).ready(function(){
             });
         });
     }
+
     function addRow($element, timeslot, sum) {
         $(
             `
@@ -429,11 +429,12 @@ $(document).ready(function(){
 		$.ajax({
 			url: `./php/main.php?action=getManager`
 		}).done((result) => {
-			result[0].employeeid = 26040
+			$('#loader').addClass('loader')
 			$.ajax({
 				url: `./php/main.php?action=getEmployees&empid=${result[0].employeeid}`
 			}).done((result) => {
 				let employees = result.employees
+				$('#loader').hide()
 				if (employees.length > 0) {
 					employees.forEach((employee) => {
 						$('#list').append(`

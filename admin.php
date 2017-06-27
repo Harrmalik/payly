@@ -3,11 +3,16 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
+    if (USER::inGroup(74)) {
+            $isManager = 'false';
+    } else {
+            $isManager = 'true';
+    }
 ?>
     <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
-<body>
+<body data-isManager="<?php echo $isManager; ?>">
     <div class="panel panel-primary container">
         <div class="panel-heading">
             <p class="text-center"><img src="../DSCommons/public/images/delta_logo.png" width="150px" /></p>
@@ -41,21 +46,8 @@
         </nav>
 
         <div class="panel-body">
-            <?php if (USER::inGroup(74)) { ?>
+            <?php if ($isManager == 'false') { ?>
                 <span id="alert"></span>
-                <form class="form-horizontal">
-                    <div class="form-group">
-                      <label for="end" class="col-sm-2 control-label">Week Ending</label>
-                      <div class="col-sm-4">
-                          <div class='input-group date' id='end'>
-                              <input type='text' class="form-control" />
-                              <span class="input-group-addon">
-                                  <span class="glyphicon glyphicon-calendar"></span>
-                              </span>
-                          </div>
-                      </div>
-                    </div>
-                </form>
                 <form class="form-horizontal" onsubmit="return getTimesheet();">
                   <div class="form-group">
                     <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
@@ -64,8 +56,7 @@
                     </div>
                   </div>
               </form>
-
-              <hr>
+              <div id="loader2"></div>
 
                 <div class="modal fade" tabindex="-1" role="dialog">
                   <div class="modal-dialog" role="document">
@@ -129,6 +120,7 @@
                 <section id="employees">
                     <h2>Employees</h2>
                     <hr/>
+                    <div id="loader"></div>
                     <table class="table">
                         <thead>
                             <th>Name</th>
@@ -144,6 +136,19 @@
 
             <section id="userTimesheet">
                 <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="end" class="col-sm-2 control-label">Week Ending</label>
+                      <div class="col-sm-4">
+                          <div class='input-group date' id='end'>
+                              <input type='text' class="form-control" />
+                              <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                              </span>
+                          </div>
+                      </div>
+                    </div>
+                </form>
                 <h2 id="username"></h2>
                 <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3>
                 <div class="btn-group" role="group">
