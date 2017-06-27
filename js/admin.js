@@ -1,6 +1,7 @@
 'use strict';
 let empid,
 	userData = $('title').data(),
+	isManager,
 	buildTable,
 	makeTimesheet,
 	timeslot;
@@ -18,10 +19,13 @@ let empid,
 
 userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 
-let getTimesheet = (e) => {
-	if (e)
-		e.preventDefault();
-	empid = $('#employeeID').val();
+let getTimesheet = (userid) => {
+	empid = $('#employeeID').val() ? $('#employeeID').val() : userid;
+
+	if (userid)	{
+		$('#userTimesheet').show()
+		$('#employees').hide()
+	}
 
 	$.ajax({
 		url: `./php/main.php?action=validateUser&empid=${empid}`
@@ -171,6 +175,11 @@ let sendAlert = (type, message) => {
 	`)
 }
 
+function back() {
+	$('#userTimesheet').hide()
+	$('#employees').show()
+}
+
 $(document).ready(function(){
 	// Javascript letiables
     let startDate;
@@ -201,10 +210,19 @@ $(document).ready(function(){
 
     // Functions
     buildTable = () => {
-		startDate = $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0);
-        endDate = $('#end').data("DateTimePicker").date().hour(23).minute(59);
-        $('#startDate').html(startDate.format('M/D/YYYY'));
-        $('#endDate').html(endDate.format('M/D/YYYY'));
+		if ($('#end').data()){
+			$('#back').hide()
+			startDate = $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0);
+			endDate = $('#end').data("DateTimePicker").date().hour(23).minute(59);
+		} else {
+			isManager = true
+			$('#addTimeslot').hide()
+			startDate = moment().weekday(-1).hour(0).minute(0);
+			endDate = moment().weekday(5).hour(23).minute(59);
+		}
+
+		$('#startDate').html(startDate.format('M/D/YYYY'));
+		$('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
 			if (timeslots) {
@@ -216,24 +234,43 @@ $(document).ready(function(){
 				day[3] = 0;
 				totalTime = 0;
 			} else {
-				$(`
-					<tr class="active headers">
-						<th style="width: 20%;">Date</th>
-						<th style="width: 20%;">Check In</th>
-						<th style="width: 20%;">Check Out</th>
-						<th style="width: 10%;">Hours</th>
-						<th style="width: 30%;">Actions</th>
-					</tr>
-				`).insertBefore(day[0]);
-			}
+				if (isManager) {
+					$(`
+						<tr class="active headers">
+							<th style="width: 25%;">Date</th>
+							<th style="width: 25%;">Check In</th>
+							<th style="width: 25%;">Check Out</th>
+							<th style="width: 25%;">Hours</th>
+						</tr>
+					`).insertBefore(day[0]);
 
-            day[0].first().html(`
-                <td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
-                <td>- -</td>
-                <td>- -</td>
-                <td>0</td>
-				<td>_</td>
-            `);
+					day[0].first().html(`
+						<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
+						<td>- -</td>
+						<td>- -</td>
+						<td>0</td>
+					`);
+				} else {
+					$(`
+						<tr class="active headers">
+							<th style="width: 20%;">Date</th>
+							<th style="width: 20%;">Check In</th>
+							<th style="width: 20%;">Check Out</th>
+							<th style="width: 10%;">Hours</th>
+							<th style="width: 30%;">Actions</th>
+						</tr>
+					`).insertBefore(day[0]);
+
+					day[0].first().html(`
+						<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
+						<td>- -</td>
+						<td>- -</td>
+						<td>0</td>
+						<td>_</td>
+					`);
+				}
+
+			}
         });
 		$('#userTimesheet').show();
     }
@@ -244,8 +281,8 @@ $(document).ready(function(){
             method: 'post',
             data: {
                 empid: empid,
-                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-                endDate: $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD HH:mm:ss')
+                startDate: startDate.format('YYYY-MM-DD HH:mm:ss'),
+                endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
             }
         }).done((data) => {
             timeslots = data.clockedHours;
@@ -303,17 +340,20 @@ $(document).ready(function(){
 						${sum.toFixed(2)}
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
-					<td>
-						<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}><i class="glyphicon glyphicon-remove"></i></button>
-						<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
-							data-id=${timeslot.timeid}
-							data-in=${timeslot.punchintime}
-							data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-pencil"></i></button>
-						<button type="button" class="btn btn-default btn-small" onclick='addLunchslot(this)'
-							data-id=${timeslot.timeid}
-							data-in=${timeslot.punchintime}
-							data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-apple"></i></button>
-					</td>
+					${
+						isManager ? '' :
+							`<td>
+								<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}><i class="glyphicon glyphicon-remove"></i></button>
+								<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
+									data-id=${timeslot.timeid}
+									data-in=${timeslot.punchintime}
+									data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-pencil"></i></button>
+								<button type="button" class="btn btn-default btn-small" onclick='addLunchslot(this)'
+									data-id=${timeslot.timeid}
+									data-in=${timeslot.punchintime}
+									data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-apple"></i></button>
+							</td>`
+					}
                 </tr>
             `
         ).insertBefore($element);
@@ -389,6 +429,7 @@ $(document).ready(function(){
 		$.ajax({
 			url: `./php/main.php?action=getManager`
 		}).done((result) => {
+			result[0].employeeid = 26040
 			$.ajax({
 				url: `./php/main.php?action=getEmployees&empid=${result[0].employeeid}`
 			}).done((result) => {
@@ -399,7 +440,7 @@ $(document).ready(function(){
 							<tr>
 								<td>${employee.name}</td>
 								<td>${employee.hours}</td>
-								<td><a class="btn btn-default" href="./timesheet.php?empid=${employee.id}" target="_blank">View Timesheet</a></td>
+								<td><a class="btn btn-default" onclick="getTimesheet(${employee.id})">View Timesheet</a></td>
 							</tr>
 						`)
 					});
