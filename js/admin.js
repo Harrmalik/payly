@@ -254,14 +254,14 @@ $(document).ready(function(){
 
 			if (isManager) {
 				day[0].first().html(`
-					<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
+					<td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
 					<td>- -</td>
 					<td>- -</td>
 					<td>0</td>
 				`);
 			} else {
 				day[0].first().html(`
-					<td>${startDate.weekday(index-1).format('dddd, MMM Do')}</td>
+					<td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
 					<td>- -</td>
 					<td>- -</td>
 					<td>0</td>
@@ -440,7 +440,8 @@ $(document).ready(function(){
 						$('#list').append(`
 							<tr>
 								<td>${employee.name}</td>
-								<td>${employee.hours}</td>
+								<td>${employee.thisWeekHours}</td>
+								<td>${employee.lastWeekHours}</td>
 								<td><a class="btn btn-default" onclick="getTimesheet(${employee.id})">View Timesheet</a></td>
 							</tr>
 						`)
@@ -452,5 +453,6 @@ $(document).ready(function(){
 	    });
 	};
 
-	getInitialState();
+	if (isManager)
+		getInitialState();
 });
