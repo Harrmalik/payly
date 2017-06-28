@@ -121,10 +121,11 @@
                     <h2>Employees</h2>
                     <hr/>
                     <div id="loader"></div>
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                             <th>Name</th>
-                            <th>Hours</th>
+                            <th>This Week Hours</th>
+                            <th>Last Week Hours</th>
                             <th></th>
                         </thead>
                         <tbody id="list">
