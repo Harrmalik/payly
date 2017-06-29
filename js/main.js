@@ -57,7 +57,7 @@ let login = (e) => {
 			$(".modal-title").html(`User not found for employee ID: ${empid}`)
 			$(".modal-body").html(`
 				  <p>The Employee number <b>${empid}</b> Was not found in the system. Would you like to punch it in anyway</p>
-			`) 
+			`)
 			$('#unknownusermodal').modal('toggle')
 		}
 	});
@@ -79,6 +79,10 @@ let unknownSignin = () => {
 	$('#name').html(empid);
 	ga('send', 'event', 'Login', empid, 'Failed')
 	timer()
+}
+
+let clearEmpId = () => {
+	empid = '';
 }
 
 // Logout the user.
@@ -273,7 +277,7 @@ $(document).ready(function () {
 					$htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
 
 				});
-				$("td#totalHours.info").html('<b>' + totalTime.toFixed(2) + '</b>');				
+				$("td#totalHours.info").html('<b>' + totalTime.toFixed(2) + '</b>');
 			});
 
 		}
@@ -332,7 +336,7 @@ $(document).ready(function () {
 								<div class="arrow"></div>
 								<h3 class="popover-title"></h3>
 								<div class="popover-content"></div>
-							</div>`, 
+							</div>`,
 					html : true,
 					container : `#${id}info`,
 					title : 'Change Log',

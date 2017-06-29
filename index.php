@@ -46,17 +46,17 @@
               </div>
             </form>
 
-            <div id="unknownusermodal" class="modal fade" tabindex="-1" role="dialog">
+            <div id="unknownusermodal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="clearEmpId()"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">User not found!</h4>
                   </div>
                   <div class="modal-body">
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-default btn-lg" data-dismiss="modal" onclick="clearEmpId()">No</button>
                     <button type="button" class="btn btn-warning btn-lg" onclick="unknownSignin()">Yes</button>
                   </div>
                 </div><!-- /.modal-content -->
