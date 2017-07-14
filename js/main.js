@@ -66,7 +66,7 @@ let login = (e) => {
 
 if (localStorage.getItem('empid')) {
 	empid = localStorage.getItem('empid')
-		login()
+	login()
 } else {
 	$('#auth').show()
 }
