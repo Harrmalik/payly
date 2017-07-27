@@ -119,11 +119,15 @@ $(document).ready(function () {
 				time : moment().seconds(0).unix(),
 				empid : empid
 			}
-		}).done((result) => {
+		}).success((result) => {
 			checkInIds.push(result.id);
 			checkInTime = moment();
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
+		}).fail((result) => {
+			console.log(result);
+			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
+			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
 		});
 	});
 
@@ -137,10 +141,14 @@ $(document).ready(function () {
 				id : checkInIds[checkInIds.length - 1],
 				empid : empid
 			}
-		}).done((hours) => {
+		}).success((hours) => {
 			checkOutTime = moment();
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
+		}).fail((result) => {
+			console.log(result);
+			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
+			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
 		});
 	});
 
