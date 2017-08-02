@@ -1,4 +1,5 @@
 <?php include_once './layouts/header.php' ?>
+    <meta http-equiv="refresh" content="300" />
         <script type="text/babel" src="./js/main.js"></script>
 </head>
 
@@ -35,8 +36,9 @@
         </nav>
 
         <div class="panel-body">
+
+                <div id="message"></div>
         <section id="auth" style="display:none">
-            <div id="message"></div>
             <form class="form-horizontal" onsubmit="return login()">
               <div class="form-group">
                 <label for="inputID" class="col-sm-2 control-label">Employee ID</label>
@@ -117,6 +119,7 @@
                 <button type="button" class="btn btn-primary btn-lg" id="checkIn">Punch In</button>
                 <button type="button" class="btn btn-primary btn-lg" id="checkOut">Punch Out</button>
                 <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button>
+                <button type="button" class="btn btn-block btn-lg btn-primary" id="benCheckIn" style="display:none; width:97%; height:3em">Benderson Check In</button>
                 <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
             </section>
 
