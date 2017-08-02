@@ -36,8 +36,9 @@
         </nav>
 
         <div class="panel-body">
+
+                <div id="message"></div>
         <section id="auth" style="display:none">
-            <div id="message"></div>
             <form class="form-horizontal" onsubmit="return login()">
               <div class="form-group">
                 <label for="inputID" class="col-sm-2 control-label">Employee ID</label>

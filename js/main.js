@@ -92,6 +92,7 @@ let clearEmpId = () => {
 // Logout the user.
 function IdleTimeout() {
 	ga('send', 'event', 'Logout', empid, 'Timedout')
+	$('#message').html('')
 	window.location = logoutUrl;
 }
 
@@ -147,6 +148,7 @@ $(document).ready(function () {
 				empid : empid
 			}
 		}).success((hours) => {
+					$('#message').html(`<div class="alert alert-info" role="alert"><b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b></div>`)
 			checkOutTime = moment();
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
