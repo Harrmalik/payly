@@ -53,6 +53,10 @@ let login = (e) => {
 				$('#clockdate').show()
 				startTime()
 			}
+
+			if (empid == 81369 || empid == 82934) {
+				$('#benCheckIn').show()
+			}
 		} else {
 			$(".modal-title").html(`User not found for employee ID: ${empid}`)
 			$(".modal-body").html(`
@@ -105,6 +109,7 @@ $(document).ready(function () {
 	// HTML Buttons
 	let $checkInBtn = $('#checkIn'),
 	$checkOutBtn = $('#checkOut'),
+	$benCheckInBtn = $('#benCheckIn'),
 	$timesheetBtn = $('#timesheet'),
 	$todayHours = $('#todayHours'),
 	$totalHours = $('#totalHours');
@@ -149,6 +154,27 @@ $(document).ready(function () {
 			console.log(result);
 			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
 			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
+		});
+	});
+
+	$benCheckInBtn.on("click", () => {
+		ga('send', 'event', 'CheckIn', empid, 'Attempted')
+		$.ajax({
+			url : `./php/main.php?action=benCheckIn`,
+			method : 'POST',
+			data : {
+				time : moment().seconds(0).unix(),
+				empid : empid
+			}
+		}).success((result) => {
+			checkInIds.push(result.id);
+			checkInTime = moment();
+			makeUpdate();
+			ga('send', 'event', 'CheckIn', empid, 'Successful')
+		}).fail((result) => {
+			console.log(result);
+			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
+			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
 		});
 	});
 

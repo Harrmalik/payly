@@ -28,11 +28,12 @@
       case 'getInitialState':
           $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/getinitialstate",array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
           break;
-
         case 'checkIn':
           $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkin",array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
           break;
-
+       case 'benCheckIn':
+          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/bencheckin", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
+          break;
         case 'checkOut':
             $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
             break;
