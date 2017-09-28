@@ -146,7 +146,7 @@ $(document).ready(function () {
 
 	$checkOutBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
-		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking in now</div>`)
+		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking out now</div>`)
 		$('#checkOut').attr('disabled', true)
 		setTimeout(() => {
 		}, 3000)
