@@ -36,7 +36,7 @@ let login = (e) => {
 	$.ajax({
 		url : `./php/main.php?action=validateUser&empid=${empid}`
 	}).done((result) => {
-		if (result.user) {
+		if (empid && result.user) {
 			getInitialState();
 			$('#auth').hide();
 			$('#app').show();
@@ -118,6 +118,12 @@ $(document).ready(function () {
 	// Event Listeners
 	$checkInBtn.on("click", () => {
 		ga('send', 'event', 'CheckIn', empid, 'Attempted')
+		$('#checkIn').attr('disabled', true)
+		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking in now</div>`)
+
+		setTimeout(() => {
+			$('#checkIn').attr('disabled', false)
+		}, 3000)
 		$.ajax({
 			url : `./php/main.php?action=checkIn`,
 			method : 'POST',
@@ -130,6 +136,7 @@ $(document).ready(function () {
 			checkInTime = moment();
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
+			$('#message').html(`<div class="alert alert-success" role="alert">You have been successfully checked in</div>`)
 		}).fail((result) => {
 			console.log(result);
 			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
@@ -139,6 +146,10 @@ $(document).ready(function () {
 
 	$checkOutBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
+		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking in now</div>`)
+		$('#checkOut').attr('disabled', true)
+		setTimeout(() => {
+		}, 3000)
 		$.ajax({
 			url : `./php/main.php?action=checkOut`,
 			method : 'POST',
@@ -148,12 +159,11 @@ $(document).ready(function () {
 				empid : empid
 			}
 		}).success((hours) => {
-					$('#message').html(`<div class="alert alert-info" role="alert"><b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b></div>`)
+			$('#message').html(`<div class="alert alert-info" role="alert"><b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b></div>`)
 			checkOutTime = moment();
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
 		}).fail((result) => {
-			console.log(result);
 			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
 			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
 		});
@@ -161,6 +171,7 @@ $(document).ready(function () {
 
 	$benCheckInBtn.on("click", () => {
 		ga('send', 'event', 'CheckIn', empid, 'Attempted')
+
 		$.ajax({
 			url : `./php/main.php?action=benCheckIn`,
 			method : 'POST',
@@ -174,7 +185,6 @@ $(document).ready(function () {
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
 		}).fail((result) => {
-			console.log(result);
 			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
 			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
 		});
@@ -317,6 +327,7 @@ $(document).ready(function () {
 			});
 
 		}
+
 		function addRow($element, timeslot, sum) {
 			$(
 `
@@ -503,6 +514,7 @@ function startTime() {
 function openWarning() {
 	$('#warning').modal()
 }
+
 function setUser() {
 	localStorage.setItem('empid', empid)
 	ga('send', 'event', 'LocalMachine', empid)
