@@ -37,7 +37,7 @@
 
         <div class="panel-body">
 
-                <div id="message"></div>
+        <div id="message"></div>
         <section id="auth" style="display:none">
             <form class="form-horizontal" onsubmit="return login()">
               <div class="form-group">
