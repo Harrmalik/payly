@@ -119,11 +119,9 @@ $(document).ready(function () {
 	$checkInBtn.on("click", () => {
 		ga('send', 'event', 'CheckIn', empid, 'Attempted')
 		$('#checkIn').attr('disabled', true)
+		$('#checkIn').text('Punching in...')
 		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking in now</div>`)
 
-		setTimeout(() => {
-			$('#checkIn').attr('disabled', false)
-		}, 3000)
 		$.ajax({
 			url : `./php/main.php?action=checkIn`,
 			method : 'POST',
@@ -138,16 +136,20 @@ $(document).ready(function () {
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
 			$('#message').html(`<div class="alert alert-success" role="alert">You have been successfully checked in</div>`)
 		}).fail((result) => {
-			console.log(result);
 			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
 			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
+		}).always((result) => {
+			$('#checkIn').attr('disabled', false)
+			$('#checkIn').text('Punch In')
 		});
 	});
 
 	$checkOutBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
 		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking out now</div>`)
+
 		$('#checkOut').attr('disabled', true)
+		$('#checkOut').text('Punching out...')
 		setTimeout(() => {
 		}, 3000)
 		$.ajax({
@@ -166,6 +168,9 @@ $(document).ready(function () {
 		}).fail((result) => {
 			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
 			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
+		}).always((result) => {
+			$('#checkOut').attr('disabled', false)
+			$('#checkOut').text('Punch Out')
 		});
 	});
 
