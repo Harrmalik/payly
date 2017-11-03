@@ -127,7 +127,8 @@ $(document).ready(function () {
 			method : 'POST',
 			data : {
 				time : moment().seconds(0).unix(),
-				empid : empid
+				empid : empid,
+				offset: moment().utcOffset()
 			}
 		}).success((result) => {
 			checkInIds.push(result.id);
@@ -158,7 +159,8 @@ $(document).ready(function () {
 			data : {
 				time : moment().seconds(0).unix(),
 				id : checkInIds[checkInIds.length - 1],
-				empid : empid
+				empid : empid,
+				offset: moment().utcOffset()
 			}
 		}).success((hours) => {
 			$('#message').html(`<div class="alert alert-info" role="alert"><b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b></div>`)
@@ -182,7 +184,8 @@ $(document).ready(function () {
 			method : 'POST',
 			data : {
 				time : moment().seconds(0).unix(),
-				empid : empid
+				empid : empid,
+				offset: moment().utcOffset()
 			}
 		}).success((result) => {
 			checkInIds.push(result.id);
