@@ -74,8 +74,8 @@ let addTimeslot = () => {
 		method: 'post',
 		data: {
 			userid: empid,
-			punchintime: moment($('#punchintime').data("DateTimePicker").date()).unix(),
-			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).unix(),
+			punchintime: moment($('#punchintime').data("DateTimePicker").date()).utc().unix(),
+			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix(),
 			empSite,
 			type: $('#type').val(),
 			action: 'addTimeslot'
@@ -92,8 +92,8 @@ let makeEdit = (row) => {
 	$('#modal-title').html('Edit Timeslot');
 	$('#typefield').hide();
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="saveChange()" data-dismiss="modal">Save changes</button>');
-	$('#punchintime').data("DateTimePicker").date(moment.unix(timeslot.in).utcOffset(parseInt(timeslot.offset)));
-	$('#punchouttime').data("DateTimePicker").date(moment.unix(timeslot.out).utcOffset(parseInt(timeslot.offset)));
+	$('#punchintime').data("DateTimePicker").date(moment.unix(timeslot.in).tz(timeslot.timezone));
+	$('#punchouttime').data("DateTimePicker").date(moment.unix(timeslot.out).tz(timeslot.timezone));
 	$('#punchingout').show();
 	$('.adding').hide();
 	$('.modal').modal('show');
@@ -103,12 +103,12 @@ let saveChange = () => {
 	let punchintime = $('#punchintime').data("DateTimePicker").date(),
 		punchouttime = $('#punchouttime').data("DateTimePicker").date()
 
-	if (punchintime.hours() != moment.unix(timeslot.in).utcOffset(timeslot.offset).hours() &&
-	 	timeslot.offset == -300) {
+	if (punchintime.hours() != moment.unix(timeslot.in).tz(timeslot.timezone).hours() &&
+	 	timeslot.timezone == 'America/Chicago') {
 		punchintime.add(1, 'hours')
 	}
-	if (punchouttime.hours() != moment.unix(timeslot.out).utcOffset(timeslot.offset).hours() &&
-		timeslot.offset == -300) {
+	if (punchouttime.hours() != moment.unix(timeslot.out).tz(timeslot.timezone).hours() &&
+		timeslot.timezone == 'America/Chicago') {
 		punchouttime.add(1, 'hours')
 	}
 
@@ -347,10 +347,10 @@ $(document).ready(function(){
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
                     <td class="${timeslot.insource == 2 ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
-						${timeslot.punchintime ? moment.unix(timeslot.punchintime).utcOffset(parseInt(timeslot.punchinoffset)).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}
+						${timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}
 					</td>
                     <td class="${timeslot.outsource == 2 ? 'warning' : ''}  ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
-						${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).utcOffset(parseInt(timeslot.punchoutoffset)).format('h:mm a') : '- -'}
+						${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).tz(timeslot.punchouttimezone).format('h:mm a') : '- -'}
 					</td>
                     <td class=${sum.toFixed(2) > 6 ? 'red' : ''}>
 						${sum.toFixed(2)}
@@ -364,7 +364,7 @@ $(document).ready(function(){
 									data-id=${timeslot.timeid}
 									data-in=${timeslot.punchintime}
 									data-out=${timeslot.punchouttime}
-									data-offset=${timeslot.punchinoffset}><i class="glyphicon glyphicon-pencil"></i></button>
+									data-timezone=${timeslot.punchintimezone}><i class="glyphicon glyphicon-pencil"></i></button>
 								<button type="button" class="btn btn-default btn-small" onclick='addLunchslot(this)'
 									data-id=${timeslot.timeid}
 									data-in=${timeslot.punchintime}
