@@ -126,9 +126,9 @@ $(document).ready(function () {
 			url : `./php/main.php?action=checkIn`,
 			method : 'POST',
 			data : {
-				time : moment().seconds(0).unix(),
-				empid : empid,
-				offset: moment().utcOffset()
+				time     : moment().seconds(0).unix(),
+				empid    : empid,
+				timezone :moment.tz.guess()
 			}
 		}).success((result) => {
 			checkInIds.push(result.id);
@@ -157,10 +157,10 @@ $(document).ready(function () {
 			url : `./php/main.php?action=checkOut`,
 			method : 'POST',
 			data : {
-				time : moment().seconds(0).unix(),
-				id : checkInIds[checkInIds.length - 1],
-				empid : empid,
-				offset: moment().utcOffset()
+				time     : moment().seconds(0).unix(),
+				id       : checkInIds[checkInIds.length - 1],
+				empid    : empid,
+				timezone :moment.tz.guess()
 			}
 		}).success((hours) => {
 			$('#message').html(`<div class="alert alert-info" role="alert"><b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b></div>`)
@@ -183,9 +183,9 @@ $(document).ready(function () {
 			url : `./php/main.php?action=benCheckIn`,
 			method : 'POST',
 			data : {
-				time : moment().seconds(0).unix(),
-				empid : empid,
-				offset: moment().utcOffset()
+				time     : moment().seconds(0).unix(),
+				empid    : empid,
+				timezone :moment.tz.guess()
 			}
 		}).success((result) => {
 			checkInIds.push(result.id);

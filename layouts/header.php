@@ -30,6 +30,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.min.js"></script>
 		<?php include_once($assets . "js/scripts.php"); ?>
 	    <script src="<?php echo $assets; ?>Helpers.js"></script>
+		<script src="js/moment-timezone.js"></script>
 
         <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
