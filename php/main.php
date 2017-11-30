@@ -13,6 +13,9 @@
             $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?empid=" . $_REQUEST['empid'], EUSER, EUSERPASSWORD);
             $_SESSION['employeeid'] = $response->body->user->employeeid;
             break;
+        case 'getIp':
+            $response->raw_body = $_SERVER['REMOTE_ADDR'];//array('1' => $_SERVER['REMOTE_ADDR']);
+            break;
         case 'getManager':
             $response = doGetRequest("https://api1.dscws.com/universalaccess/users?fields=userid,realname,position,employeeid&filter=userid=" . $_SESSION['userid'], USER::getUsername(), User::getPassword());
             break;

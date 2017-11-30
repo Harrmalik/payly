@@ -2,6 +2,7 @@ let empid,
 getInitialState,
 logoutUrl = './',
 userData = $('title').data(),
+ipaddress = '',
 timer = () => {
 	setTimeout(IdleTimeout, 60000)
 },
@@ -34,37 +35,46 @@ let login = (e) => {
 	empid = empid ? empid : $('#inputID').val();
 
 	$.ajax({
-		url : `./php/main.php?action=validateUser&empid=${empid}`
-	}).done((result) => {
-		if (empid && result.user) {
-			getInitialState();
-			$('#auth').hide();
-			$('#app').show();
-			$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
-			ga('send', 'event', 'Login', empid)
-			userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
-			if (localStorage) {
-				if (!localStorage.getItem('empid')) {
-					timer()
-					$('#setuser').show()
+		url : `./php/main.php?action=getIp`
+	}).always((ip) => {
+		$.ajax({
+			url : `./php/main.php?action=validateUser&empid=${empid}`
+		}).done((result) => {
+			let ipaddress = ip.responseText.trim()
+			if (empid && result.user) {
+				getInitialState();
+				$('#auth').hide();
+				$('#app').show();
+				$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
+				ga('send', 'event', 'Login', empid)
+				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
+				if (localStorage) {
+					if (!localStorage.getItem('empid')) {
+						timer()
+						$('#setuser').show()
+					}
 				}
-			}
-			if ($(window).width() > 1300) {
-				$('#clockdate').show()
-				startTime()
-			}
+				if (ipaddress == '172.30.49.156') {
+					$('#setuser').hide()
+				}
+				if ($(window).width() > 1300) {
+					$('#clockdate').show()
+					startTime()
+				}
 
-			if (empid == 81369 || empid == 82934) {
-				$('#benCheckIn').show()
+				if (empid == 81369 || empid == 82934) {
+					$('#benCheckIn').show()
+				}
+			} else {
+				$(".modal-title").html(`User not found for employee ID: ${empid}`)
+				$(".modal-body").html(`
+					  <p>The Employee number <b>${empid}</b> Was not found in the system. Would you like to punch it in anyway</p>
+				`)
+				$('#unknownusermodal').modal('toggle')
 			}
-		} else {
-			$(".modal-title").html(`User not found for employee ID: ${empid}`)
-			$(".modal-body").html(`
-				  <p>The Employee number <b>${empid}</b> Was not found in the system. Would you like to punch it in anyway</p>
-			`)
-			$('#unknownusermodal').modal('toggle')
-		}
-	});
+		});
+	})
+
 	return false;
 }
 
