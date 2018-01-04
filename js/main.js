@@ -1,4 +1,5 @@
 let empid,
+maxHours = 0,
 getInitialState,
 logoutUrl = './',
 userData = $('title').data(),
@@ -48,6 +49,8 @@ let login = (e) => {
 				$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
+				maxHours = result.user.holidays
+
 				if (localStorage) {
 					if (!localStorage.getItem('empid')) {
 						timer()
@@ -123,7 +126,8 @@ $(document).ready(function () {
 	$benCheckInBtn = $('#benCheckIn'),
 	$timesheetBtn = $('#timesheet'),
 	$todayHours = $('#todayHours'),
-	$totalHours = $('#totalHours');
+	$totalHours = $('#totalHours'),
+	$overallHours = $('#overallHours');
 
 	// Event Listeners
 	$checkInBtn.on("click", () => {
@@ -452,7 +456,11 @@ $(document).ready(function () {
 					if (checkOutTime) {
 						hoursSum = calculateHours(checkInTime, checkOutTime);
 						populateElement(totalTime.toFixed(2), $totalHours);
+						populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
 						counter++;
+					} else {
+						let timeNow = moment.duration(moment().diff(moment(checkInTime))).asHours()
+						populateElement(`${(totalTime + timeNow).toFixed(2)}`, $overallHours);
 					}
 
 					addRow(checkInTime, checkOutTime, hoursSum);
@@ -478,6 +486,7 @@ $(document).ready(function () {
 		if (checkOut) {
 			hoursSum = calculateHours(checkInTime, checkOutTime);
 			populateElement(totalTime.toFixed(2), $totalHours);
+			populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
 			$(`#${checkInIds[checkInIds.length - 1]}timeout`).html(checkOutTime.format('h:mm a'));
 			$(`#${checkInIds[checkInIds.length - 1]}hours`).html(hoursSum.toFixed(2));
 		} else {
@@ -508,7 +517,7 @@ $(document).ready(function () {
 				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''}</td>
 				<td>${start.format('h:mm a')}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'timeout'}">${ end ? end.format('h:mm a') : '- -'}</td>
-				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : 0}</td>
+				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : '- -'}</td>
 			</tr>
 		`);
 	}
