@@ -1,5 +1,5 @@
 <?php include_once './layouts/header.php' ?>
-    <meta http-equiv="refresh" content="300" />
+    <!-- <meta http-equiv="refresh" content="300" /> -->
         <script type="text/babel" src="./js/main.js"></script>
 </head>
 
@@ -29,7 +29,7 @@
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <p class="navbar-text" id="name"></p>
-                  <li><a href="./" role="button">Sign Out</a></li>
+                  <li><a href="./" role="button" onclick="localStorage.setItem('empid', '');">Sign Out</a></li>
               </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container-fluid -->
@@ -117,7 +117,10 @@
 
             <section class="mainBtns">
                 <button type="button" class="btn btn-primary btn-lg" id="checkIn">Punch In</button>
-                <button type="button" class="btn btn-primary btn-lg" id="checkOut">Punch Out</button>
+                <button type="button" class="btn btn-primary btn-lg" id="checkOut">
+                    <h3>Check Out</h3>
+                    <p>Total Hours will be: <span id="overallHours"></span></p>
+                </button>
                 <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button>
                 <button type="button" class="btn btn-block btn-lg btn-primary" id="benCheckIn" style="display:none; width:97%; height:3em">Benderson Check In</button>
                 <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
