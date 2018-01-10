@@ -4,6 +4,7 @@
 </head>
 
 <body>
+    <img style="position:absolute; width:300px; top: 10em; left: 5em"/>
     <div class="panel panel-primary container">
         <div class="panel-heading" style="display:none">
             <p class="text-center"><img src="<?php echo $assets; ?>../images/delta_logo.png" width="150px" /></p>

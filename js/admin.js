@@ -28,12 +28,12 @@ let getTimesheet = (userid) => {
 	}
 
 	$.ajax({
-		url: `./php/main.php?action=validateUser&empid=${empid}`
-	}).done((result) => {
-		if (result.user) {
+		url: `./php/main.php?module=kissklock&action=validateUser&id=${empid}`
+	}).done((user) => {
+		if (user.empname) {
 			// TODO: show application
-			$('#username').html(result.user.empname);
-			empSite = result.user.site
+			$('#username').html(user.empname);
+			empSite = user.site
 			buildTable();
 			makeTimesheet();
 		} else {
@@ -78,7 +78,8 @@ let addTimeslot = () => {
 			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix(),
 			empSite,
 			type: $('#type').val(),
-			action: 'addTimeslot'
+			action: 'addTimeslot',
+			module: 'admin'
 		}
 	}).done((data) => {
 		ga('send', 'event', 'addTimeslot', empid, 'type', $('#type').val())
@@ -122,7 +123,8 @@ let saveChange = () => {
 			oldout: timeslot.out,
 			punchouttime: punchouttime.unix(),
 			timenow: moment().unix(),
-			action: 'editTimeslot'
+			action: 'editTimeslot',
+			module: 'admin'
 		}
 	}).done((data) => {
 		ga('send', 'event', 'editTimeslot', empid)
@@ -142,7 +144,8 @@ let addLunchslot = (row) => {
 			punchouttime: timeslot.out,
 			empSite,
 			type: 0,
-			action: 'addTimeslot'
+			action: 'addTimeslot',
+			module: 'admin'
 		}
 	}).done((data) => {
 		$.ajax({
@@ -155,7 +158,8 @@ let addLunchslot = (row) => {
 				oldout: timeslot.out,
 				punchouttime: moment.unix(timeslot.out).hour(12).minutes(30).unix(),
 				timenow: moment().unix(),
-				action: 'editTimeslot'
+				action: 'editTimeslot',
+				module: 'admin'
 			}
 		}).done((data) => {
 			ga('send', 'event', 'addLunchslot', empid)
@@ -172,7 +176,8 @@ let deleteTimeslot = (row) => {
 		method: 'post',
 		data: {
 			timeid: timeid,
-			action: 'deleteTimeslot'
+			action: 'deleteTimeslot',
+			module: 'admin'
 		}
 	}).done((data) => {
 		ga('send', 'event', 'deleteTimeslot', empid)
@@ -291,16 +296,15 @@ $(document).ready(function(){
     makeTimesheet = () => {
 		$('#loader').addClass('loader')
         $.ajax({
-            url: `./php/main.php?action=getInitialState`,
-            method: 'post',
+            url: `./php/main.php?module=kissklock&action=getInitialState`,
             data: {
-                empid: empid,
-                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-                endDate: endDate.format('YYYY-MM-DD HH:mm:ss')
+                id: empid,
+                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD'),
+                endDate: endDate.format('YYYY-MM-DD')
             }
-        }).done((data) => {
+        }).done((currentTimeslots) => {
+			timeslots = currentTimeslots
 			$('#loader2').hide()
-            timeslots = data.clockedHours;
             let hours = 0;
 
             timeslots.forEach((timeslot, index) => {
@@ -380,13 +384,8 @@ $(document).ready(function(){
 
 	function setPopover(id) {
 		$.ajax({
-			url: `./php/main.php?action=getChanges`,
-			method: 'post',
-			data: {
-				id
-			}
-		}).done((result) => {
-				let changes = result.changes;
+			url: `./php/main.php?module=kissklock&action=getChanges&id=${id}`
+		}).done((changes) => {
 				let html = '';
 				if (changes.length == 0) {
 					html += 'This timeslot was created for you';
@@ -444,7 +443,7 @@ $(document).ready(function(){
 
 	let getInitialState = () => {
 		$.ajax({
-			url: `./php/main.php?action=getManager`
+			url: `./php/main.php?module=admin&action=getManager`
 		}).done((result) => {
 			$('#loader').addClass('loader')
 			$.ajax({

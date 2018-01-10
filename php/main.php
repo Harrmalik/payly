@@ -2,53 +2,41 @@
   header('content-type:application/json');
   require_once('/var/www/resources/core/index.php');
   $core->inc('users');
-  $NodeServer = '/checkinclockserver';
-  $response;
+  $NodeServer = CHECKINCLOCK_SERVER . "/checkinclockserver";
+
+  $username = USER::getUsername(); $password = USER::getPassword();
 
   // API
   switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-      switch ($_REQUEST['action']) {
-        case 'validateUser':
-            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/validate?empid=" . $_REQUEST['empid'], EUSER, EUSERPASSWORD);
-            $_SESSION['employeeid'] = $response->body->user->employeeid;
+      switch ($_REQUEST['module']) {
+        case 'kissklock':
+            $response = doGetRequest($NodeServer . "/kissklock?action=" . $_REQUEST['action'] . "&id=" . $_REQUEST['id'] . "&startDate=" . $_REQUEST['startDate'] . "&endDate=" . $_REQUEST['endDate'], EUSER, EUSERPASSWORD);
             break;
         case 'getIp':
             $response->raw_body = $_SERVER['REMOTE_ADDR'];
             break;
         case 'getManager':
-            $response = doGetRequest("https://api1.dscws.com/universalaccess/users?fields=userid,realname,position,employeeid&filter=userid=" . $_SESSION['userid'], USER::getUsername(), User::getPassword());
+            $response = doGetRequest("https://api1.dscws.com/universalaccess/users?fields=userid,realname,position,employeeid&filter=userid=" . $_SESSION['userid'], $username, $password);
             break;
-        case 'getEmployees':
-            $response = doGetRequest(CHECKINCLOCK_SERVER . $NodeServer . "/getemployees?empid=" . $_REQUEST['empid'], USER::getUsername(), User::getPassword());
+        case 'admin':
+            $response = doGetRequest($NodeServer . "/competitor?action=" . $_REQUEST['action'] . "&empid=" . $_REQUEST['empid'], $username, $password);
             break;
       }
 
       break;
 
     case 'POST':
-      switch ($_REQUEST['action']) {
-      case 'getInitialState':
-          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/getinitialstate",array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
-          break;
-        case 'checkIn':
-          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkin",array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
-          break;
-       case 'benCheckIn':
-          $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/bencheckin", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
-          break;
-        case 'checkOut':
-            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/checkout", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
-            break;
-        case 'getChanges':
-            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/getchanges", array("data" => json_encode($_POST)), EUSER, EUSERPASSWORD);
-            break;
-        default :
-            $response = doPostRequestWithData(CHECKINCLOCK_SERVER . $NodeServer . "/posthandler", array("data" => json_encode($_POST)), USER::getUsername(), User::getPassword());
-            break;
-      }
+        if ($_REQUEST['module'] == 'kissklock') {
+            $response = doPostRequestWithData($NodeServer . "/". $_REQUEST['module'] . "?action=" . $_REQUEST['action'], $_POST, EUSER, EUSERPASSWORD);
+        } else {
+            $response = doPostRequestWithData($NodeServer . "/". $_REQUEST['module'] . "?action=" . $_REQUEST['action'], $_POST, $username, $password);
+        }
 
       break;
+
+  default:
+      $response = 'action not supported';
   }
 
   http_response_code($response->code);
