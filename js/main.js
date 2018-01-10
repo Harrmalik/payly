@@ -36,37 +36,61 @@ let login = (e) => {
 	empid = empid ? empid : $('#inputID').val();
 
 	$.ajax({
-		url : `./php/main.php?action=getIp`
+		url : `./php/main.php?module=getIp`
 	}).always((ip) => {
 		$.ajax({
-			url : `./php/main.php?action=validateUser&empid=${empid}`
-		}).done((result) => {
+			url : `./php/main.php?module=kissklock&action=validateUser&id=${empid}`
+		}).done((user) => {
 			let ipaddress = ip.responseText.trim()
-			if (empid && result.user) {
+			if (empid && user.empname) {
 				getInitialState();
 				$('#auth').hide();
 				$('#app').show();
-				$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
+				$('#name').html(`Signed in as ${user.empname} <i class="glyphicon glyphicon-user"></i>`);
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
-				maxHours = result.user.holidays
+				maxHours = user.holidays
+				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
+				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
+				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
+				var todaysDate = moment().format('MMDD')
 
+				// If local machine stop the page logout
 				if (localStorage) {
 					if (!localStorage.getItem('empid')) {
 						timer()
 						$('#setuser').show()
 					}
 				}
+
+				// If public machine prevent users from setting as local maching
 				if (ipaddress == '172.30.49.156') {
 					$('#setuser').hide()
+				} else {
+					function refresh() {
+						getInitialState()
+					}
+
+					setInterval(refresh, 60000);
 				}
+
+				// Only show timer if screen is wide enough
 				if ($(window).width() > 1300) {
 					$('#clockdate').show()
 					startTime()
 				}
 
+				// Show benderson punch in for dev and benderson user
 				if (empid == 81369 || empid == 82934) {
 					$('#benCheckIn').show()
+				}
+
+				if (birthday == todaysDate) {
+					$('#message').html(`<div class="alert alert-info" role="alert">Happy birthday <b>${user.empname}</b>!</div>`)
+				}
+
+				if (hiredDate == todaysDate) {
+					$('#message').html(`<div class="alert alert-info" role="alert">Happy Anniversary <b>${user.empname}</b>! Thank you for your ${yearsWorked} year(s) of service.</b></div>`)
 				}
 			} else {
 				$(".modal-title").html(`User not found for employee ID: ${empid}`)
@@ -137,15 +161,15 @@ $(document).ready(function () {
 		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking in now</div>`)
 
 		$.ajax({
-			url : `./php/main.php?action=checkIn`,
+			url : `./php/main.php?module=kissklock&action=checkIn`,
 			method : 'POST',
 			data : {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
 				timezone :moment.tz.guess()
 			}
-		}).success((result) => {
-			checkInIds.push(result.id);
+		}).success((checkin) => {
+			checkInIds.push(checkin);
 			checkInTime = moment();
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
@@ -168,7 +192,7 @@ $(document).ready(function () {
 		setTimeout(() => {
 		}, 3000)
 		$.ajax({
-			url : `./php/main.php?action=checkOut`,
+			url : `./php/main.php?module=kissklock&action=checkOut`,
 			method : 'POST',
 			data : {
 				time     : moment().seconds(0).unix(),
@@ -194,15 +218,15 @@ $(document).ready(function () {
 		ga('send', 'event', 'CheckIn', empid, 'Attempted')
 
 		$.ajax({
-			url : `./php/main.php?action=benCheckIn`,
+			url : `./php/main.php?module=kissklock&action=benCheckIn`,
 			method : 'POST',
 			data : {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
 				timezone :moment.tz.guess()
 			}
-		}).success((result) => {
-			checkInIds.push(result.id);
+		}).success((checkin) => {
+			checkInIds.push(checkin);
 			checkInTime = moment();
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
@@ -250,16 +274,16 @@ $(document).ready(function () {
 		];
 		$('#end').datetimepicker({
 			defaultDate : moment().weekday(2),
-			format : 'MMMM Do',
+			format : 'MMMM Do, YYYY',
 			daysOfWeekDisabled : [0, 1, 2, 3, 4, 6]
 		});
 
 		$.ajax({
-			url : `./php/main.php?action=validateUser&empid=${empid}`
-		}).done((result) => {
-			if (result.user) {
-				$('#name').html(`Signed in as ${result.user.empname} <i class="glyphicon glyphicon-user"></i>`);
-				$('#username').html(result.user.empname);
+			url : `./php/main.php?module=kissklock&action=validateUser&id=${empid}`
+		}).done((user) => {
+			if (user.empname) {
+				$('#name').html(`Signed in as ${user.empname} <i class="glyphicon glyphicon-user"></i>`);
+				$('#username').html(user.empname);
 				buildTable();
 				makeTimesheet();
 			}
@@ -297,17 +321,14 @@ $(document).ready(function () {
 
 		function makeTimesheet() {
 			$.ajax({
-				url : `./php/main.php?action=getInitialState`,
-				method : 'post',
+				url : `./php/main.php?module=kissklock&action=getInitialState`,
 				data : {
-					empid,
-					startDate : $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-					endDate : $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD HH:mm:ss')
+					id: empid,
+					startDate : $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD'),
+					endDate : $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD')
 				}
-			}).done((data) => {
-				// $('#startDate').html($('#end').data("DateTimePicker").date().weekday(-1).format('M/D/YYYY'));
-				// $('#endDate').html($('#end').data("DateTimePicker").date().format('M/D/YYYY'));
-				timeslots = data.clockedHours;
+			}).done((clockedHours) => {
+				timeslots = clockedHours;
 				let hours = 0;
 				let totalTime = 0;
 				timeslots.forEach((timeslot, index) => {
@@ -352,7 +373,7 @@ $(document).ready(function () {
 
 		function addRow($element, timeslot, sum) {
 			$(
-`
+					`
 		            <tr class="timeslots">
 		                <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
 		                <td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
@@ -368,13 +389,8 @@ $(document).ready(function () {
 
 		function setPopover(id) {
 			$.ajax({
-				url : `./php/main.php?action=getChanges`,
-				method : 'post',
-				data : {
-					id
-				}
-			}).done((result) => {
-				let changes = result.changes;
+				url : `./php/main.php?module=kissklock&action=getChanges&id=${id}`
+			}).done((changes) => {
 				let html = '';
 				if (changes.length == 0) {
 					html += 'This timeslot was created for you';
@@ -432,19 +448,18 @@ $(document).ready(function () {
 	// Functions
 	getInitialState = () => {
 		$.ajax({
-			url : `./php/main.php?action=getInitialState`,
-			method : 'POST',
+			url : `./php/main.php?module=kissklock&action=getInitialState`,
 			data : {
-				empid : empid,
-				startDate : date.format('YYYY-MM-DD') + ' 00:00:00',
-				endDate : moment().add(1, 'days').format('YYYY-MM-DD') + ' 00:00:00'
+				id : empid,
+				startDate : date.format('YYYY-MM-DD'),
+				endDate : moment().add(1, 'days').format('YYYY-MM-DD')
 			}
-		}).done((hours) => {
+		}).done((timeslots) => {
 			$('#todayHours').empty()
 			checkInIds = []
-			totalTime = 0
-				counter = 0
-				let timeslots = hours.clockedHours;
+			totalTime  = 0
+			counter    = 0
+
 			if (timeslots.length > 0) {
 				timeslots.forEach((timeslot, index) => {
 					let hoursSum;
@@ -521,12 +536,6 @@ $(document).ready(function () {
 			</tr>
 		`);
 	}
-
-	function refresh() {
-		getInitialState()
-	}
-
-	setInterval(refresh, 60000);
 });
 
 function startTime() {
