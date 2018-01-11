@@ -83,7 +83,7 @@ let addTimeslot = () => {
 		}
 	}).done((data) => {
 		ga('send', 'event', 'addTimeslot', empid, 'type', $('#type').val())
-		sendAlert('success', data.result)
+		sendAlert('success', 'Timelot successfully created')
 		getTimesheet();
 	});
 }
@@ -163,7 +163,7 @@ let addLunchslot = (row) => {
 			}
 		}).done((data) => {
 			ga('send', 'event', 'addLunchslot', empid)
-			sendAlert('success', data.result)
+			sendAlert('success', 'Lunch punch in successfully created')
 			getTimesheet();
 		});
 	});
@@ -181,7 +181,7 @@ let deleteTimeslot = (row) => {
 		}
 	}).done((data) => {
 		ga('send', 'event', 'deleteTimeslot', empid)
-		sendAlert('info', data.result)
+		sendAlert('info', 'Timeslot has been deleted')
 		getTimesheet();
 	});
 }
