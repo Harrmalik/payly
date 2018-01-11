@@ -83,7 +83,7 @@ let addTimeslot = () => {
 		}
 	}).done((data) => {
 		ga('send', 'event', 'addTimeslot', empid, 'type', $('#type').val())
-		sendAlert('success', 'Timelot successfully created')
+		sendAlert('success', 'Timeslot successfully created')
 		getTimesheet();
 	});
 }
@@ -163,7 +163,7 @@ let addLunchslot = (row) => {
 			}
 		}).done((data) => {
 			ga('send', 'event', 'addLunchslot', empid)
-			sendAlert('success', 'Lunch punch in successfully created')
+			sendAlert('success', 'Lunch punch slot successfully created')
 			getTimesheet();
 		});
 	});
