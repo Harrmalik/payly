@@ -21,7 +21,7 @@ let empid,
 userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 
 let getTimesheet = (userid) => {
-	empid = $('#employeeID').val() ? $('#employeeID').val() : userid ? userid : empid;
+	empid = $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : userid ? userid : empid;
 	if (userid)	{
 		$('#userTimesheet').show()
 		$('#employees').hide()
@@ -227,6 +227,32 @@ $(document).ready(function(){
         [$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks],
         [$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks],
     ];
+
+	// Autocomplete Searchboxes
+	$.ajax({
+		url: `./php/main.php?module=admin&action=getEmployees`
+	}).done((users) => {
+		let options = {
+			data: users,
+			getValue: (user) => {
+				return user.employeeid + '. '  + user.employeename
+			},
+			theme: "blue-light",
+			list: {
+				maxNumberOfElements: 100,
+				match: {
+					enabled: true
+				},
+				onChooseEvent: () => {
+					let employee = $("#employeeID").getSelectedItemData()
+					getTimesheet(employee.employeeid)
+				}
+			}
+		}
+
+		$("#employeeID").easyAutocomplete(options)
+		$('.easy-autocomplete-container').css('z-index', 3)
+	})
 
     // Functions
     buildTable = () => {
