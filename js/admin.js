@@ -469,11 +469,11 @@ $(document).ready(function(){
 
 	let getInitialState = () => {
 		$.ajax({
-			url: `./php/main.php?module=admin&action=getManager`
+			url: `./php/main.php?action=getManager`
 		}).done((result) => {
 			$('#loader').addClass('loader')
 			$.ajax({
-				url: `./php/main.php?action=getEmployees&empid=${result[0].employeeid}`
+				url: `./php/main.php?module=admin&action=getMyEmployees&empid=${result[0].employeeid}`
 			}).done((result) => {
 				let employees = result.employees
 				$('#loader').hide()
