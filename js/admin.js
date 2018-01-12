@@ -469,13 +469,12 @@ $(document).ready(function(){
 
 	let getInitialState = () => {
 		$.ajax({
-			url: `./php/main.php?action=getManager`
+			url: `./php/main.php?module=getManager`
 		}).done((result) => {
 			$('#loader').addClass('loader')
 			$.ajax({
 				url: `./php/main.php?module=admin&action=getMyEmployees&empid=${result[0].employeeid}`
-			}).done((result) => {
-				let employees = result.employees
+			}).done((employees) => {
 				$('#loader').hide()
 				if (employees.length > 0) {
 					employees.forEach((employee) => {
