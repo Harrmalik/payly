@@ -9,6 +9,8 @@
             $isManager = 'true';
     }
 ?>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
     <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
@@ -50,9 +52,9 @@
                 <span id="alert"></span>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
-                  <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Edit Timesheets</a></li>
-                  <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Edit Users</a></li>
-                  <li role="presentation"><a href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab">Edit Supervisors</a></li>
+                  <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
+                  <li role="presentation"><a href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                 </ul>
 
                 <br/>
@@ -129,22 +131,87 @@
                   </div>
 
                   <div role="tabpanel" class="tab-pane" id="users">
-                      <form class="form-horizontal" onsubmit="return getTimesheet();">
+                      <form class="form-horizontal">
                         <div class="form-group">
                           <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
                           <div class="col-sm-4">
-                            <input type="number" class="form-control" id="" placeholder="Employee ID">
+                            <input type="text" class="form-control" id="employeeid" placeholder="Employee ID">
                           </div>
                         </div>
+                    </form>
+
+                    <br><br>
+                    <form class="form-horizontal">
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Employee Name</label>
+                        <div class="col-sm-5">
+                          <input type="text" class="form-control" id="uName">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Job Description</label>
+                        <div class="col-sm-5">
+                          <input type="text" class="form-control" id="uJob">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
+                        <div class="col-sm-5">
+                          <input type="text" class="form-control" id="uSupervisor" placeholder="Supervisor ID">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Holidays</label>
+                        <div class="col-sm-5">
+                          <input type="text" class="form-control" id="uHoliday" placeholder="How many hours">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                          <div id="removeUser" class="btn btn-danger">Remove User</div>
+                          <div id="addUser" class="btn btn-primary">Add User</div>
+                          <div id="saveUser" class="btn btn-success">Save Changes</div>
+                        </div>
+                      </div>
                     </form>
                   </div>
 
                   <div role="tabpanel" class="tab-pane" id="supervisors">
-                      <form class="form-horizontal" onsubmit="return getTimesheet();">
+                      <form class="form-horizontal">
                         <div class="form-group">
-                          <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
+                          <label for="employeeID" class="col-sm-2 control-label">Supervisor ID</label>
                           <div class="col-sm-4">
-                            <input type="number" class="form-control" id="supervisors" placeholder="manager">
+                            <input type="text" class="form-control" id="supervisorid" placeholder="manager">
+                          </div>
+                        </div>
+                      </form>
+
+                      <br><br>
+                      <form class="form-horizontal">
+                        <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">Name</label>
+                          <div class="col-sm-5">
+                            <input type="text" class="form-control" id="sName">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
+                          <div class="col-sm-5">
+                            <input type="text" class="form-control" id="sEmail" placeholder="Supervisor ID">
+                          </div>
+                        </div>
+                        <!-- <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
+                          <div class="col-sm-5">
+                            <select id="supervisorEmployees" data-placeholder="Add Employees" multiple class="form-control chosen-select">
+                            </select>
+                          </div>
+                        </div> -->
+                        <div class="form-group">
+                          <div class="col-sm-offset-2 col-sm-10">
+                            <div id="removeSupervisor" class="btn btn-danger">Remove Supervisor</div>
+                            <div id="addSupervisor" class="btn btn-primary">Add Supervisor</div>
+                            <div id="saveSupervisor" class="btn btn-success">Save Changes</div>
                           </div>
                         </div>
                       </form>
