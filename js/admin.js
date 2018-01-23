@@ -20,6 +20,9 @@ let empid,
 
 userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 
+
+// Edit Timesheets tab
+
 let getTimesheet = (userid) => {
 	empid = $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : userid ? userid : empid;
 	if (userid)	{
@@ -195,6 +198,117 @@ let sendAlert = (type, message) => {
 	`)
 }
 
+
+// Edit Users Tab
+$('#removeUser').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'removeUser',
+		employeeID: $('#employeeid').val().split('.')[0]
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		sendAlert('info', 'User removed')
+	});
+})
+
+$('#addUser').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'addUser',
+		employeeID: $('#employeeid').val().split('.')[0],
+		employeeName: $('#uName').val(),
+		job: $('#uJob').val(),
+		supervisor: $('#uSupervisor').val().split('.')[0],
+		holidays: $('#uHoliday').val()
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		sendAlert('info', 'User added')
+	});
+})
+
+$('#saveUser').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'saveUser',
+		employeeID: $('#employeeid').val().split('.')[0],
+		employeeName: $('#uName').val(),
+		job: $('#uJob').val(),
+		supervisor: $('#uSupervisor').val().split('.')[0],
+		holidays: $('#uHoliday').val()
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		sendAlert('info', 'User saved')
+	});
+})
+
+// Edit Supervisors Tab
+$('#removeSupervisor').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'removeSupervisor',
+		employeeID: $('#supervisorid').val().split('.')[0]
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		sendAlert('info', 'Supervisor removed')
+	});
+})
+
+$('#addSupervisor').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'addSupervisor',
+		employeeID: $('#supervisorid').val().split('.')[0],
+		name: $('#sName').val(),
+		email: $('#sEmail').val(),
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		sendAlert('info', 'Supervisor added')
+	});
+})
+
+$('#saveSupervisor').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'saveSupervisor',
+		employeeID: $('#supervisorid').val().split('.')[0],
+		name: $('#sName').val(),
+		email: $('#sEmail').val(),
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		sendAlert('info', 'Supervisor saved')
+	});
+})
+
 function back() {
 	$('#userTimesheet').hide()
 	$('#employees').show()
@@ -239,7 +353,6 @@ $(document).ready(function(){
 			},
 			theme: "blue-light",
 			list: {
-				maxNumberOfElements: 100,
 				match: {
 					enabled: true
 				},
@@ -250,7 +363,107 @@ $(document).ready(function(){
 			}
 		}
 
+		users.forEach((user) => {
+			$('#supervisorEmployees').append(`
+				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
+			`)
+		});
+
 		$("#employeeID").easyAutocomplete(options)
+		$('.easy-autocomplete-container').css('z-index', 3)
+		$("#supervisorEmployees").chosen().change((data, change) => {
+			if ($('#supervisorid').val().split('.')[0]) {
+				if (change.selected) {
+					// Change supervisor to me
+					data = {
+						module: 'admin',
+						action: 'addEmployeeToSupervisor',
+						employeeID: change.selected,
+						supervisor: $('#supervisorid').val().split('.')[0]
+					}
+				} else {
+					// Remove me as supervisor
+					data = {
+						module: 'admin',
+						action: 'addEmployeeToSupervisor',
+						employeeID: change.deselected,
+						supervisor: ""
+					}
+				}
+
+				$.ajax({
+					url: `./php/main.php`,
+					method: 'post',
+					data
+				}).done((data) => {
+					sendAlert('info', 'User supervisor changed')
+				});
+			}
+		})
+	})
+
+	$.ajax({
+		url: `./php/main.php?module=admin&action=getEmployees`
+	}).done((users) => {
+		let options = {
+			data: users,
+			getValue: (user) => {
+				return user.employeeid + '. '  + user.employeename
+			},
+			theme: "blue-light",
+			list: {
+				match: {
+					enabled: true
+				},
+				onChooseEvent: () => {
+					let employee = $("#employeeid").getSelectedItemData()
+					$('#uEmployeeid').val(employee.employeeid)
+					$('#uName').val(employee.employeename)
+					$('#uJob').val(employee.job)
+					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
+					$('#uHoliday').val(employee.holidays)
+				}
+			}
+		}
+
+		$("#employeeid").easyAutocomplete(options)
+	})
+
+	$.ajax({
+		url: `./php/main.php?module=admin&action=getSupervisors`
+	}).done((supervisors) => {
+		let options = {
+			data: supervisors,
+			getValue: (supervisor) => {
+				return supervisor.employeeid + '. '  + supervisor.name
+			},
+			theme: "blue-light",
+			list: {
+				match: {
+					enabled: true
+				},
+				onChooseEvent: () => {
+					let supervisor = $("#supervisorid").getSelectedItemData()
+					$('#sName').val(supervisor.name)
+					$('#sEmail').val(supervisor.email)
+
+					// Get a faster route removing user hours
+					$.ajax({
+						url: `./php/main.php?module=admin&action=getMyEmployees&empid=${supervisor.employeeid}`
+					}).done((employees) => {
+						$("#supervisorEmployees").val(employees.map(employee => {
+							return employee.id
+						}))
+
+						$("#supervisorEmployees").trigger("chosen:updated");
+					})
+
+				}
+			}
+		}
+
+		$("#supervisorid").easyAutocomplete(options)
+		$("#uSupervisor").easyAutocomplete(options)
 		$('.easy-autocomplete-container').css('z-index', 3)
 	})
 
