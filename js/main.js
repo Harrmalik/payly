@@ -462,23 +462,25 @@ $(document).ready(function () {
 
 			if (timeslots.length > 0) {
 				timeslots.forEach((timeslot, index) => {
-					let hoursSum;
-					checkInTime = timeslot.punchintime ? moment.unix(timeslot.punchintime) : null;
-					checkOutTime = timeslot.punchouttime ? moment.unix(timeslot.punchouttime) : null;
-					checkInIds.push(timeslot.timeid);
-					counter++;
-
-					if (checkOutTime) {
-						hoursSum = calculateHours(checkInTime, checkOutTime);
-						populateElement(totalTime.toFixed(2), $totalHours);
-						populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
+					if (moment.unix(timeslot.punchintime).day() == moment().day()) {
+						let hoursSum;
+						checkInTime = timeslot.punchintime ? moment.unix(timeslot.punchintime) : null;
+						checkOutTime = timeslot.punchouttime ? moment.unix(timeslot.punchouttime) : null;
+						checkInIds.push(timeslot.timeid);
 						counter++;
-					} else {
-						let timeNow = moment.duration(moment().diff(moment(checkInTime))).asHours()
-						populateElement(`${(totalTime + timeNow).toFixed(2)}`, $overallHours);
-					}
 
-					addRow(checkInTime, checkOutTime, hoursSum);
+						if (checkOutTime) {
+							hoursSum = calculateHours(checkInTime, checkOutTime);
+							populateElement(totalTime.toFixed(2), $totalHours);
+							populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
+							counter++;
+						} else {
+							let timeNow = moment.duration(moment().diff(moment(checkInTime))).asHours()
+							populateElement(`${(totalTime + timeNow).toFixed(2)}`, $overallHours);
+						}
+
+						addRow(checkInTime, checkOutTime, hoursSum);
+					}
 				});
 
 				toggleButtons();
