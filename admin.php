@@ -167,6 +167,18 @@
                         </div>
                       </div>
                       <div class="form-group">
+                        <label for="weekends" class="col-sm-2 control-label">Weekends</label>
+                        <div class="col-sm-5">
+                            <input id="weekends" type="checkbox"></input>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="nights" class="col-sm-2 control-label">Nights</label>
+                        <div class="col-sm-5">
+                            <input id="nights" type="checkbox"></input>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                           <div id="removeUser" class="btn btn-danger">Remove User</div>
                           <div id="addUser" class="btn btn-primary">Add User</div>

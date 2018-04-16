@@ -2,7 +2,7 @@
   header('content-type:application/json');
   require_once('/var/www/resources/core/index.php');
   $core->inc('users');
-  $NodeServer = CHECKINCLOCK_SERVER . "/checkinclockserver";
+  $NodeServer = CHECKINCLOCK_SERVER;
 
   $username = USER::getUsername(); $password = USER::getPassword();
 
