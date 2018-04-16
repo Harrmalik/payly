@@ -244,7 +244,9 @@ $('#saveUser').on('click', () => {
 		employeeName: $('#uName').val(),
 		job: $('#uJob').val(),
 		supervisor: $('#uSupervisor').val().split('.')[0],
-		holidays: $('#uHoliday').val()
+		holidays: $('#uHoliday').val(),
+		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+		nights: $('#nights').is(':checked') == true ? 1 : 0
 	}
 
 	$.ajax({
@@ -422,6 +424,8 @@ $(document).ready(function(){
 					$('#uJob').val(employee.job)
 					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
 					$('#uHoliday').val(employee.holidays)
+					$('#weekends').attr('checked', employee.weekends == 1 ? true : false)
+					$('#nights').attr('checked', employee.nights == 1 ? true : false)
 				}
 			}
 		}
