@@ -40,12 +40,12 @@ let getTimesheet = (userid) => {
 			buildTable();
 			makeTimesheet();
 		} else {
-			$('#alert').html(`
-				<div class="alert alert-warning alert-dismissible" role="alert">
-				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				  ${empid} is not a valid employee id, Please try again!.
-				</div>
-			`)
+			iziToast.warning({
+				title: 'Couldn\'t find user',
+				message: `${empid} is not a valid employee id, Please try again!.`,
+
+
+			});
 		}
 	});
 	return false;
@@ -86,7 +86,12 @@ let addTimeslot = () => {
 		}
 	}).done((data) => {
 		ga('send', 'event', 'addTimeslot', empid, 'type', $('#type').val())
-		sendAlert('success', 'Timeslot successfully created')
+		iziToast.success({
+			title: 'Success',
+			message: `Timeslot successfully created.`,
+
+
+		});
 		getTimesheet();
 	});
 }
@@ -131,7 +136,12 @@ let saveChange = () => {
 		}
 	}).done((data) => {
 		ga('send', 'event', 'editTimeslot', empid)
-		sendAlert('info', data.result)
+		iziToast.success({
+			title: 'Success',
+			message: `${data.result}`,
+
+
+		});
 		getTimesheet();
 	});
 }
@@ -166,7 +176,10 @@ let addLunchslot = (row) => {
 			}
 		}).done((data) => {
 			ga('send', 'event', 'addLunchslot', empid)
-			sendAlert('success', 'Lunch punch slot successfully created')
+			iziToast.success({
+				title: 'Success',
+				message: `Lunch punch slot successfully created.`,
+			});
 			getTimesheet();
 		});
 	});
@@ -184,20 +197,15 @@ let deleteTimeslot = (row) => {
 		}
 	}).done((data) => {
 		ga('send', 'event', 'deleteTimeslot', empid)
-		sendAlert('info', 'Timeslot has been deleted')
+		iziToast.success({
+			title: 'Success',
+			message: `Timeslot has been deleted`,
+
+			
+		});
 		getTimesheet();
 	});
 }
-
-let sendAlert = (type, message) => {
-	$('#alert').html(`
-		<div class="alert alert-${type} alert-dismissible" role="alert">
-		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  ${message}
-		</div>
-	`)
-}
-
 
 // Edit Users Tab
 $('#removeUser').on('click', () => {
@@ -212,7 +220,12 @@ $('#removeUser').on('click', () => {
 		method: 'post',
 		data
 	}).done((data) => {
-		sendAlert('info', 'User removed')
+		iziToast.success({
+			title: 'Sucess',
+			message: `User removed`,
+
+
+		});
 	});
 })
 
@@ -254,7 +267,12 @@ $('#saveUser').on('click', () => {
 		method: 'post',
 		data
 	}).done((data) => {
-		sendAlert('info', 'User saved')
+		iziToast.success({
+			title: 'Success',
+			message: `User saved`,
+
+
+		});
 	});
 })
 
@@ -271,7 +289,12 @@ $('#removeSupervisor').on('click', () => {
 		method: 'post',
 		data
 	}).done((data) => {
-		sendAlert('info', 'Supervisor removed')
+		iziToast.success({
+			title: 'Couldn\'t find user',
+			message: `Supervisor Removed`,
+
+
+		});
 	});
 })
 
@@ -289,7 +312,12 @@ $('#addSupervisor').on('click', () => {
 		method: 'post',
 		data
 	}).done((data) => {
-		sendAlert('info', 'Supervisor added')
+		iziToast.success({
+			title: 'Success',
+			message: `Supervisor added.`,
+
+
+		});
 	});
 })
 
@@ -307,7 +335,12 @@ $('#saveSupervisor').on('click', () => {
 		method: 'post',
 		data
 	}).done((data) => {
-		sendAlert('info', 'Supervisor saved')
+		iziToast.success({
+			title: 'Success',
+			message: `Supervisor saved`,
+
+
+		});
 	});
 })
 
@@ -398,7 +431,12 @@ $(document).ready(function(){
 					method: 'post',
 					data
 				}).done((data) => {
-					sendAlert('info', 'User supervisor changed')
+					iziToast.success({
+						title: 'Success',
+						message: `User supervisor changed.`,
+
+
+					});
 				});
 			}
 		})

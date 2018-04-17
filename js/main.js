@@ -129,7 +129,12 @@ let clearEmpId = () => {
 // Logout the user.
 function IdleTimeout() {
 	ga('send', 'event', 'Logout', empid, 'Timedout')
-	$('#message').html('')
+	iziToast.show({
+	    title: 'IdleTimeout',
+	    message: 'You have been signed out',
+		transitionIn: 'bounceInLeft',
+		transitionOut: 'flipOutX'
+	});
 	window.location = logoutUrl;
 }
 
@@ -158,7 +163,12 @@ $(document).ready(function () {
 		ga('send', 'event', 'CheckIn', empid, 'Attempted')
 		$('#checkIn').attr('disabled', true)
 		$('#checkIn').text('Punching in...')
-		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking in now</div>`)
+		iziToast.show({
+			title: 'Loading',
+			message: `Checking in now`,
+			transitionIn: 'bounceInLeft',
+			transitionOut: 'flipOutX'
+		});
 
 		$.ajax({
 			url : `./php/main.php?module=kissklock&action=checkIn`,
@@ -173,9 +183,19 @@ $(document).ready(function () {
 			checkInTime = moment();
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
-			$('#message').html(`<div class="alert alert-success" role="alert">You have been successfully checked in</div>`)
+			iziToast.success({
+				title: 'Success',
+				message: 'You have been successfully checked in',
+				transitionIn: 'bounceInLeft',
+				transitionOut: 'flipOutX'
+			});
 		}).fail((result) => {
-			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
+			iziToast.error({
+				title: 'Error',
+				message: 'Kiss Klock could not be saved at this time',
+				transitionIn: 'bounceInLeft',
+				transitionOut: 'flipOutX'
+			});
 			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
 		}).always((result) => {
 			$('#checkIn').attr('disabled', false)
@@ -185,7 +205,12 @@ $(document).ready(function () {
 
 	$checkOutBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
-		$('#message').html(`<div class="alert alert-info" role="alert"><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i> Checking out now</div>`)
+		iziToast.show({
+			title: 'Loading',
+			message: `Checking out now`,
+			transitionIn: 'bounceInLeft',
+			transitionOut: 'flipOutX'
+		});
 
 		$('#checkOut').attr('disabled', true)
 		$('#checkOut').text('Punching out...')
@@ -201,12 +226,23 @@ $(document).ready(function () {
 				timezone :moment.tz.guess()
 			}
 		}).success((hours) => {
-			$('#message').html(`<div class="alert alert-info" role="alert"><b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b></div>`)
+			iziToast.info({
+				timeout: '10000',
+				title: 'Punched Out',
+				message: `<b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b>`,
+				transitionIn: 'bounceInLeft',
+				transitionOut: 'flipOutX'
+			});
 			checkOutTime = moment();
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
 		}).fail((result) => {
-			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
+			iziToast.error({
+				title: 'Error',
+				message: 'Kiss Klock could not be saved at this time',
+				transitionIn: 'bounceInLeft',
+				transitionOut: 'flipOutX'
+			});
 			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
 		}).always((result) => {
 			$('#checkOut').attr('disabled', false)
@@ -231,7 +267,12 @@ $(document).ready(function () {
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
 		}).fail((result) => {
-			$('#message').html(`<div class="alert alert-danger" role="alert">Kiss Klock could not be saved at this time</div>`)
+			iziToast.error({
+				title: 'Error',
+				message: 'Kiss Klock could not be saved at this time',
+				transitionIn: 'bounceInLeft',
+				transitionOut: 'flipOutX'
+			});
 			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
 		});
 	});
