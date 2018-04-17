@@ -424,8 +424,8 @@ $(document).ready(function(){
 					$('#uJob').val(employee.job)
 					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
 					$('#uHoliday').val(employee.holidays)
-					$('#weekends').attr('checked', employee.weekends == 1 ? true : false)
-					$('#nights').attr('checked', employee.nights == 1 ? true : false)
+					$('#weekends').prop('checked', employee.weekends == 1 ? true : false)
+					$('#nights').prop('checked', employee.nights == 1 ? true : false)
 				}
 			}
 		}
