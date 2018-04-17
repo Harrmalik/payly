@@ -227,7 +227,7 @@ $(document).ready(function () {
 			}
 		}).success((hours) => {
 			iziToast.info({
-				timeout: '10000'
+				timeout: '10000',
 				title: 'Punched Out',
 				message: `<b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b>`,
 				transitionIn: 'bounceInLeft',
