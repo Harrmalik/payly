@@ -4,6 +4,7 @@ getInitialState,
 logoutUrl = './',
 userData = $('title').data(),
 ipaddress = '',
+alerts,
 timer = () => {
 	setTimeout(IdleTimeout, 60000)
 },
@@ -50,6 +51,7 @@ let login = (e) => {
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 				maxHours = user.holidays
+				alerts = user.alerts
 				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
 				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
 				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
@@ -176,7 +178,8 @@ $(document).ready(function () {
 			data : {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
-				timezone :moment.tz.guess()
+				timezone :moment.tz.guess(),
+				alerts   : 1
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
@@ -223,11 +226,12 @@ $(document).ready(function () {
 				time     : moment().seconds(0).unix(),
 				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
-				timezone :moment.tz.guess()
+				timezone :moment.tz.guess(),
+				alerts   : 1
 			}
 		}).success((hours) => {
 			iziToast.info({
-				timeout: '10000',
+				timeout: 60000 * 60,
 				title: 'Punched Out',
 				message: `<b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b>`,
 				transitionIn: 'bounceInLeft',
@@ -259,7 +263,8 @@ $(document).ready(function () {
 			data : {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
-				timezone :moment.tz.guess()
+				timezone :moment.tz.guess(),
+				alerts   : 1
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
