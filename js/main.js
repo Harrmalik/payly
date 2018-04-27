@@ -179,7 +179,7 @@ $(document).ready(function () {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
 				timezone :moment.tz.guess(),
-				alerts   : 1
+				alerts   : alerts
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
@@ -227,7 +227,7 @@ $(document).ready(function () {
 				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
 				timezone :moment.tz.guess(),
-				alerts   : 1
+				alerts   : alerts
 			}
 		}).success((hours) => {
 			iziToast.info({
@@ -264,7 +264,7 @@ $(document).ready(function () {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
 				timezone :moment.tz.guess(),
-				alerts   : 1
+				alerts   : alerts
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
