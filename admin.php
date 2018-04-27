@@ -179,6 +179,12 @@
                         </div>
                       </div>
                       <div class="form-group">
+                        <label for="alerts" class="col-sm-2 control-label">Alerts</label>
+                        <div class="col-sm-5">
+                            <input id="alerts" type="checkbox"></input>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                           <div id="removeUser" class="btn btn-danger">Remove User</div>
                           <div id="addUser" class="btn btn-primary">Add User</div>
@@ -191,9 +197,9 @@
                   <div role="tabpanel" class="tab-pane" id="supervisors">
                       <form class="form-horizontal">
                         <div class="form-group">
-                          <label for="employeeID" class="col-sm-2 control-label">Supervisor ID</label>
+                          <label for="supervisorid" class="col-sm-2 control-label">Supervisor ID</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" id="supervisorid" placeholder="manager">
+                            <input type="text" class="form-control" id="supervisorid" placeholder="empid">
                           </div>
                         </div>
                       </form>
@@ -201,15 +207,15 @@
                       <br><br>
                       <form class="form-horizontal">
                         <div class="form-group">
-                          <label for="inputPassword3" class="col-sm-2 control-label">Name</label>
+                          <label for="sName" class="col-sm-2 control-label">Name</label>
                           <div class="col-sm-5">
                             <input type="text" class="form-control" id="sName">
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
+                          <label for="sEmail" class="col-sm-2 control-label">Email</label>
                           <div class="col-sm-5">
-                            <input type="text" class="form-control" id="sEmail" placeholder="Supervisor ID">
+                            <input type="text" class="form-control" id="sEmail" placeholder="supervisor@deltasoniccarwash.com">
                           </div>
                         </div>
                         <!-- <div class="form-group">

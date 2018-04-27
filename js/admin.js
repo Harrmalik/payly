@@ -201,7 +201,7 @@ let deleteTimeslot = (row) => {
 			title: 'Success',
 			message: `Timeslot has been deleted`,
 
-			
+
 		});
 		getTimesheet();
 	});
@@ -237,7 +237,10 @@ $('#addUser').on('click', () => {
 		employeeName: $('#uName').val(),
 		job: $('#uJob').val(),
 		supervisor: $('#uSupervisor').val().split('.')[0],
-		holidays: $('#uHoliday').val()
+		holidays: $('#uHoliday').val(),
+		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+		nights: $('#nights').is(':checked') == true ? 1 : 0,
+		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
 	}
 
 	$.ajax({
@@ -245,7 +248,10 @@ $('#addUser').on('click', () => {
 		method: 'post',
 		data
 	}).done((data) => {
-		sendAlert('info', 'User added')
+		iziToast.success({
+			title: 'Success',
+			message: `User Added`,
+		});
 	});
 })
 
@@ -259,7 +265,8 @@ $('#saveUser').on('click', () => {
 		supervisor: $('#uSupervisor').val().split('.')[0],
 		holidays: $('#uHoliday').val(),
 		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-		nights: $('#nights').is(':checked') == true ? 1 : 0
+		nights: $('#nights').is(':checked') == true ? 1 : 0,
+		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
 	}
 
 	$.ajax({
@@ -464,6 +471,7 @@ $(document).ready(function(){
 					$('#uHoliday').val(employee.holidays)
 					$('#weekends').prop('checked', employee.weekends == 1 ? true : false)
 					$('#nights').prop('checked', employee.nights == 1 ? true : false)
+					$('#alerts').prop('checked', employee.alerts == 1 ? true : false)
 				}
 			}
 		}
