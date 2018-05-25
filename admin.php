@@ -161,6 +161,15 @@
                         </div>
                       </div>
                       <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Timezone</label>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="uTimezone">
+                                <option value="America/New_York">EST</option>
+                                <option value="America/Chicago">CDT</option>
+                            </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">Holidays</label>
                         <div class="col-sm-5">
                           <input type="text" class="form-control" id="uHoliday" placeholder="How many hours">
