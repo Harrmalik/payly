@@ -5,6 +5,7 @@ let empid,
 	isManager = $('body').data('ismanager'),
 	buildTable,
 	makeTimesheet,
+	timezone,
 	timeslot;
 	$('#punchintime').datetimepicker({
 		sideBySide: true
@@ -37,6 +38,7 @@ let getTimesheet = (userid) => {
 			// TODO: show application
 			$('#username').html(user.empname);
 			empSite = user.site
+			timezone = user.timezone
 			buildTable();
 			makeTimesheet();
 		} else {
@@ -79,6 +81,7 @@ let addTimeslot = () => {
 			userid: empid,
 			punchintime: moment($('#punchintime').data("DateTimePicker").date()).utc().unix(),
 			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix(),
+			timezone,
 			empSite,
 			type: $('#type').val(),
 			action: 'addTimeslot',
@@ -147,14 +150,17 @@ let saveChange = () => {
 }
 
 let addLunchslot = (row) => {
-	let timeslot = $(row).data();
+	let timeslot = $(row).data(),
+		breakHour = timezone == 'America/New_York' ? 12 : 13;
+
 	$.ajax({
 		url: `./php/main.php`,
 		method: 'post',
 		data: {
 			userid: empid,
 			punchintime: moment.unix(timeslot.out).hour(13).minutes(0).unix(),
-			punchouttime: timeslot.out,
+			punchouttime: moment.unix(timeslot.out).subtract(timezone == 'America/New_York' ? 0 : 1, 'hours').unix(),
+			timezone,
 			empSite,
 			type: 0,
 			action: 'addTimeslot',
@@ -169,7 +175,7 @@ let addLunchslot = (row) => {
 				oldin: timeslot.in,
 				punchintime: timeslot.in,
 				oldout: timeslot.out,
-				punchouttime: moment.unix(timeslot.out).hour(12).minutes(30).unix(),
+				punchouttime: moment.unix(timeslot.out).hour(breakHour).minutes(30).unix(),
 				timenow: moment().unix(),
 				action: 'editTimeslot',
 				module: 'admin'
@@ -237,6 +243,7 @@ $('#addUser').on('click', () => {
 		employeeName: $('#uName').val(),
 		job: $('#uJob').val(),
 		supervisor: $('#uSupervisor').val().split('.')[0],
+		timezone: $('#uTimezone').val(),
 		holidays: $('#uHoliday').val(),
 		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
 		nights: $('#nights').is(':checked') == true ? 1 : 0,
@@ -263,6 +270,7 @@ $('#saveUser').on('click', () => {
 		employeeName: $('#uName').val(),
 		job: $('#uJob').val(),
 		supervisor: $('#uSupervisor').val().split('.')[0],
+		timezone: $('#uTimezone').val(),
 		holidays: $('#uHoliday').val(),
 		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
 		nights: $('#nights').is(':checked') == true ? 1 : 0,
@@ -468,6 +476,7 @@ $(document).ready(function(){
 					$('#uName').val(employee.employeename)
 					$('#uJob').val(employee.job)
 					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
+					$('#uTimezone').val(employee.timezone),
 					$('#uHoliday').val(employee.holidays)
 					$('#weekends').prop('checked', employee.weekends == 1 ? true : false)
 					$('#nights').prop('checked', employee.nights == 1 ? true : false)
