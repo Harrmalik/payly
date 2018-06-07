@@ -87,6 +87,8 @@
                                             <option value="0">Regular</option>
                                             <option value="3">Floating</option>
                                             <option value="4">Holiday</option>
+                                            <option value="5">Jury Duty</option>
+                                            <option value="6">Bereavement</option>
                                           </select>
                                     </div>
                                     <div class="form-group">
@@ -196,8 +198,7 @@
                       <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                           <div id="removeUser" class="btn btn-danger">Remove User</div>
-                          <div id="addUser" class="btn btn-primary">Add User</div>
-                          <div id="saveUser" class="btn btn-success">Save Changes</div>
+                          <div id="saveUser" class="btn btn-primary">Save Changes</div>
                         </div>
                       </div>
                     </form>
@@ -237,7 +238,6 @@
                         <div class="form-group">
                           <div class="col-sm-offset-2 col-sm-10">
                             <div id="removeSupervisor" class="btn btn-danger">Remove Supervisor</div>
-                            <div id="addSupervisor" class="btn btn-primary">Add Supervisor</div>
                             <div id="saveSupervisor" class="btn btn-success">Save Changes</div>
                           </div>
                         </div>
