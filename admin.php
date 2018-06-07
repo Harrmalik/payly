@@ -3,7 +3,7 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (!USER::inGroup(74)) {
+    if (USER::inGroup(74)) {
             $isManager = 'false';
     } else {
             $isManager = 'true';
