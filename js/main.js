@@ -5,6 +5,7 @@ logoutUrl = './',
 userData = $('title').data(),
 ipaddress = '',
 alerts,
+timezone,
 timer = () => {
 	setTimeout(IdleTimeout, 60000)
 },
@@ -52,6 +53,7 @@ let login = (e) => {
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 				maxHours = user.holidays
 				alerts = user.alerts
+				timezone = user.timezone
 				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
 				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
 				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
@@ -178,7 +180,7 @@ $(document).ready(function () {
 			data : {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
-				timezone :moment.tz.guess(),
+				timezone : timezone,
 				alerts   : alerts
 			}
 		}).success((checkin) => {
@@ -226,7 +228,7 @@ $(document).ready(function () {
 				time     : moment().seconds(0).unix(),
 				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
-				timezone :moment.tz.guess(),
+				timezone : timezone,
 				alerts   : alerts
 			}
 		}).success((hours) => {
@@ -263,7 +265,7 @@ $(document).ready(function () {
 			data : {
 				time     : moment().seconds(0).unix(),
 				empid    : empid,
-				timezone :moment.tz.guess(),
+				timezone : timezone,
 				alerts   : alerts
 			}
 		}).success((checkin) => {

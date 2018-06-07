@@ -3,7 +3,7 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (USER::inGroup(74)) {
+    if (!USER::inGroup(74)) {
             $isManager = 'false';
     } else {
             $isManager = 'true';
@@ -87,6 +87,8 @@
                                             <option value="0">Regular</option>
                                             <option value="3">Floating</option>
                                             <option value="4">Holiday</option>
+                                            <option value="5">Jury Duty</option>
+                                            <option value="6">Bereavement</option>
                                           </select>
                                     </div>
                                     <div class="form-group">
