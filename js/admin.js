@@ -235,60 +235,60 @@ $('#removeUser').on('click', () => {
 	});
 })
 
-$('#addUser').on('click', () => {
-	let data = {
-		module: 'admin',
-		action: 'addUser',
-		employeeID: $('#employeeid').val().split('.')[0],
-		employeeName: $('#uName').val(),
-		job: $('#uJob').val(),
-		supervisor: $('#uSupervisor').val().split('.')[0],
-		timezone: $('#uTimezone').val(),
-		holidays: $('#uHoliday').val(),
-		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-		nights: $('#nights').is(':checked') == true ? 1 : 0,
-		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
-	}
-
-	$.ajax({
-		url: `./php/main.php`,
-		method: 'post',
-		data
-	}).done((data) => {
-		iziToast.success({
-			title: 'Success',
-			message: `User Added`,
-		});
-	});
-})
-
 $('#saveUser').on('click', () => {
-	let data = {
-		module: 'admin',
-		action: 'saveUser',
-		employeeID: $('#employeeid').val().split('.')[0],
-		employeeName: $('#uName').val(),
-		job: $('#uJob').val(),
-		supervisor: $('#uSupervisor').val().split('.')[0],
-		timezone: $('#uTimezone').val(),
-		holidays: $('#uHoliday').val(),
-		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-		nights: $('#nights').is(':checked') == true ? 1 : 0,
-		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
-	}
+	if (!$('#employeeid').val().split('.')[1]) {
+		let data = {
+			module: 'admin',
+			action: 'addUser',
+			employeeID: $('#employeeid').val().split('.')[0],
+			employeeName: $('#uName').val(),
+			job: $('#uJob').val(),
+			supervisor: $('#uSupervisor').val().split('.')[0],
+			timezone: $('#uTimezone').val(),
+			holidays: $('#uHoliday').val(),
+			weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+			nights: $('#nights').is(':checked') == true ? 1 : 0,
+			alerts: $('#alerts').is(':checked') == true ? 1 : 0,
+		}
 
-	$.ajax({
-		url: `./php/main.php`,
-		method: 'post',
-		data
-	}).done((data) => {
-		iziToast.success({
-			title: 'Success',
-			message: `User saved`,
-
-
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `User Added`,
+			});
 		});
-	});
+	} else {
+		let data = {
+			module: 'admin',
+			action: 'saveUser',
+			employeeID: $('#employeeid').val().split('.')[0],
+			employeeName: $('#uName').val(),
+			job: $('#uJob').val(),
+			supervisor: $('#uSupervisor').val().split('.')[0],
+			timezone: $('#uTimezone').val(),
+			holidays: $('#uHoliday').val(),
+			weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+			nights: $('#nights').is(':checked') == true ? 1 : 0,
+			alerts: $('#alerts').is(':checked') == true ? 1 : 0,
+		}
+
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `User saved`,
+
+
+			});
+		});
+	}
 })
 
 // Edit Supervisors Tab
@@ -313,50 +313,50 @@ $('#removeSupervisor').on('click', () => {
 	});
 })
 
-$('#addSupervisor').on('click', () => {
-	let data = {
-		module: 'admin',
-		action: 'addSupervisor',
-		employeeID: $('#supervisorid').val().split('.')[0],
-		name: $('#sName').val(),
-		email: $('#sEmail').val(),
-	}
-
-	$.ajax({
-		url: `./php/main.php`,
-		method: 'post',
-		data
-	}).done((data) => {
-		iziToast.success({
-			title: 'Success',
-			message: `Supervisor added.`,
-
-
-		});
-	});
-})
-
 $('#saveSupervisor').on('click', () => {
-	let data = {
-		module: 'admin',
-		action: 'saveSupervisor',
-		employeeID: $('#supervisorid').val().split('.')[0],
-		name: $('#sName').val(),
-		email: $('#sEmail').val(),
-	}
+	if (!$('#supervisorid').val().split('.')[1]) {
+		let data = {
+			module: 'admin',
+			action: 'addSupervisor',
+			employeeID: $('#supervisorid').val().split('.')[0],
+			name: $('#sName').val(),
+			email: $('#sEmail').val(),
+		}
 
-	$.ajax({
-		url: `./php/main.php`,
-		method: 'post',
-		data
-	}).done((data) => {
-		iziToast.success({
-			title: 'Success',
-			message: `Supervisor saved`,
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `Supervisor added.`,
 
 
+			});
 		});
-	});
+	} else {
+		let data = {
+			module: 'admin',
+			action: 'saveSupervisor',
+			employeeID: $('#supervisorid').val().split('.')[0],
+			name: $('#sName').val(),
+			email: $('#sEmail').val(),
+		}
+
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `Supervisor saved`,
+
+
+			});
+		});
+	}
 })
 
 function back() {
