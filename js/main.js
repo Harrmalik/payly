@@ -6,17 +6,25 @@ userData = $('title').data(),
 ipaddress = '',
 alerts,
 timezone,
+deltasonic,
+autologout,
 timer = () => {
-	setTimeout(IdleTimeout, 60000)
+	autologout = setTimeout(IdleTimeout, 60000)
 },
 removeTimer = () => {
-	clearTimeout(timeout)
+	clearTimeout(autologout)
 };
 
 if (!ga) {
 	var ga = function (arg1, arg2, category = '', action = '', label = '') {
 		console.log(`${arg2} - category: ${category}, action: ${action}, label: ${label}`);
 	}
+}
+
+// Only show timer if screen is wide enough
+if ($(window).width() > 1300) {
+	$('#clockdate').show()
+	startTime()
 }
 
 function update(input) {
@@ -47,6 +55,8 @@ let login = (e) => {
 			if (empid && user.empname) {
 				getInitialState();
 				$('#auth').hide();
+				$('#nav').show();
+				$('#appname').text(user.deltasonic ? 'Kiss Klock' : 'Benderson Timeclock')
 				$('#app').show();
 				$('#name').html(`Signed in as ${user.empname} <i class="glyphicon glyphicon-user"></i>`);
 				ga('send', 'event', 'Login', empid)
@@ -54,34 +64,27 @@ let login = (e) => {
 				maxHours = user.holidays
 				alerts = user.alerts
 				timezone = user.timezone
+				deltasonic = user.deltasonic
 				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
 				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
 				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
 				var todaysDate = moment().format('MMDD')
 
-				// If local machine stop the page logout
-				if (localStorage) {
-					if (!localStorage.getItem('empid')) {
-						timer()
-						$('#setuser').show()
-					}
-				}
+
 
 				// If public machine prevent users from setting as local maching
 				if (ipaddress == '172.30.49.156') {
 					$('#setuser').hide()
 				} else {
-					function refresh() {
-						getInitialState()
+					getInitialState()
+
+					// If local machine stop the page logout
+					if (localStorage) {
+						if (!localStorage.getItem('empid')) {
+							timer()
+							$('#setuser').show()
+						}
 					}
-
-					setInterval(refresh, 60000);
-				}
-
-				// Only show timer if screen is wide enough
-				if ($(window).width() > 1300) {
-					$('#clockdate').show()
-					startTime()
 				}
 
 				// Show benderson punch in for dev and benderson user
@@ -287,6 +290,7 @@ $(document).ready(function () {
 	$timesheetBtn.on("click", () => {
 		$('#app').hide()
 		$('#timesheetPage').show()
+		$('#clockdate').hide()
 		// Javascript letiables
 		let startDate,
 		endDate,
@@ -550,6 +554,46 @@ $(document).ready(function () {
 		counter++;
 		if (checkOut) {
 			hoursSum = calculateHours(checkInTime, checkOutTime);
+			if (deltasonic == 0 && totalTime > 40) {
+				removeTimer()
+				swal({
+					title: 'Reason for overtime',
+					input: 'textarea',
+					inputAttributes: {
+					  autocapitalize: 'off'
+					},
+					confirmButtonText: 'Submit',
+					showLoaderOnConfirm: true,
+					preConfirm: (reason) => {
+						$.ajax({
+							url : `./php/main.php?module=kissklock&action=overtimeReason`,
+							method : 'POST',
+							data : {
+								weekending : moment().weekday(6).unix(),
+								empid      : empid,
+								reason     : reason
+							}
+						}).success((checkin) => {
+							ga('send', 'event', 'OvertimeReason', empid, 'Successful')
+							iziToast.success({
+								title: 'Success',
+								message: 'Overtime reason has been successfully saved.',
+								transitionIn: 'bounceInLeft',
+								transitionOut: 'flipOutX'
+							});
+						}).fail((result) => {
+							iziToast.error({
+								title: 'Error',
+								message: 'Could not save overtime reason at this time. Please try again.',
+								transitionIn: 'bounceInLeft',
+								transitionOut: 'flipOutX'
+							});
+							ga('send', 'event', 'OvertimeReason', empid, 'Unsuccessful')
+						});
+					},
+					allowOutsideClick: false
+				});
+			}
 			populateElement(totalTime.toFixed(2), $totalHours);
 			populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
 			$(`#${checkInIds[checkInIds.length - 1]}timeout`).html(checkOutTime.format('h:mm a'));
@@ -591,7 +635,7 @@ $(document).ready(function () {
 function startTime() {
 	var today = moment();
 	$('#clock').html(today.format('hh:mm:ss') + `<span>${today.format('A')}</span>`)
-	$('#date').text(today.format('Do, dddd MMMM YYYY'))
+	$('#date').text(today.format('dddd, MMMM Do'))
 	var time = setTimeout(function () {
 			startTime()
 		}, 500);

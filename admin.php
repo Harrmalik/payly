@@ -3,7 +3,7 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (USER::inGroup(74)) {
+    if (!USER::inGroup(74)) {
             $isManager = 'false';
     } else {
             $isManager = 'true';
@@ -145,26 +145,35 @@
                     <br><br>
                     <form class="form-horizontal">
                       <div class="form-group">
-                        <label for="inputPassword3" class="col-sm-2 control-label">Employee Name</label>
-                        <div class="col-sm-5">
+                        <label for="uName" class="col-sm-2 control-label">Employee Name</label>
+                        <div class="col-sm-4">
                           <input type="text" class="form-control" id="uName">
                         </div>
                       </div>
                       <div class="form-group">
+                        <label for="uDeltasonic" class="col-sm-2 control-label">Company</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" id="uDeltasonic">
+                                <option value="1">Deltasonic</option>
+                                <option value="0">Benderson</option>
+                            </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">Job Description</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                           <input type="text" class="form-control" id="uJob">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                           <input type="text" class="form-control" id="uSupervisor" placeholder="Supervisor ID">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">Timezone</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                             <select class="form-control" id="uTimezone">
                                 <option value="America/New_York">EST</option>
                                 <option value="America/Chicago">CDT</option>
@@ -173,25 +182,25 @@
                       </div>
                       <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">Holidays</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                           <input type="text" class="form-control" id="uHoliday" placeholder="How many hours">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="weekends" class="col-sm-2 control-label">Weekends</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                             <input id="weekends" type="checkbox"></input>
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="nights" class="col-sm-2 control-label">Nights</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                             <input id="nights" type="checkbox"></input>
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="alerts" class="col-sm-2 control-label">Alerts</label>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                             <input id="alerts" type="checkbox"></input>
                         </div>
                       </div>
@@ -218,19 +227,19 @@
                       <form class="form-horizontal">
                         <div class="form-group">
                           <label for="sName" class="col-sm-2 control-label">Name</label>
-                          <div class="col-sm-5">
+                          <div class="col-sm-4">
                             <input type="text" class="form-control" id="sName">
                           </div>
                         </div>
                         <div class="form-group">
                           <label for="sEmail" class="col-sm-2 control-label">Email</label>
-                          <div class="col-sm-5">
+                          <div class="col-sm-4">
                             <input type="text" class="form-control" id="sEmail" placeholder="supervisor@deltasoniccarwash.com">
                           </div>
                         </div>
                         <!-- <div class="form-group">
                           <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
-                          <div class="col-sm-5">
+                          <div class="col-sm-4">
                             <select id="supervisorEmployees" data-placeholder="Add Employees" multiple class="form-control chosen-select">
                             </select>
                           </div>
