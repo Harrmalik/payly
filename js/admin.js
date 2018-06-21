@@ -236,20 +236,22 @@ $('#removeUser').on('click', () => {
 })
 
 $('#saveUser').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'saveUser',
+		employeeID: $('#employeeid').val().split('.')[0],
+		employeeName: $('#uName').val(),
+		deltasonic: $('#uDeltasonic').val(),
+		job: $('#uJob').val(),
+		supervisor: $('#uSupervisor').val().split('.')[0],
+		timezone: $('#uTimezone').val(),
+		holidays: $('#uHoliday').val(),
+		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+		nights: $('#nights').is(':checked') == true ? 1 : 0,
+		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
+	}
 	if (!$('#employeeid').val().split('.')[1]) {
-		let data = {
-			module: 'admin',
-			action: 'addUser',
-			employeeID: $('#employeeid').val().split('.')[0],
-			employeeName: $('#uName').val(),
-			job: $('#uJob').val(),
-			supervisor: $('#uSupervisor').val().split('.')[0],
-			timezone: $('#uTimezone').val(),
-			holidays: $('#uHoliday').val(),
-			weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-			nights: $('#nights').is(':checked') == true ? 1 : 0,
-			alerts: $('#alerts').is(':checked') == true ? 1 : 0,
-		}
+		data['action'] = 'addUser';
 
 		$.ajax({
 			url: `./php/main.php`,
@@ -262,19 +264,7 @@ $('#saveUser').on('click', () => {
 			});
 		});
 	} else {
-		let data = {
-			module: 'admin',
-			action: 'saveUser',
-			employeeID: $('#employeeid').val().split('.')[0],
-			employeeName: $('#uName').val(),
-			job: $('#uJob').val(),
-			supervisor: $('#uSupervisor').val().split('.')[0],
-			timezone: $('#uTimezone').val(),
-			holidays: $('#uHoliday').val(),
-			weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-			nights: $('#nights').is(':checked') == true ? 1 : 0,
-			alerts: $('#alerts').is(':checked') == true ? 1 : 0,
-		}
+		data['action'] = 'saveUser';
 
 		$.ajax({
 			url: `./php/main.php`,
@@ -314,14 +304,16 @@ $('#removeSupervisor').on('click', () => {
 })
 
 $('#saveSupervisor').on('click', () => {
+	let data = {
+		module: 'admin',
+		action: 'addSupervisor',
+		employeeID: $('#supervisorid').val().split('.')[0],
+		name: $('#sName').val(),
+		email: $('#sEmail').val(),
+	}
+
 	if (!$('#supervisorid').val().split('.')[1]) {
-		let data = {
-			module: 'admin',
-			action: 'addSupervisor',
-			employeeID: $('#supervisorid').val().split('.')[0],
-			name: $('#sName').val(),
-			email: $('#sEmail').val(),
-		}
+		data['action'] = 'addSupervisor';
 
 		$.ajax({
 			url: `./php/main.php`,
@@ -331,18 +323,10 @@ $('#saveSupervisor').on('click', () => {
 			iziToast.success({
 				title: 'Success',
 				message: `Supervisor added.`,
-
-
 			});
 		});
 	} else {
-		let data = {
-			module: 'admin',
-			action: 'saveSupervisor',
-			employeeID: $('#supervisorid').val().split('.')[0],
-			name: $('#sName').val(),
-			email: $('#sEmail').val(),
-		}
+		data['action'] = 'saveSupervisor';
 
 		$.ajax({
 			url: `./php/main.php`,
@@ -352,8 +336,6 @@ $('#saveSupervisor').on('click', () => {
 			iziToast.success({
 				title: 'Success',
 				message: `Supervisor saved`,
-
-
 			});
 		});
 	}
@@ -474,6 +456,7 @@ $(document).ready(function(){
 					let employee = $("#employeeid").getSelectedItemData()
 					$('#uEmployeeid').val(employee.employeeid)
 					$('#uName').val(employee.employeename)
+					$('#uDeltasonic').val(employee.deltasonic)
 					$('#uJob').val(employee.job)
 					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
 					$('#uTimezone').val(employee.timezone),

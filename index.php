@@ -1,16 +1,15 @@
 <?php include_once './layouts/header.php' ?>
-    <!-- <meta http-equiv="refresh" content="300" /> -->
         <script type="text/babel" src="./js/main.js"></script>
 </head>
 
 <body>
     <img style="position:absolute; width:300px; top: 10em; left: 5em"/>
-    <div class="panel panel-primary container">
+    <div class="panel panel-primary container" style="box-shadow: none;">
         <div class="panel-heading" style="display:none">
             <p class="text-center"><img src="<?php echo $assets; ?>../images/delta_logo.png" width="150px" /></p>
         </div>
 
-        <nav class="navbar navbar-inverse">
+        <nav class="navbar navbar-inverse" id="nav" style="display:none">
           <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -20,7 +19,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="./">Kiss Klock</a>
+              <a class="navbar-brand" href="./" id="appname">Kiss Klock</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -39,6 +38,32 @@
         <div class="panel-body">
 
         <div id="message"></div>
+        <div id="clockdate">
+          <div class="clockdate-wrapper">
+            <div id="clock"></div>
+            <div id="date"></div>
+          </div>
+        </div>
+
+        <div id="warning" class="modal fade" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+              </div>
+              <div class="modal-body">
+                <p>If this is your local computer, clicking "Accept" will keep your session logged in forever</p>
+                <p class="red">Please do not click "Accept" if this is a public machine</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" style="width:auto;height:100%;">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="setUser()" style="width:auto;height:100%;">Accept</button>
+              </div>
+          </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
         <section id="auth" style="display:none">
             <form class="form-horizontal" onsubmit="return login()">
               <div class="form-group">
@@ -90,32 +115,6 @@
         </section>
 
         <section id="app">
-            <div id="clockdate" style="display:none">
-              <div class="clockdate-wrapper">
-                <div id="clock"></div>
-                <div id="date"></div>
-              </div>
-            </div>
-
-            <div id="warning" class="modal fade" tabindex="-1" role="dialog">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Modal title</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>If this is your local computer, clicking "Accept" will keep your session logged in forever</p>
-                    <p class="red">Please do not click "Accept" if this is a public machine</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" style="width:auto;height:100%;">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="setUser()" style="width:auto;height:100%;">Accept</button>
-                  </div>
-              </div><!-- /.modal-content -->
-              </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
-
             <section class="mainBtns">
                 <button type="button" class="btn btn-primary btn-lg" id="checkIn">Punch In</button>
                 <button type="button" class="btn btn-primary btn-lg" id="checkOut">
