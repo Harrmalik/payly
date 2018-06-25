@@ -242,6 +242,7 @@ $('#saveUser').on('click', () => {
 		employeeID: $('#employeeid').val().split('.')[0],
 		employeeName: $('#uName').val(),
 		deltasonic: $('#uDeltasonic').val(),
+		companyCode: $('#uCode').val(),
 		job: $('#uJob').val(),
 		supervisor: $('#uSupervisor').val().split('.')[0],
 		timezone: $('#uTimezone').val(),
@@ -457,6 +458,7 @@ $(document).ready(function(){
 					$('#uEmployeeid').val(employee.employeeid)
 					$('#uName').val(employee.employeename)
 					$('#uDeltasonic').val(employee.deltasonic)
+					$('#uCode').val(employee.companycode)
 					$('#uJob').val(employee.job)
 					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
 					$('#uTimezone').val(employee.timezone),

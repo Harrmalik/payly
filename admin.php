@@ -3,7 +3,7 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (!USER::inGroup(74)) {
+    if (USER::inGroup(74)) {
             $isManager = 'false';
     } else {
             $isManager = 'true';
@@ -156,6 +156,16 @@
                             <select class="form-control" id="uDeltasonic">
                                 <option value="1">Deltasonic</option>
                                 <option value="0">Benderson</option>
+                            </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="uCode" class="col-sm-2 control-label">Company Code</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" id="uCode">
+                                <option value="DSCW">DSCW</option>
+                                <option value="BDLLC">BDLLC</option>
+                                <option value="BROCH">BROCH</option>
                             </select>
                         </div>
                       </div>
