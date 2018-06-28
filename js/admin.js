@@ -725,30 +725,26 @@ $(document).ready(function(){
 	});
 
 	let getInitialState = () => {
+		$('#loader').addClass('loader')
 		$.ajax({
-			url: `./php/main.php?module=getManager`
-		}).done((result) => {
-			$('#loader').addClass('loader')
-			$.ajax({
-				url: `./php/main.php?module=admin&action=getMyEmployees&empid=${result[0].employeeid}`
-			}).done((employees) => {
-				$('#loader').hide()
-				if (employees.length > 0) {
-					employees.forEach((employee) => {
-						$('#list').append(`
-							<tr>
-								<td>${employee.name}</td>
-								<td>${employee.thisWeekHours}</td>
-								<td>${employee.lastWeekHours}</td>
-								<td><a class="btn btn-default" onclick="getTimesheet(${employee.id})">View Timesheet</a></td>
-							</tr>
-						`)
-					});
-				} else {
-					$('#employees').html('You are in charge of no employees');
-				}
-			})
-	    });
+			url: `./php/main.php?module=admin&action=getMyEmployees`
+		}).done((employees) => {
+			$('#loader').hide()
+			if (employees.length > 0) {
+				employees.forEach((employee) => {
+					$('#list').append(`
+						<tr>
+							<td>${employee.name}</td>
+							<td>${employee.thisWeekHours}</td>
+							<td>${employee.lastWeekHours}</td>
+							<td><a class="btn btn-default" onclick="getTimesheet(${employee.id})">View Timesheet</a></td>
+						</tr>
+					`)
+				});
+			} else {
+				$('#employees').html('You are in charge of no employees');
+			}
+		})
 	};
 
 	if (isManager)
