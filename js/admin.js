@@ -471,7 +471,6 @@ $(document).ready(function(){
 			}
 		}
 
-		console.log(allUsers.length);
 		allUsers.forEach((user) => {
 			$('#supervisorEmployees').append(`
 				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
@@ -482,8 +481,6 @@ $(document).ready(function(){
 		$('.easy-autocomplete-container').css('z-index', 3)
 		setTimeout(function(){
 			$("#supervisorEmployees").chosen().change((data, change) => {
-				console.log(data);
-				console.log(change);
 				if ($('#supervisorid').val().split('.')[0]) {
 					if (change.selected) {
 						// Change supervisor to me
@@ -499,12 +496,10 @@ $(document).ready(function(){
 							module: 'admin',
 							action: 'addEmployeeToSupervisor',
 							employeeID: change.deselected,
-							supervisor: ""
+							supervisor: null
 						}
 					}
 
-
-					console.log(data);
 					$.ajax({
 						url: `./php/main.php`,
 						method: 'post',
@@ -513,8 +508,6 @@ $(document).ready(function(){
 						iziToast.success({
 							title: 'Success',
 							message: `User supervisor changed.`,
-
-
 						});
 					});
 				}
