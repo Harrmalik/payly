@@ -3,7 +3,7 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (USER::inGroup(74)) {
+    if (!USER::inGroup(74)) {
             $isManager = 'false';
     } else {
             $isManager = 'true';
@@ -247,13 +247,13 @@
                             <input type="text" class="form-control" id="sEmail" placeholder="supervisor@deltasoniccarwash.com">
                           </div>
                         </div>
-                        <!-- <div class="form-group">
-                          <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
-                          <div class="col-sm-4">
-                            <select id="supervisorEmployees" data-placeholder="Add Employees" multiple class="form-control chosen-select">
+                        <div class="form-group">
+                          <label for="supervisorEmployees" class="col-sm-2 control-label">Supervisor</label>
+                          <div class="col-sm-8">
+                            <select id="supervisorEmployees" data-placeholder="Add Employees" multiple class="form-control chosen-select" style="width:100%">
                             </select>
                           </div>
-                        </div> -->
+                        </div>
                         <div class="form-group">
                           <div class="col-sm-offset-2 col-sm-10">
                             <div id="removeSupervisor" class="btn btn-danger">Remove Supervisor</div>
