@@ -6,7 +6,8 @@ let empid,
 	buildTable,
 	makeTimesheet,
 	timezone,
-	timeslot;
+	timeslot,
+	allUsers;
 	$('#punchintime').datetimepicker({
 		sideBySide: true
 	});
@@ -396,48 +397,10 @@ $(document).ready(function(){
 			}
 		}
 
-		users.forEach((user) => {
-			$('#supervisorEmployees').append(`
-				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
-			`)
-		});
+		allUsers = users
 
 		$("#employeeID").easyAutocomplete(options)
 		$('.easy-autocomplete-container').css('z-index', 3)
-		$("#supervisorEmployees").chosen().change((data, change) => {
-			if ($('#supervisorid').val().split('.')[0]) {
-				if (change.selected) {
-					// Change supervisor to me
-					data = {
-						module: 'admin',
-						action: 'addEmployeeToSupervisor',
-						employeeID: change.selected,
-						supervisor: $('#supervisorid').val().split('.')[0]
-					}
-				} else {
-					// Remove me as supervisor
-					data = {
-						module: 'admin',
-						action: 'addEmployeeToSupervisor',
-						employeeID: change.deselected,
-						supervisor: ""
-					}
-				}
-
-				$.ajax({
-					url: `./php/main.php`,
-					method: 'post',
-					data
-				}).done((data) => {
-					iziToast.success({
-						title: 'Success',
-						message: `User supervisor changed.`,
-
-
-					});
-				});
-			}
-		})
 	})
 
 	$.ajax({
@@ -495,6 +458,7 @@ $(document).ready(function(){
 					$.ajax({
 						url: `./php/main.php?module=admin&action=getMyEmployees&empid=${supervisor.employeeid}`
 					}).done((employees) => {
+						console.log(employees);
 						$("#supervisorEmployees").val(employees.map(employee => {
 							return employee.id
 						}))
@@ -502,13 +466,54 @@ $(document).ready(function(){
 						$("#supervisorEmployees").trigger("chosen:updated");
 					})
 
+
 				}
 			}
 		}
 
+		allUsers.forEach((user) => {
+			$('#supervisorEmployees').append(`
+				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
+			`)
+		});
 		$("#supervisorid").easyAutocomplete(options)
 		$("#uSupervisor").easyAutocomplete(options)
 		$('.easy-autocomplete-container').css('z-index', 3)
+		setTimeout(function(){
+			$("#supervisorEmployees").chosen().change((data, change) => {
+				if ($('#supervisorid').val().split('.')[0]) {
+					if (change.selected) {
+						// Change supervisor to me
+						data = {
+							module: 'admin',
+							action: 'addEmployeeToSupervisor',
+							employeeID: change.selected,
+							supervisor: $('#supervisorid').val().split('.')[0]
+						}
+					} else {
+						// Remove me as supervisor
+						data = {
+							module: 'admin',
+							action: 'addEmployeeToSupervisor',
+							employeeID: change.deselected,
+							supervisor: null
+						}
+					}
+
+					$.ajax({
+						url: `./php/main.php`,
+						method: 'post',
+						data
+					}).done((data) => {
+						iziToast.success({
+							title: 'Success',
+							message: `User supervisor changed.`,
+						});
+					});
+				}
+			})
+		}, 3000);
+
 	})
 
     // Functions

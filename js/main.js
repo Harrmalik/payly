@@ -22,7 +22,7 @@ if (!ga) {
 }
 
 // Only show timer if screen is wide enough
-if ($(window).width() > 1300) {
+if ($(window).width() >= 1000) {
 	$('#clockdate').show()
 	startTime()
 }
@@ -223,11 +223,14 @@ $(document).ready(function () {
 				alerts   : alerts
 			}
 		}).success((hours) => {
-			iziToast.info({
-				timeout: 60000 * 60,
-				title: 'Punched Out',
-				message: `<b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b>`
-			});
+			if (deltasonic == 1) {
+				iziToast.info({
+					timeout: 60000 * 60,
+					title: 'Punched Out',
+					message: `<b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b>`
+				});
+			}
+
 			checkOutTime = moment();
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
