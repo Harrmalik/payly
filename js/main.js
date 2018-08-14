@@ -1,5 +1,6 @@
 let empid,
 maxHours = 0,
+currentHours,
 getInitialState,
 logoutUrl = './',
 userData = $('title').data(),
@@ -62,6 +63,7 @@ let login = (e) => {
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 				maxHours = user.holidays
+				currentHours = user.currentHours
 				alerts = user.alerts
 				timezone = user.timezone
 				deltasonic = user.deltasonic
@@ -537,7 +539,7 @@ $(document).ready(function () {
 		counter++;
 		if (checkOut) {
 			hoursSum = calculateHours(checkInTime, checkOutTime);
-			if (deltasonic == 0 && totalTime > 40) {
+			if (deltasonic == 0 && (currentHours + hoursSum > 40)) {
 				removeTimer()
 				swal({
 					title: 'Reason for overtime',
