@@ -170,6 +170,7 @@ $(document).ready(function () {
 		ga('send', 'event', 'CheckIn', empid, 'Attempted')
 		$('#checkIn').attr('disabled', true)
 		$('#checkIn').text('Punching in...')
+		checkInTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
 		iziToast.show({
 			title: 'Loading',
 			message: `Checking in now`
@@ -179,14 +180,13 @@ $(document).ready(function () {
 			url : `./php/main.php?module=kissklock&action=checkIn`,
 			method : 'POST',
 			data : {
-				time     : moment().seconds(0).unix(),
+				time     : checkInTime.unix(),
 				empid    : empid,
 				timezone : timezone,
 				alerts   : alerts
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
-			checkInTime = moment();
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
 			iziToast.success({
@@ -205,6 +205,7 @@ $(document).ready(function () {
 
 	$checkOutBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
+		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
 		iziToast.show({
 			title: 'Loading',
 			message: `Checking out now`
@@ -218,7 +219,7 @@ $(document).ready(function () {
 			url : `./php/main.php?module=kissklock&action=checkOut`,
 			method : 'POST',
 			data : {
-				time     : moment().seconds(0).unix(),
+				time     : checkOutTime.unix(),
 				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
 				timezone : timezone,
@@ -229,11 +230,9 @@ $(document).ready(function () {
 				iziToast.info({
 					timeout: 60000 * 60,
 					title: 'Punched Out',
-					message: `<b>30 Minutes</b> from now would be - <b>${moment().add(30,'minutes').format('h:mm a')}</b>`
+					message: `<b>30 Minutes</b> from now would be - <b>${moment.unix(checkOutTime.unix()).add(30,'minutes').format('h:mm a')}</b>`
 				});
 			}
-
-			checkOutTime = moment();
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
 		}).fail((result) => {
