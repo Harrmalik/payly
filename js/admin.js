@@ -20,7 +20,9 @@ let empid,
 		daysOfWeekDisabled: [0,1,2,3,4,6]
 	});
 
-userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
+if (window.navigator.userAgent.indexOf("MSIE ") > 0 ) {
+	userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
+}
 
 
 // Edit Timesheets tab
