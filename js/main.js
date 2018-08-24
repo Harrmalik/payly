@@ -1,6 +1,7 @@
 let empid,
 maxHours = 0,
 currentHours,
+hasOvertime,
 getInitialState,
 logoutUrl = './',
 userData = $('title').data(),
@@ -65,8 +66,9 @@ let login = (e) => {
 				maxHours = user.holidays
 				currentHours = user.currentHours
 				alerts = user.alerts
-				timezone = user.timezone
+				timezone = user.timezone ? user.timezone : moment.tz.guess()
 				deltasonic = user.deltasonic
+				hasOvertime = user.hasOvertime
 				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
 				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
 				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
@@ -538,7 +540,7 @@ $(document).ready(function () {
 		counter++;
 		if (checkOut) {
 			hoursSum = calculateHours(checkInTime, checkOutTime);
-			if (deltasonic == 0 && (currentHours + hoursSum > 40)) {
+			if (deltasonic == 0 && (currentHours + hoursSum > 40) && !hasOvertime) {
 				removeTimer()
 				swal({
 					title: 'Reason for overtime',
@@ -553,7 +555,7 @@ $(document).ready(function () {
 							url : `./php/main.php?module=kissklock&action=overtimeReason`,
 							method : 'POST',
 							data : {
-								weekending : moment().weekday(6).unix(),
+								weekending : moment().weekday(7).unix(),
 								empid      : empid,
 								reason     : reason
 							}
