@@ -6,6 +6,7 @@ let empid,
 	buildTable,
 	makeTimesheet,
 	timezone,
+	deltasonic,
 	timeslot,
 	allUsers;
 	$('#punchintime').datetimepicker({
@@ -17,7 +18,7 @@ let empid,
 	$('#end').datetimepicker({
 		defaultDate: moment().weekday(5),
 		format: 'MMMM Do',
-		daysOfWeekDisabled: [0,1,2,3,4,6]
+		daysOfWeekDisabled: [1,2,3,4,6]
 	});
 
 if (window.navigator.userAgent.indexOf("MSIE ") > 0 ) {
@@ -41,7 +42,8 @@ let getTimesheet = (userid) => {
 			// TODO: show application
 			$('#username').html(user.empname);
 			empSite = user.site
-			timezone = user.timezone
+			timezone = user.timezone,
+			deltasonic = user.deltasonic
 			buildTable();
 			makeTimesheet();
 		} else {
@@ -355,6 +357,7 @@ $(document).ready(function(){
     let startDate;
     let endDate;
     let timeslots,
+	days,
 	totalTime = 0,
     breaks = 0,
     saturdayHours = 0, saturdayBreaks = 0,
@@ -366,17 +369,8 @@ $(document).ready(function(){
     fridayHours = 0, fridayBreaks = 0;
 
     // HTML Elements
-    let $timesheet = $('#timesheet');
+    let $timesheet = $('#timesheetTable');
     let $totalHours = $('#totalHours');
-    let days = [
-        [$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks],
-        [$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks],
-        [$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks],
-        [$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks],
-        [$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks],
-        [$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks],
-        [$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks],
-    ];
 
 	// Autocomplete Searchboxes
 	$.ajax({
@@ -520,66 +514,147 @@ $(document).ready(function(){
 
     // Functions
     buildTable = () => {
+		$timesheet.empty();
+		if (deltasonic) {
+			days = [
+				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
+				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
+				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
+				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
+				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
+				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
+			];
+		} else {
+			days = [
+				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
+				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
+				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
+				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
+				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
+				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
+			];
+		}
 		if (!isManager){
 			$('#back').hide()
 		} else {
 			$('#addTimeslot').hide()
 		}
 
-		startDate = $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0);
-		endDate = $('#end').data("DateTimePicker").date().hour(23).minute(59);
+
+		endDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? 5 : 7).hour(23).minute(59);
+		startDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : -6).hour(0).minute(0);
 		$('#startDate').html(startDate.format('M/D/YYYY'));
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
-			if (timeslots) {
-				$('.timeslots').remove();
-				day[0].first().html('');
-				day[0].attr('clocked', false);
-				day[1].html('<b>0</b>');
-				day[2] = 0;
-				day[3] = 0;
-				totalTime = 0;
-			} else {
-				if (isManager) {
-					$(`
-						<tr class="active headers">
-							<th style="width: 25%;">Date</th>
-							<th style="width: 25%;">Check In</th>
-							<th style="width: 25%;">Check Out</th>
-							<th style="width: 25%;">Hours</th>
-						</tr>
-					`).insertBefore(day[0]);
-				} else {
-					$(`
-						<tr class="active headers">
-							<th style="width: 20%;">Date</th>
-							<th style="width: 20%;">Check In</th>
-							<th style="width: 20%;">Check Out</th>
-							<th style="width: 10%;">Hours</th>
-							<th style="width: 30%;">Actions</th>
-						</tr>
-					`).insertBefore(day[0]);
-				}
-			}
-
 			if (isManager) {
-				day[0].first().html(`
-					<td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
-					<td>- -</td>
-					<td>- -</td>
-					<td>0</td>
+				$timesheet.append(`
+					<tr class="active headers">
+						<th style="width: 25%;">Date</th>
+						<th style="width: 25%;">Check In</th>
+						<th style="width: 25%;">Check Out</th>
+						<th style="width: 25%;">Hours</th>
+					</tr>
+
+					<tr id="${day[4]}" class="timeslots">
+						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index + 1).format('dddd, MMM Do')}</td>
+						<td>- -</td>
+						<td>- -</td>
+						<td>0</td>
+					</tr>
+
+					<tr class="timeslots">
+						<td></td>
+						<td></td>
+						<td></td>
+						<td id="${day[4]}Hours" class="info"><b>0</b></td>
+					</tr>
 				`);
 			} else {
-				day[0].first().html(`
-					<td>${$('#end').data("DateTimePicker").date().weekday(index-1).format('dddd, MMM Do')}</td>
-					<td>- -</td>
-					<td>- -</td>
-					<td>0</td>
-					<td>_</td>
+				$timesheet.append(`
+					<tr class="active headers">
+						<th style="width: 20%;">Date</th>
+						<th style="width: 20%;">Check In</th>
+						<th style="width: 20%;">Check Out</th>
+						<th style="width: 10%;">Hours</th>
+						<th style="width: 30%;">Actions</th>
+					</tr>
+
+					<tr id="${day[4]}" class="timeslots">
+						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index + 1).format('dddd, MMM Do')}</td>
+						<td>- -</td>
+						<td>- -</td>
+						<td>0</td>
+						<td></td>
+					</tr>
+
+					<tr class="timeslots">
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td id="${day[4]}Hours" class="info"><b>0</b></td>
+					</tr>
 				`);
 			}
         });
+
+		if (deltasonic) {
+			days = [
+				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
+				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
+				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
+				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
+				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
+				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
+			];
+		} else {
+			days = [
+				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
+				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
+				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
+				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
+				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
+				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
+			];
+		}
+		if (isManager) {
+			$timesheet.append(`
+				<tr id="totalrow">
+					<th></th>
+					<th></th>
+					<th></th>
+					<th>Total Hours</th>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td id="totalHours" class="info"><b>0</b></td>
+				</tr>
+			`)
+		} else {
+			$timesheet.append(`
+				<tr id="totalrow">
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th>Total Hours</th>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td id="totalHours" class="info"><b>0</b></td>
+					<th></th>
+				</tr>
+			`)
+		}
 		$('#userTimesheet').show();
     }
 
@@ -589,7 +664,7 @@ $(document).ready(function(){
             url: `./php/main.php?module=kissklock&action=getInitialState`,
             data: {
                 id: empid,
-                startDate: $('#end').data("DateTimePicker").date().weekday(-1).hour(0).minute(0).format('YYYY-MM-DD'),
+                startDate: startDate.hour(0).minute(0).format('YYYY-MM-DD'),
                 endDate: endDate.format('YYYY-MM-DD')
             }
         }).done((currentTimeslots) => {
@@ -600,9 +675,9 @@ $(document).ready(function(){
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
                     weekday = moment.unix(timeslot.created).weekday() === 6 ? -1 : moment.unix(timeslot.created).weekday(),
-                    $htmlDay = days[weekday + 1][0],
-                    $htmlhours = days[weekday + 1][1],
-                    breakSum = days[weekday + 1][3];
+                    $htmlDay = days[deltasonic ? weekday + 1 : weekday - 1][0],
+                    $htmlhours = days[deltasonic ? weekday + 1 : weekday - 1][1],
+                    breakSum = days[deltasonic ? weekday + 1 : weekday - 1][3];
 
                 if (timeslot.punchouttime) {
                     hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
@@ -727,6 +802,7 @@ $(document).ready(function(){
 
 	$('#end').on('dp.change', () => {
 		if (empid) {
+			buildTable()
 			getTimesheet();
 		}
 	});

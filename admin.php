@@ -306,92 +306,9 @@
                 </div>
 
                 <table id="timesheet" class="table">
-                <tr id="saturday">
-                </tr>
+                    <tbody id="timesheetTable">
 
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="saturdayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-                <tr id="sunday">
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="sundayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-                <tr id="monday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="mondayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-                <tr id="tuesday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="tuesdayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-                <tr id="wednesday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="wednesdayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-
-
-                <tr id="thursday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="thursdayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-
-
-                <tr id="friday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="fridayHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
-
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th>Total Hours</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="totalHours" class="info" colspan="2"><b>0</b></td>
-                </tr>
+                    </tbody>
                 </table>
             </section>
         </div>

@@ -20,7 +20,7 @@
 		  }
 		</script>
         <meta charset="utf-8" />
-        <title data-emp="<?php echo $_SESSION['userid']; ?>">Delta Sonic - Check In Clock</title>
+        <title data-emp="<?php echo $_SESSION['userid']; ?>">Delta Sonic - Kiss Klock</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<link rel="stylesheet" href="<?php echo $assets; ?>css/main.css"/>
