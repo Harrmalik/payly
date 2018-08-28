@@ -170,92 +170,10 @@
             <h2 id="username"></h2>
             <!-- <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3> -->
 
-            <table id="timesheet" class="table">
-                <tr id="saturday">
-                </tr>
+            <table class="table">
+                <tbody id="timesheetTable">
 
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="saturdayHours" class="info"><b>0</b></td>
-                </tr>
-
-                <tr id="sunday">
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="sundayHours" class="info"><b>0</b></td>
-                </tr>
-
-                <tr id="monday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="mondayHours" class="info"><b>0</b></td>
-                </tr>
-
-                <tr id="tuesday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="tuesdayHours" class="info"><b>0</b></td>
-                </tr>
-
-                <tr id="wednesday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="wednesdayHours" class="info"><b>0</b></td>
-                </tr>
-
-
-
-                <tr id="thursday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="thursdayHours" class="info"><b>0</b></td>
-                </tr>
-
-
-
-                <tr id="friday">
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="fridayHours" class="info"><b>0</b></td>
-                </tr>
-
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th>Total Hours</th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td id="totalHours" class="info"><b>0</b></td>
-                </tr>
+                </tbody>
             </table>
 
         <hr>
