@@ -609,7 +609,7 @@ $(document).ready(function () {
 							url : `./php/main.php?module=kissklock&action=overtimeReason`,
 							method : 'POST',
 							data : {
-								weekending : moment().weekday(6).unix(),
+								weekending : moment().weekday(5).unix(),
 								empid      : empid,
 								reason     : reason
 							}
