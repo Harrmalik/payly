@@ -527,13 +527,13 @@ $(document).ready(function(){
 			];
 		} else {
 			days = [
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
 				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
 				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
 				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
 				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
-				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 			];
 		}
 		if (!isManager){
@@ -543,8 +543,8 @@ $(document).ready(function(){
 		}
 
 
-		endDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? 5 : 7).hour(23).minute(59);
-		startDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : -6).hour(0).minute(0);
+		endDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? 5 : 6).hour(23).minute(59);
+		startDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : 0).hour(0).minute(0);
 		$('#startDate').html(startDate.format('M/D/YYYY'));
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
@@ -559,7 +559,7 @@ $(document).ready(function(){
 					</tr>
 
 					<tr id="${day[4]}" class="timeslots">
-						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index + 1).format('dddd, MMM Do')}</td>
+						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
 						<td>- -</td>
 						<td>- -</td>
 						<td>0</td>
@@ -583,7 +583,7 @@ $(document).ready(function(){
 					</tr>
 
 					<tr id="${day[4]}" class="timeslots">
-						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index + 1).format('dddd, MMM Do')}</td>
+						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
 						<td>- -</td>
 						<td>- -</td>
 						<td>0</td>
@@ -594,8 +594,8 @@ $(document).ready(function(){
 						<td></td>
 						<td></td>
 						<td></td>
-						<td></td>
 						<td id="${day[4]}Hours" class="info"><b>0</b></td>
+						<td></td>
 					</tr>
 				`);
 			}
@@ -613,13 +613,13 @@ $(document).ready(function(){
 			];
 		} else {
 			days = [
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
 				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
 				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
 				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
 				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
-				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 			];
 		}
 		if (isManager) {
@@ -675,9 +675,9 @@ $(document).ready(function(){
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
                     weekday = moment.unix(timeslot.created).weekday() === 6 ? -1 : moment.unix(timeslot.created).weekday(),
-                    $htmlDay = days[deltasonic ? weekday + 1 : weekday - 1][0],
-                    $htmlhours = days[deltasonic ? weekday + 1 : weekday - 1][1],
-                    breakSum = days[deltasonic ? weekday + 1 : weekday - 1][3];
+                    $htmlDay = days[deltasonic ? weekday + 1 : weekday][0],
+                    $htmlhours = days[deltasonic ? weekday + 1 : weekday][1],
+                    breakSum = days[deltasonic ? weekday + 1 : weekday][3];
 
                 if (timeslot.punchouttime) {
                     hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
