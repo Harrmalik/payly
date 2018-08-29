@@ -320,18 +320,18 @@ $(document).ready(function () {
 			});
 		} else {
 			days = [
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
 				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
 				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
 				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
 				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
-				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 			];
 			$('#end').datetimepicker({
-				defaultDate : moment().weekday(7),
+				defaultDate : moment().weekday(6),
 				format : 'MMMM Do, YYYY',
-				daysOfWeekDisabled : [1, 2, 3, 4, 5, 6]
+				daysOfWeekDisabled : [0, 1, 2, 3, 4, 5]
 			});
 		}
 
@@ -358,7 +358,7 @@ $(document).ready(function () {
 					</tr>
 
 					<tr id="${day[4]}" class="timeslots">
-						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index + 1).format('dddd, MMM Do')}</td>
+						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
 						<td>- -</td>
 						<td>- -</td>
 						<td>0</td>
@@ -385,13 +385,13 @@ $(document).ready(function () {
 				];
 			} else {
 				days = [
+					[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 					[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
 					[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
 					[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
 					[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
 					[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
 					[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
-					[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
 				];
 			}
 
@@ -416,7 +416,7 @@ $(document).ready(function () {
 				url : `./php/main.php?module=kissklock&action=getInitialState`,
 				data : {
 					id: empid,
-					startDate : $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : -6).hour(0).minute(0).format('YYYY-MM-DD'),
+					startDate : $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : 0).hour(0).minute(0).format('YYYY-MM-DD'),
 					endDate : $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD')
 				}
 			}).done((clockedHours) => {
@@ -426,9 +426,9 @@ $(document).ready(function () {
 				timeslots.forEach((timeslot, index) => {
 					let hoursSum = 0,
 					weekday = moment.unix(timeslot.created).weekday() === 6 ? -1 : moment.unix(timeslot.created).weekday(),
-					$htmlDay = days[deltasonic ? weekday + 1 : weekday - 1][0],
-					$htmlhours = days[deltasonic ? weekday + 1 : weekday - 1][1],
-					breakSum = days[deltasonic ? weekday + 1 : weekday - 1][3];
+					$htmlDay = days[deltasonic ? weekday + 1 : weekday][0],
+					$htmlhours = days[deltasonic ? weekday + 1 : weekday][1],
+					breakSum = days[deltasonic ? weekday + 1 : weekday][3];
 
 					if (timeslot.punchouttime) {
 						hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
@@ -609,7 +609,7 @@ $(document).ready(function () {
 							url : `./php/main.php?module=kissklock&action=overtimeReason`,
 							method : 'POST',
 							data : {
-								weekending : moment().weekday(7).unix(),
+								weekending : moment().weekday(6).unix(),
 								empid      : empid,
 								reason     : reason
 							}
