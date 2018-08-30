@@ -643,8 +643,8 @@ $(document).ready(function(){
 					<th></th>
 					<th></th>
 					<th></th>
-					<th></th>
 					<th>Total Hours</th>
+					<th></th>
 				</tr>
 				<tr>
 					<td></td>
@@ -705,7 +705,7 @@ $(document).ready(function(){
                 }
 
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
-                $totalHours.html(`<b>${totalTime.toFixed(2)}</b>`);
+                $("td#totalHours.info").html(`<b>${totalTime.toFixed(2)}</b>`);
             });
         });
     }
