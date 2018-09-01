@@ -425,7 +425,7 @@ $(document).ready(function () {
 				let totalTime = 0;
 				timeslots.forEach((timeslot, index) => {
 					let hoursSum = 0,
-					weekday = moment.unix(timeslot.created).weekday() === 6 ? -1 : moment.unix(timeslot.created).weekday(),
+					weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
 					$htmlDay = days[deltasonic ? weekday + 1 : weekday][0],
 					$htmlhours = days[deltasonic ? weekday + 1 : weekday][1],
 					breakSum = days[deltasonic ? weekday + 1 : weekday][3];
