@@ -426,9 +426,9 @@ $(document).ready(function () {
 				timeslots.forEach((timeslot, index) => {
 					let hoursSum = 0,
 					weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
-					$htmlDay = days[deltasonic ? weekday + 1 : weekday][0],
-					$htmlhours = days[deltasonic ? weekday + 1 : weekday][1],
-					breakSum = days[deltasonic ? weekday + 1 : weekday][3];
+					$htmlDay = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][0],
+					$htmlhours = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][1],
+					breakSum = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][3];
 
 					if (timeslot.punchouttime) {
 						hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
