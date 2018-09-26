@@ -1,7 +1,7 @@
 let empid,
 maxHours = 0,
 currentHours,
-hasOvertime,
+otrId,
 getInitialState,
 logoutUrl = './',
 userData = $('title').data(),
@@ -68,13 +68,15 @@ let login = (e) => {
 				alerts = user.alerts
 				timezone = user.timezone ? user.timezone : moment.tz.guess()
 				deltasonic = user.deltasonic
-				hasOvertime = user.hasOvertime
+				if (deltasonic) $('#overtime').hide()
+				if (user.hasOvertime) {
+					$('#overtimeReason').val(user.hasOvertime)
+					otrId = user.otrId
+				}
 				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
 				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
 				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
 				var todaysDate = moment().format('MMDD')
-
-
 
 				// If public machine prevent users from setting as local maching
 				if (ipaddress == '172.30.49.156') {
@@ -165,7 +167,8 @@ $(document).ready(function () {
 	$timesheetBtn = $('#timesheet'),
 	$todayHours = $('#todayHours'),
 	$totalHours = $('#totalHours'),
-	$overallHours = $('#overallHours');
+	$overallHours = $('#overallHours'),
+	$overtimeBtn = $('#overtimeBtn');
 
 	// Event Listeners
 	$checkInBtn.on("click", () => {
@@ -272,6 +275,29 @@ $(document).ready(function () {
 			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
 		});
 	});
+
+	$overtimeBtn.on('click', () => {
+		$.ajax({
+			url : `./php/main.php?module=kissklock&action=overtimeReason`,
+			method : 'POST',
+			data : {
+				weekending : moment().weekday(5).unix(),
+				empid      : empid,
+				reason     : $('#overtimeReason').val(),
+				otrId
+			}
+		}).success((checkin) => {
+			ga('send', 'event', 'OvertimeReason', empid, 'Successful')
+			iziToast.success({
+				message: 'Overtime reason has been successfully saved.'
+			});
+		}).fail((result) => {
+			iziToast.error({
+				message: 'Could not save overtime reason at this time. Please try again.'
+			});
+			ga('send', 'event', 'OvertimeReason', empid, 'Unsuccessful')
+		});
+	})
 
 	$timesheetBtn.on("click", () => {
 		$('#app').hide()
@@ -594,40 +620,7 @@ $(document).ready(function () {
 		counter++;
 		if (checkOut) {
 			hoursSum = calculateHours(checkInTime, checkOutTime);
-			if (deltasonic == 0 && (currentHours + hoursSum > 40) && !hasOvertime) {
-				removeTimer()
-				swal({
-					title: 'Reason for overtime',
-					input: 'textarea',
-					inputAttributes: {
-					  autocapitalize: 'off'
-					},
-					confirmButtonText: 'Submit',
-					showLoaderOnConfirm: true,
-					preConfirm: (reason) => {
-						$.ajax({
-							url : `./php/main.php?module=kissklock&action=overtimeReason`,
-							method : 'POST',
-							data : {
-								weekending : moment().weekday(5).unix(),
-								empid      : empid,
-								reason     : reason
-							}
-						}).success((checkin) => {
-							ga('send', 'event', 'OvertimeReason', empid, 'Successful')
-							iziToast.success({
-								message: 'Overtime reason has been successfully saved.'
-							});
-						}).fail((result) => {
-							iziToast.error({
-								message: 'Could not save overtime reason at this time. Please try again.'
-							});
-							ga('send', 'event', 'OvertimeReason', empid, 'Unsuccessful')
-						});
-					},
-					allowOutsideClick: false
-				});
-			}
+
 			populateElement(totalTime.toFixed(2), $totalHours);
 			populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
 			$(`#${checkInIds[checkInIds.length - 1]}timeout`).html(checkOutTime.format('h:mm a'));

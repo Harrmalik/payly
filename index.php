@@ -151,6 +151,12 @@
                     <td id="totalHours">0</td>
                 </tr>
             </table>
+
+            <div id="overtime">
+                <h3>Overtime reason</h3>
+                <textarea id="overtimeReason" class="form-control" rows="3"></textarea>
+                <button type="button" id="overtimeBtn" class="btn-primary custom-btn">Save Overtime</button>
+            </div>
         </section>
 
         <section id="timesheetPage">
