@@ -39,6 +39,17 @@ section#app .btn {
 	width: 15em;
 }
 
+section#app .btn-primary {
+	background: #2185D0;
+}
+
+.custom-btn {
+	float: right;
+	border-radius: 25px;
+	margin-top: .5em;
+	background: #2185D0;
+}
+
 table#timesheet {
 	margin-top: 1em;
 }
