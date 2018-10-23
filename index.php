@@ -25,10 +25,18 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
-                  <li class="active"><a href="./" role="button"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+                  <li class="active"><a id="home"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+                  <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li> -->
+                  <li><a id="timesheet" role="button"><i class="glyphicon glyphicon-list-alt"></i> Timesheet</a></li>
+                  <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Edit Request</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <p class="navbar-text" id="name"></p>
+                  <li class="dropdown">
+                   <a id="primaryJob" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></a>
+                   <ul class="dropdown-menu" id="jobList">
+                   </ul>
+                 </li>
                   <li><a href="./" role="button" onclick="localStorage.setItem('empid', '');">Sign Out</a></li>
               </ul>
             </div><!-- /.navbar-collapse -->
@@ -116,13 +124,13 @@
 
         <section id="app">
             <section class="mainBtns">
-                <button type="button" class="btn btn-primary btn-lg" id="checkIn">Punch In</button>
+                <button type="button" class="btn btn-primary btn-lg" id="checkIn"><h3>Punch In</h3></button>
+                <button type="button" class="btn btn-primary btn-lg" id="lunchBreak"><h3>Lunch Break</h3></button>
                 <button type="button" class="btn btn-primary btn-lg" id="checkOut">
-                    <h3>Check Out</h3>
+                    <h3>Done for Day</h3>
                     <p>Total Hours will be: <span id="overallHours"></span></p>
                 </button>
-                <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button>
-                <button type="button" class="btn btn-block btn-lg btn-primary" id="benCheckIn" style="display:none; width:97%; height:3em">Benderson Check In</button>
+                <!-- <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button> -->
                 <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
             </section>
 

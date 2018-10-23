@@ -255,6 +255,8 @@ $('#saveUser').on('click', () => {
 		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
 		nights: $('#nights').is(':checked') == true ? 1 : 0,
 		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
+		canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
+		field: $('#field').is(':checked') == true ? 1 : 0,
 	}
 	if (!$('#employeeid').val().split('.')[1]) {
 		data['action'] = 'addUser';
@@ -425,6 +427,8 @@ $(document).ready(function(){
 					$('#weekends').prop('checked', employee.weekends == 1 ? true : false)
 					$('#nights').prop('checked', employee.nights == 1 ? true : false)
 					$('#alerts').prop('checked', employee.alerts == 1 ? true : false)
+					$('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false)
+					$('#field').prop('checked', employee.field == 1 ? true : false)
 				}
 			}
 		}
