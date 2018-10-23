@@ -1,4 +1,5 @@
 let empid,
+role,
 maxHours = 0,
 currentHours,
 otrId,
@@ -61,8 +62,19 @@ let login = (e) => {
 				$('#appname').text(user.deltasonic ? 'Kiss Klock' : 'Benderson Timeclock')
 				$('#app').show();
 				$('#name').html(`Signed in as ${user.empname} <i class="glyphicon glyphicon-user"></i>`);
+				$('#primaryJob').html(`${user.roles[0].job_desc} <span class="caret"></span>`)
+				user.roles.forEach((role) => {
+					$('#jobList').append(`
+						<li><a id="${role.job_code}">${role.job_desc}</a></li>
+					`)
+				})
+				$('#jobList a').on('click', (e) => {
+					$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
+					role = e.target.id
+				})
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
+				role = user.roles[0].job_code
 				maxHours = user.holidays
 				currentHours = user.currentHours
 				alerts = user.alerts
@@ -91,11 +103,6 @@ let login = (e) => {
 							$('#setuser').show()
 						}
 					}
-				}
-
-				// Show benderson punch in for dev and benderson user
-				if (empid == 81369 || empid == 82934) {
-					$('#benCheckIn').show()
 				}
 
 				if (birthday == todaysDate) {
@@ -163,7 +170,7 @@ $(document).ready(function () {
 	// HTML Buttons
 	let $checkInBtn = $('#checkIn'),
 	$checkOutBtn = $('#checkOut'),
-	$benCheckInBtn = $('#benCheckIn'),
+	$lunchBreakBtn = $('#lunchBreak'),
 	$timesheetBtn = $('#timesheet'),
 	$todayHours = $('#todayHours'),
 	$totalHours = $('#totalHours'),
@@ -188,7 +195,8 @@ $(document).ready(function () {
 				time     : checkInTime.unix(),
 				empid    : empid,
 				timezone : timezone,
-				alerts   : alerts
+				alerts   : alerts,
+				role     : role
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
@@ -233,9 +241,8 @@ $(document).ready(function () {
 		}).success((hours) => {
 			if (deltasonic == 1) {
 				iziToast.info({
-					timeout: 60000 * 60,
 					title: 'Punched Out',
-					message: `<b>30 Minutes</b> from now would be - <b>${moment.unix(checkOutTime.unix()).add(30,'minutes').format('h:mm a')}</b>`
+					message: `You have successfully been punched out.`
 				});
 			}
 			makeUpdate(true);
@@ -251,28 +258,46 @@ $(document).ready(function () {
 		});
 	});
 
-	$benCheckInBtn.on("click", () => {
-		ga('send', 'event', 'CheckIn', empid, 'Attempted')
+	$lunchBreakBtn.on("click", () => {
+		ga('send', 'event', 'CheckOut', empid, 'Attempted')
+		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
+		iziToast.show({
+			title: 'Loading',
+			message: `Checking out now`
+		});
 
+		$lunchBreakBtn.attr('disabled', true)
+		$lunchBreakBtn.text('Punching out...')
+		setTimeout(() => {
+		}, 3000)
 		$.ajax({
-			url : `./php/main.php?module=kissklock&action=benCheckIn`,
+			url : `./php/main.php?module=kissklock&action=checkOut`,
 			method : 'POST',
 			data : {
-				time     : moment().seconds(0).unix(),
+				time     : checkOutTime.unix(),
+				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
 				timezone : timezone,
 				alerts   : alerts
 			}
-		}).success((checkin) => {
-			checkInIds.push(checkin);
-			checkInTime = moment();
-			makeUpdate();
-			ga('send', 'event', 'CheckIn', empid, 'Successful')
+		}).success((hours) => {
+			if (deltasonic == 1) {
+				iziToast.info({
+					timeout: 60000 * 60,
+					title: 'Punched Out',
+					message: `<b>30 Minutes</b> from now would be - <b>${moment.unix(checkOutTime.unix()).add(30,'minutes').format('h:mm a')}</b>`
+				});
+			}
+			makeUpdate(true);
+			ga('send', 'event', 'CheckOut', empid, 'Successful')
 		}).fail((result) => {
 			iziToast.error({
 				message: 'Kiss Klock could not be saved at this time'
 			});
-			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
+			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
+		}).always((result) => {
+			$lunchBreakBtn.attr('disabled', false)
+			$lunchBreakBtn.text('Punch Out')
 		});
 	});
 
@@ -299,10 +324,20 @@ $(document).ready(function () {
 		});
 	})
 
+	$('#home').on('click', () => {
+		$('#app').show()
+		$('#timesheetPage').hide()
+		$('#clockdate').show()
+		$timesheetBtn.parent().removeClass('active')
+		$('#home').parent().addClass('active')
+	})
+
 	$timesheetBtn.on("click", () => {
 		$('#app').hide()
 		$('#timesheetPage').show()
 		$('#clockdate').hide()
+		$timesheetBtn.parent().addClass('active')
+		$('#home').parent().removeClass('active')
 		// Javascript letiables
 		let startDate,
 		endDate,
@@ -635,9 +670,11 @@ $(document).ready(function () {
 		if (counter % 2 == 0) {
 			$checkInBtn.show();
 			$checkOutBtn.hide();
+			$lunchBreakBtn.hide();
 		} else {
 			$checkInBtn.hide();
 			$checkOutBtn.show();
+			$lunchBreakBtn.show();
 		}
 	};
 

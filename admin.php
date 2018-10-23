@@ -215,6 +215,18 @@
                         </div>
                       </div>
                       <div class="form-group">
+                        <label for="canCallIn" class="col-sm-2 control-label">Can Call In</label>
+                        <div class="col-sm-4">
+                            <input id="canCallIn" type="checkbox"></input>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="field" class="col-sm-2 control-label">Field</label>
+                        <div class="col-sm-4">
+                            <input id="field" type="checkbox"></input>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                           <div id="removeUser" class="btn btn-danger">Remove User</div>
                           <div id="saveUser" class="btn btn-primary">Save Changes</div>
