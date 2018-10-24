@@ -62,19 +62,21 @@ let login = (e) => {
 				$('#appname').text(user.deltasonic ? 'Kiss Klock' : 'Benderson Timeclock')
 				$('#app').show();
 				$('#name').html(`Signed in as ${user.empname} <i class="glyphicon glyphicon-user"></i>`);
-				$('#primaryJob').html(`${user.roles[0].job_desc} <span class="caret"></span>`)
-				user.roles.forEach((role) => {
-					$('#jobList').append(`
-						<li><a id="${role.job_code}">${role.job_desc}</a></li>
-					`)
-				})
-				$('#jobList a').on('click', (e) => {
-					$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
-					role = e.target.id
-				})
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
-				role = user.roles[0].job_code
+				if (user.roles[0]) {
+					role = user.roles[0].job_code
+					$('#primaryJob').html(`${user.roles[0].job_desc} <span class="caret"></span>`)
+					user.roles.forEach((role) => {
+						$('#jobList').append(`
+							<li><a id="${role.job_code}">${role.job_desc}</a></li>
+						`)
+					})
+					$('#jobList a').on('click', (e) => {
+						$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
+						role = e.target.id
+					})
+				}
 				maxHours = user.holidays
 				currentHours = user.currentHours
 				alerts = user.alerts
