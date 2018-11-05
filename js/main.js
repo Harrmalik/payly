@@ -1,7 +1,13 @@
 let empid,
+employeename,
+counter = 0,
+roles,
 role,
+tippedRole,
 maxHours = 0,
-currentHours,
+currentHours = 0,
+currentTippedHours = 0,
+currentNonTippedHours = 0,
 otrId,
 getInitialState,
 logoutUrl = './',
@@ -11,6 +17,8 @@ alerts,
 timezone,
 deltasonic,
 autologout,
+checkIn,
+checkOut,
 timer = () => {
 	autologout = setTimeout(IdleTimeout, 60000)
 },
@@ -65,7 +73,9 @@ let login = (e) => {
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 				if (user.roles[0]) {
+					// TODO: Log person into their last role
 					role = user.roles[0].job_code
+					tippedRole = user.roles[0].istipped == 1 ? true : false
 					$('#primaryJob').html(`${user.roles[0].job_desc} <span class="caret"></span>`)
 					user.roles.forEach((role) => {
 						$('#jobList').append(`
@@ -75,13 +85,20 @@ let login = (e) => {
 					$('#jobList a').on('click', (e) => {
 						$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
 						role = e.target.id
+						if (counter % 2 == 1) {
+							checkOut()
+							checkIn()
+						}
+
 					})
 				}
+				employeename = user.empname
 				maxHours = user.holidays
 				currentHours = user.currentHours
 				alerts = user.alerts
 				timezone = user.timezone ? user.timezone : moment.tz.guess()
 				deltasonic = user.deltasonic
+				roles = user.roles
 				if (deltasonic) $('#overtime').hide()
 				if (user.hasOvertime) {
 					$('#overtimeReason').val(user.hasOvertime)
@@ -96,8 +113,6 @@ let login = (e) => {
 				if (ipaddress == '172.30.49.156') {
 					$('#setuser').hide()
 				} else {
-					getInitialState()
-
 					// If local machine stop the page logout
 					if (localStorage) {
 						if (!localStorage.getItem('empid')) {
@@ -163,7 +178,6 @@ $(document).ready(function () {
 	$('#inputID').focus();
 	//Javascript letiables
 	let date = moment(),
-	counter = 0,
 	checkInTime,
 	checkOutTime,
 	checkInIds = [],
@@ -179,86 +193,22 @@ $(document).ready(function () {
 	$overallHours = $('#overallHours'),
 	$overtimeBtn = $('#overtimeBtn');
 
+	$('#tipDate').datetimepicker({
+		defaultDate : moment(),
+		format : 'MMMM Do, YYYY'
+	});
+	$('#tipDate').on('dp.change', () => {
+		$($('[name="tippedHours"]')[0]).val("");
+		$($('[name="nonTippedHours"]')[0]).val("");
+		lookupHours();
+	});
+
 	// Event Listeners
 	$checkInBtn.on("click", () => {
-		ga('send', 'event', 'CheckIn', empid, 'Attempted')
-		$('#checkIn').attr('disabled', true)
-		$('#checkIn').text('Punching in...')
-		checkInTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
-		iziToast.show({
-			title: 'Loading',
-			message: `Checking in now`
-		});
-
-		$.ajax({
-			url : `./php/main.php?module=kissklock&action=checkIn`,
-			method : 'POST',
-			data : {
-				time     : checkInTime.unix(),
-				empid    : empid,
-				timezone : timezone,
-				alerts   : alerts,
-				role     : role
-			}
-		}).success((checkin) => {
-			checkInIds.push(checkin);
-			makeUpdate();
-			ga('send', 'event', 'CheckIn', empid, 'Successful')
-			iziToast.success({
-				message: 'You have been successfully checked in'
-			});
-		}).fail((result) => {
-			iziToast.error({
-				message: 'Kiss Klock could not be saved at this time'
-			});
-			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
-		}).always((result) => {
-			$('#checkIn').attr('disabled', false)
-			$('#checkIn').text('Punch In')
-		});
+		checkIn()
 	});
 
-	$checkOutBtn.on("click", () => {
-		ga('send', 'event', 'CheckOut', empid, 'Attempted')
-		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
-		iziToast.show({
-			title: 'Loading',
-			message: `Checking out now`
-		});
-
-		$('#checkOut').attr('disabled', true)
-		$('#checkOut').text('Punching out...')
-		setTimeout(() => {
-		}, 3000)
-		$.ajax({
-			url : `./php/main.php?module=kissklock&action=checkOut`,
-			method : 'POST',
-			data : {
-				time     : checkOutTime.unix(),
-				id       : checkInIds[checkInIds.length - 1],
-				empid    : empid,
-				timezone : timezone,
-				alerts   : alerts
-			}
-		}).success((hours) => {
-			if (deltasonic == 1) {
-				iziToast.info({
-					title: 'Punched Out',
-					message: `You have successfully been punched out.`
-				});
-			}
-			makeUpdate(true);
-			ga('send', 'event', 'CheckOut', empid, 'Successful')
-		}).fail((result) => {
-			iziToast.error({
-				message: 'Kiss Klock could not be saved at this time'
-			});
-			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
-		}).always((result) => {
-			$('#checkOut').attr('disabled', false)
-			$('#checkOut').text('Punch Out')
-		});
-	});
+	$checkOutBtn.on("click", checkOut)
 
 	$lunchBreakBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
@@ -332,12 +282,36 @@ $(document).ready(function () {
 		$('#clockdate').show()
 		$timesheetBtn.parent().removeClass('active')
 		$('#home').parent().addClass('active')
+		$('#tipsPage').hide()
+	})
+
+	$('#tips').on('click', () => {
+		$('#app').hide()
+		$('#timesheetPage').hide()
+		$('#clockdate').hide()
+		$('#tipsPage').show()
+		$('#home').parent().removeClass('active')
+		$('#tips').parent().addClass('active')
+
+
+		lookupHours()
+
+		setQuestionNumber(1);
+
+		$("#employeeid").val(empid);
+
+		glbsection = 1;
+		$("#slide1").slideToggle("slow");
+		$("#slide2").slideToggle("slow");
+
+		$("#employeeNameDisplay").text(employeename);
 	})
 
 	$timesheetBtn.on("click", () => {
 		$('#app').hide()
 		$('#timesheetPage').show()
 		$('#clockdate').hide()
+		$('#tipsPage').hide()
 		$timesheetBtn.parent().addClass('active')
 		$('#home').parent().removeClass('active')
 		// Javascript letiables
@@ -487,11 +461,13 @@ $(document).ready(function () {
 				let hours = 0;
 				let totalTime = 0;
 				timeslots.forEach((timeslot, index) => {
-					let hoursSum = 0,
-					weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
-					$htmlDay = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][0],
-					$htmlhours = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][1],
-					breakSum = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][3];
+					let hoursSum     = 0,
+					punchintimezone  = timeslot.punchintimezone ? timeslot.punchintimezone : moment.tz.guess(),
+					punchouttimezone = timeslot.punchouttimezone ? timeslot.punchouttimezone : moment.tz.guess(),
+					weekday          = moment.unix(timeslot.punchintime).tz(punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(punchintimezone).weekday(),
+					$htmlDay         = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(punchintimezone).weekday()][0],
+					$htmlhours       = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(punchintimezone).weekday()][1],
+					breakSum         = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(punchintimezone).weekday()][3];
 
 					if (timeslot.punchouttime) {
 						hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
@@ -634,9 +610,18 @@ $(document).ready(function () {
 							populateElement(`${(totalTime + timeNow).toFixed(2)}`, $overallHours);
 						}
 
-						addRow(checkInTime, checkOutTime, hoursSum);
+						addRow(checkInTime, checkOutTime, hoursSum, timeslot.role);
 					}
 				});
+				let lastPunchIn = timeslots[timeslots.length - 1],
+					lastCheckOut = lastPunchIn.punchouttime ? moment.unix(lastPunchIn.punchouttime) : null;
+
+
+				if (!lastCheckOut) {
+					role = lastPunchIn.roleId
+					tippedRole = lastPunchIn.istipped == 1 ? true : false
+					$('#primaryJob').html(`${lastPunchIn.role} <span class="caret"></span>`)
+				}
 
 				toggleButtons();
 			} else {
@@ -686,15 +671,95 @@ $(document).ready(function () {
 		return hours;
 	};
 
-	let addRow = (start, end, total) => {
+	let addRow = (start, end, total, role='') => {
 		$todayHours.append(`
 			<tr>
-				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''}</td>
+				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''} ${role}</td>
 				<td>${start.format('h:mm a')}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'timeout'}">${ end ? end.format('h:mm a') : '- -'}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : '- -'}</td>
 			</tr>
 		`);
+	}
+
+	checkIn = () => {
+		ga('send', 'event', 'CheckIn', empid, 'Attempted')
+		$('#checkIn').attr('disabled', true)
+		$('#checkIn').text('Punching in...')
+		checkInTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
+		iziToast.show({
+			title: 'Loading',
+			message: `Checking in now`
+		});
+
+		$.ajax({
+			url : `./php/main.php?module=kissklock&action=checkIn`,
+			method : 'POST',
+			data : {
+				time     : checkInTime.unix(),
+				empid    : empid,
+				timezone : timezone,
+				alerts   : alerts,
+				role     : role
+			}
+		}).success((checkin) => {
+			checkInIds.push(checkin);
+			makeUpdate();
+			ga('send', 'event', 'CheckIn', empid, 'Successful')
+			iziToast.success({
+				message: 'You have been successfully checked in'
+			});
+		}).fail((result) => {
+			iziToast.error({
+				message: 'Kiss Klock could not be saved at this time'
+			});
+			ga('send', 'event', 'CheckIn', empid, 'Unsuccessful')
+		}).always((result) => {
+			$('#checkIn').attr('disabled', false)
+			$('#checkIn').text('Punch In')
+		});
+	}
+
+	checkOut = () => {
+		ga('send', 'event', 'CheckOut', empid, 'Attempted')
+		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
+		iziToast.show({
+			title: 'Loading',
+			message: `Checking out now`
+		});
+
+		$('#checkOut').attr('disabled', true)
+		$('#checkOut').text('Punching out...')
+		setTimeout(() => {
+		}, 3000)
+		$.ajax({
+			url : `./php/main.php?module=kissklock&action=checkOut`,
+			method : 'POST',
+			data : {
+				time     : checkOutTime.unix(),
+				id       : checkInIds[checkInIds.length - 1],
+				empid    : empid,
+				timezone : timezone,
+				alerts   : alerts
+			}
+		}).success((hours) => {
+			if (deltasonic == 1) {
+				iziToast.info({
+					title: 'Punched Out',
+					message: `You have successfully been punched out.`
+				});
+			}
+			makeUpdate(true);
+			ga('send', 'event', 'CheckOut', empid, 'Successful')
+		}).fail((result) => {
+			iziToast.error({
+				message: 'Kiss Klock could not be saved at this time'
+			});
+			ga('send', 'event', 'CheckOut', empid, 'Unsuccessful')
+		}).always((result) => {
+			$('#checkOut').attr('disabled', false)
+			$('#checkOut').text('Punch Out')
+		});
 	}
 });
 
@@ -715,4 +780,238 @@ function setUser() {
 	localStorage.setItem('empid', empid)
 	ga('send', 'event', 'LocalMachine', empid)
 	$('#warning').modal('hide')
+}
+
+
+//////// TIPS
+var glbsection = 0;
+var glbSignaturePad = '';
+$(document).ready(function(){
+
+	$("#btnSigDisplay").on("click", function(){
+		$("#todaystips").hide("", function(){ establishCanvas(); });
+		$("#signatureContainer").show();
+	});
+
+	$("#btnSigHide").on("click", function(){
+		$("#signatureContainer").hide();
+		$("#todaystips").show();
+	});
+
+	//var canvas = document.getElementById('signature-pad');
+	//var canvas = document.querySelector("canvas");
+	//var canvas = $("canvas");
+	var canvas = document.querySelector("canvas");
+
+	glbSignaturePad = new SignaturePad(canvas, {
+	  backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
+	});
+
+	//establishCanvas();
+
+	$(".btnLessthanfourhours").on("click", function(){
+		var value = $(this).attr("ds_value");
+		setQ1(value);
+	});
+
+	$(".btnLessthanfourhoursunderstand").on("click", function(){
+		$("#lessthanfourhoursunderstand").val(1);
+		setQuestionNumber(3);
+	});
+});
+
+function setQuestionNumber(sectionNumber){
+	var counter = 1;
+	while(document.getElementById("tipsection" + counter)){
+		if(counter == sectionNumber){
+			$("#tipsection" + counter).slideDown("slow", function(){ if(sectionNumber == 3){ establishCanvas(); } });
+		} else {
+			$("#tipsection" + counter).slideUp("slow");
+		}
+
+		counter++;
+	}
+	glbsection = counter;
+}
+
+function tipCommand(sectionNum){
+	switch(sectionNum){
+		case 1:
+			if($("#setQuestionNumber").prop("checked")){
+
+			} else {
+
+			}
+			break;
+		case 2:
+			setQuestionNumber(3);
+			break;
+		case 3:
+			break;
+		default:
+			break;
+	}
+}
+
+function setQ1(val){
+	$("#lessthanfourhours").val(val);
+
+	if(val > 0){
+		setQuestionNumber(2);
+	} else {
+		setQuestionNumber(3);
+	}
+}
+
+function saveTips(){
+	if(!$("#btnCommand").hasClass("disabled")){
+		var formData = $("#frmtips").serialize() + "&command=savetip";
+		formData += "&date=" + $('#tipDate').data("DateTimePicker").date().format("M/D/Y");
+
+		var tippedHours = $($('[name="tippedHours"]')[0]).val();
+		var nonTippedHours = $($('[name="nonTippedHours"]')[0]).val();
+		var washTips = $($('[name="washTTips"]')[0]).val();
+		var detailTips = $($('[name="detailTTips"]')[0]).val();
+
+		var signatureData = encodeURIComponent(glbSignaturePad.toDataURL('image/png'));
+		formData += "&signatureData=" + signatureData;
+
+		if(		!isNaN(parseInt(tippedHours))
+			&&	!isNaN(parseInt(nonTippedHours))
+			&&	!isNaN(parseInt(washTips))
+			&&	!isNaN(parseInt(detailTips))
+			&&	!glbSignaturePad.isEmpty()
+		){
+			$("#btnCommand").addClass("disabled");
+			$.ajax({
+				url: "./php/call.php",
+				data: formData,
+				method: "post"
+			}).done(function(data){
+				var success = false;
+
+				if(typeof(data[0]) != 'undefined'){
+					if(typeof(data[0]['status']) != 'undefined'){
+						if(data[0]['status'] == 'success'){
+							success = true;
+						}
+					}
+				}
+
+				if(success){
+					//$("#msg-status").removeClass("bg-danger");
+					//$("#msg-status").addClass("bg-success");
+					//$("#msg-status").html("Saved");
+					showMsg("bg-success", "Saved");
+
+
+					setTimeout(function(){
+		    			//resetPage();
+		    			window.close();
+
+						}, 3000);
+
+
+				} else {
+					showMsg("bg-danger", "An error has occurred while saving the tips' data.");
+					//$("#msg-status").removeClass("bg-success");
+					//$("#msg-status").addClass("bg-danger");
+					//$("#msg-status").html("An error has occurred while saving the tips' data.");
+					$("#btnCommand").removeClass("disabled");
+				}
+			});
+		} else {
+			//$("#msg-status").removeClass("bg-success");
+			//$("#msg-status").addClass("bg-danger");
+			//$("#msg-status").html("Please Enter values for all tips and hours, and remember to sign before saving.");
+			showMsg("bg-danger", "Please Enter values for all tips and hours, and remember to sign before saving.");
+		}
+	}
+}
+
+function resetPage(){
+	glbSignaturePad.clear();
+
+	$("#btnCommand").removeClass("disabled");
+
+	$("#slide1").slideDown("slow");
+	$("#slide2").slideUp("slow");
+
+	$("#msg-status").removeClass("bg-success");
+	$("#msg-status").removeClass("bg-danger");
+	$("#msg-status").html("<br/>");
+
+	$("#empNumberDisplay").text("");
+	$("#employeeNameDisplay").text("");
+
+	$($('[name="employeeid"]')[0]).val("");
+	$($('[name="lessthanfourhours"]')[0]).val("");
+	$($('[name="lessthanfourhoursunderstand"]')[0]).val("");
+	$($('[name="tippedHours"]')[0]).val("");
+	$($('[name="nonTippedHours"]')[0]).val("");
+	$($('[name="detailTTips"]')[0]).val("");
+	$($('[name="washTTips"]')[0]).val("");
+	closeModal('msgContainer');
+}
+
+/*
+	TABLET SIGNATURE
+	https://github.com/szimek/signature_pad
+	https://jsfiddle.net/szimek/jq9cyzuc/
+*/
+
+// Adjust canvas coordinate space taking into account pixel ratio,
+// to make it look crisp on mobile devices.
+// This also causes canvas to be cleared.
+function establishCanvas() {
+	if(typeof(canvas) == 'undefined'){
+		var canvas = document.getElementById('signature-pad');
+	}
+    // When zoomed out to less than 100%, for some very strange reason,
+    // some browsers report devicePixelRatio as less than 1
+    // and only part of the canvas is cleared then.
+    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+}
+
+function lookupHours(){
+	var data = {
+		id: empid,
+		startDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD'),
+		endDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD')
+	};
+	$.get("./php/main.php?module=kissklock&action=getHoursByTip",data).done(function(response){
+		let tippedHours = 0;
+		let nonTippedHours = 0;
+
+		response.forEach((timeslot) => {
+			if (timeslot.isTipped) {
+				tippedHours += timeslot.totalHours
+			} else {
+				nonTippedHours += timeslot.totalHours
+			}
+		})
+
+		$($('[name="tippedHours"]')[0]).val(tippedHours.toFixed(2));
+		$($('[name="nonTippedHours"]')[0]).val(nonTippedHours.toFixed(2));
+
+		$("#tippedHours_display").html(tippedHours.toFixed(2));
+		$("#nonTippedHours_display").html(nonTippedHours.toFixed(2));
+	});
+}
+
+function showMsg(thisclass, msg){
+
+	$("#modal-status").removeClass("bg-success bg-danger");
+	$("#modal-status").addClass(thisclass);
+	$("#modal-status").html(msg);
+
+	$('#msgContainer').modal('show');
+}
+
+function closeModal(modal){
+	$('#' + modal).modal('hide');
 }

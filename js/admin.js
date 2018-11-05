@@ -20,6 +20,15 @@ let empid,
 		format: 'MMMM Do',
 		daysOfWeekDisabled: [1,2,3,4,6]
 	});
+	$('#dateFilter').datetimepicker({
+		defaultDate: moment().weekday(5),
+		format: 'MMMM Do',
+		daysOfWeekDisabled: [1,2,3,4,6]
+	});
+
+	var glbDataTable = '';
+	var calSelectStartDate = "";
+	var calSelectEndDate = "";
 
 if (window.navigator.userAgent.indexOf("MSIE ") > 0 ) {
 	userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
@@ -812,6 +821,12 @@ $(document).ready(function(){
 		}
 	});
 
+	$('#dateFilter').on('dp.change', () => {
+		getDateRange($('#dateFilter').data("DateTimePicker").date().weekday(5).hour(23).minute(59).format("M/D/Y"), true);
+		displayDateRange();
+		getTips();
+	});
+
 	let getInitialState = () => {
 		$('#loader').addClass('loader')
 		$.ajax({
@@ -837,4 +852,185 @@ $(document).ready(function(){
 
 	if (isManager)
 		getInitialState();
+
+	var now =  new Date();
+	var nowStr = ( (parseInt(now.getMonth())+1) + "/" + now.getDate() + "/" + now.getFullYear() );
+
+	getDateRange(nowStr, false);
+	displayDateRange();
+	getTips();
 });
+
+function getTips(){
+	glbDataTable = $('#tipContainer').DataTable( {
+		"createdRow":function(row,data,dataIndex) {
+			if (data[3] > 0 && data[7] == 0 && data[1] != moment().format("MM/DD/Y")) {
+				$(row).addClass("suspect");
+			}
+		},
+		dom: 'Blfrtip',
+		buttons: [
+			{
+				extend: "csv",
+				exportOptions: {
+                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                }
+			},
+			{
+				extend: "excel",
+				exportOptions: {
+                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                }
+			}
+        ],
+        "ajax": "./php/getTips.php?startDate=" + (calSelectStartDate.getTime()/1000) + "&endDate=" + (calSelectEndDate.getTime()/1000),
+		"destroy": true,
+		"searching": true,
+		"columnDefs": [
+			{ "targets": 0, "width": "200px" }, // name
+			{ "targets": 1, "width": "135px", "type": "date"}, // date
+			{ "targets": [3, 4, 5, 6, 7], "width": "125px" ,"type":"num", render: $.fn.dataTable.render.number(',','.',2)} // tips
+		],
+		fixedColumns: false,
+		"order": [[ 1, "desc" ]]
+		,"lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
+    } );
+
+	var data = glbDataTable.buttons.exportData( {
+	    columns: ':visible'
+	} );
+}
+
+function reviewTip(obj, num){
+	$.ajax({
+		url: "./php/reviewTip.php",
+		data: {id: num}
+	}).done(function(data) {
+		var success = false;
+
+		if(typeof(data[0]) != 'undefined'){
+			if(typeof(data[0]['status']) != 'undefined'){
+				if(typeof(data[0]['status']) != 'success'){
+					success = true;
+				}
+			}
+		}
+
+		if(success){
+			$(obj).parent().html(data[0]['reviewName']);
+		} else {
+
+		}
+	});
+}
+
+function displayDateRange(){
+	$("#dateRangeDisplay").html("Showing for date range: " + (calSelectStartDate.getMonth()+1) + "/" + calSelectStartDate.getDate() + "/" + calSelectStartDate.getFullYear() +"  -  " + (calSelectEndDate.getMonth()+1) + "/" + calSelectEndDate.getDate() + "/" + calSelectEndDate.getFullYear());
+}
+
+var remove_obj = '';
+var remove_num = '';
+var remove_empnum = '';
+var remove_date = '';
+function removeTip(obj, num, empnum, date){
+	remove_obj = obj;
+	remove_num = num;
+	remove_empnum = empnum;
+	remove_date = date;
+
+	$("#removeTipModal").modal("show");
+}
+
+function confirmRemoveTip(){
+	$.ajax({
+		url: "./php/removeTip.php",
+		data: {
+			"num": remove_num,
+			"empnum": remove_empnum,
+			"date": remove_date
+		}
+	}).done(function(data){
+		remove_obj = '';
+		remove_num = '';
+		remove_empnum = '';
+		remove_date = '';
+
+		glbDataTable.ajax.reload();
+		$("#removeTipModal").modal("hide");
+	});
+}
+
+//dateStr = mm/dd/yyyy
+function getDateRange(dateStr, boolStyle){
+	/*
+	DOW (payroll week = 6 - 5):
+	0 - sun
+	6 - sat
+
+	*/
+	var dateArray = dateStr.split("/");
+
+	var year = dateArray[2];
+	var month = dateArray[0];
+	var day = dateArray[1];
+
+	var epoch = Date.parse(year + '/' + month + '/' + day);
+	var date = new Date(epoch);
+
+	var oneDay = 24*60*60 * 1000;
+	var dow = date.getDay();
+
+	var daysTillStart = 0;
+	var daysTillEnd = 0;
+
+	switch(dow){
+		case 0://Sunday
+			daysTillStart = -1;
+			daysTillEnd = 5;
+			break;
+		case 1://Monday
+			daysTillStart = -2;
+			daysTillEnd = 4;
+			break;
+		case 2://Tuesday
+			daysTillStart = -3;
+			daysTillEnd = 3;
+			break;
+		case 3://Wednesday
+			daysTillStart = -4;
+			daysTillEnd = 2;
+			break;
+		case 4://Thursday
+			daysTillStart = -5;
+			daysTillEnd = 1;
+			break;
+		case 5://Friday
+			daysTillStart = -6;
+			daysTillEnd = 0;
+			break;
+		case 6://Saturday
+			daysTillStart = 0;
+			daysTillEnd = 6;
+			break;
+		default:
+			break;
+
+	}
+
+	calSelectStartDate = new Date(epoch + (oneDay * daysTillStart));
+	calSelectEndDate = new Date(epoch + (oneDay * daysTillEnd));
+
+	if(boolStyle){
+		$(".adminCalWeekHighlight").removeClass("adminCalWeekHighlight");
+
+		var tmpEpoch = calSelectStartDate.getTime();
+		var tmpDate = '';
+		while(tmpDate < calSelectEndDate.getTime()){
+			tmpDate = new Date(tmpEpoch);
+
+			var calObj = $(".xdsoft_date[data-date="+tmpDate.getDate()+"][data-month="+tmpDate.getMonth()+"][data-year="+tmpDate.getFullYear()+"]")[0];
+			$(calObj).addClass("adminCalWeekHighlight");
+			tmpEpoch += oneDay;
+		}
+	}
+}

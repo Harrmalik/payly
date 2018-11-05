@@ -1,5 +1,8 @@
 <?php include_once './layouts/header.php' ?>
-        <script type="text/babel" src="./js/main.js"></script>
+
+
+    <script src="./js/signature_pad.min.js"></script>
+    <script type="text/babel" src="./js/main.js"></script>
 </head>
 
 <body>
@@ -26,7 +29,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
                   <li class="active"><a id="home"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                  <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li> -->
+                  <li><a id="tips" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li>
                   <li><a id="timesheet" role="button"><i class="glyphicon glyphicon-list-alt"></i> Timesheet</a></li>
                   <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Edit Request</a></li> -->
               </ul>
@@ -164,6 +167,161 @@
                 <h3>Overtime reason</h3>
                 <textarea id="overtimeReason" class="form-control" rows="3"></textarea>
                 <button type="button" id="overtimeBtn" class="btn-primary custom-btn">Save Overtime</button>
+            </div>
+        </section>
+
+        <section id="tipsPage">
+            <div class="row text-center">
+                <div id="slide1" style="display:none;">
+                    <div id="msg-status"><br/></div>
+
+                    <div>Employee: <span id="employeeNameDisplay"></span></div>
+
+                    <form class="form-horizontal" style="margin:auto;width:500px">
+                        <div class="form-group">
+                            <label for="end" style="text-align: left;" class="col-sm-2 control-label">Tips for</label>
+
+                            <div class='input-group date' id='tipDate'>
+                              <input type='text' class="form-control" />
+                              <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                              </span>
+                            </div>
+                        </div>
+                    </form>
+                    <form id="frmtips">
+                    <div id="todaystips">
+                        <div>
+                            <input type="hidden" name="employeeid" id="employeeid"/>
+                            <input type="hidden" id="site" value="<?php echo $site;?>"/>
+
+                            <div id="tipsection1" style="display:block;">
+                                <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>Have you worked less than 4 hours today?
+
+                                <div class="text-center">
+                                    <div class="btn btn-lg btn-success btnLessthanfourhours" id="btnLessthanfourhours1" ds_value="1">Yes</div>
+                                    <div class="btn btn-lg btn-danger btnLessthanfourhours" id="btnLessthanfourhours0" ds_value="0">No</div>
+                                </div>
+                            </div>
+
+                            <div id="tipsection2" style="display:none;">
+                                <div>
+                                    By clicking the box below I acknowledge that I have voluntarily chose to end my shift early. I understand that I could have stayed and choose to work at least 4 hours.
+                                    <br/>
+                                    <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value=""/>
+                                    <div class="btn btn-lg btn-success btnLessthanfourhoursunderstand">I understand</div>
+                                </div>
+                            </div>
+
+
+                            <div id="tipsection3" style="display:none;margin:auto;" class="container text-left">
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="tippedHours">How many <b>Tipped hours</b> have you worked today?</label>
+                                            <?php
+                                            if($_SERVER['SERVER_ADDR'] == "172.18.100.7"){
+                                            ?>
+                                                <input type="hidden"  name="tippedHours" /><span class="form-control" id="tippedHours_display" style="width:100px;"></span>
+                                            <?php
+                                            } else {
+                                            ?>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control" name="tippedHours" style="width:100px;"/>
+                                            <?php
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="nonTippedHours">How many <b>Non Tipped hours</b> have you worked today?</label>
+                                                <?php
+                                                if($_SERVER['SERVER_ADDR'] == "172.18.100.7"){
+                                                ?>
+                                                    <input type="hidden" name="nonTippedHours" /><span class="form-control" id="nonTippedHours_display" style="width:100px;"></span>
+                                                <?php
+                                                } else {
+                                                ?>
+                                                    <input type="number" step=".01" autocomplete="off" class="form-control" name="nonTippedHours" style="width:100px;"/>
+                                                <?php
+                                                }
+                                                ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="detailTTips">How much have you earned in <b>tips</b> today while working under <b>Detail T</b>?</label>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control" name="detailTTips" style="width:100px;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="washTTips">How much have you earned in <b>tips</b> today while working under <b>Wash T</b>?</label>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control" name="washTTips" style="width:100px;"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center">
+                                    <small>Please check and verify your time entries and notify management of any errors.</small>
+                                    <?php
+                                    // show the lookup tool, but only if the user is from the register
+                                    if($_SERVER['SERVER_ADDR'] == "172.18.100.7"){
+                                        echo '<a href="javascript:;" onClick="lookupHours()"><i class="fa fa-search" aria-hidden="true"></i> Lookup Hours</a>';
+                                    }?>
+                                </div>
+
+                                <div class="questionRow row">
+                                    <div class="text-right col-sm-offset-1 col-sm-5">
+                                        <button type="button" class="btn btn-primary btn-lg" id='btnSigDisplay'>
+                                          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;&nbsp;Sign
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()">Submit Tips</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="signatureContainer" style="display:none;background-color:#fff;">
+                        <div class="modal-body">
+                            <div id="signature-pad-container"><canvas id="signature-pad" class="signature-pad" width="400px" height="200px"></canvas></div>
+                            <img id="imgSig" style="display:none;" height="200px" width="400px"/>
+
+                            <div>
+                                By my signature, I certify that the information I entered on this form is true, accurate, and complete based on my own check of my time entries on a daily basis
+                            </div>
+
+                            <div class="text-right">
+                                <div class="btn btn-primary" id="btnSigHide">Apply Signature</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="msgContainer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="overflow-y:hidden;">
+                <div class="modal-dialog" role="document" style="width:30%;">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div id="modal-status" class="text-center" style="font-size:150%;">
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer text-right">
+                            <div class="btn btn-primary" id="btnHideMsg" onClick="closeModal('msgContainer')">[X] Close</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

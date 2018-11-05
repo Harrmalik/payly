@@ -9,6 +9,32 @@
             $isManager = 'true';
     }
 ?>
+
+<!-- <script src="./js/datetimepicker.js"></script> -->
+
+<!--
+<link rel="stylesheet" href="../../DSCommons/public/css/datatables.min.css">
+-->
+<link rel="stylesheet" href="./css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="./css/datetimepicker.css">
+
+
+<!--
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+-->
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+
+
+<!--[if lt IE 9]>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+<![endif]-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
     <script type="text/babel" src="./js/admin.js"></script>
@@ -55,6 +81,7 @@
                   <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
                   <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
+                  <li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                 </ul>
 
                 <br/>
@@ -274,6 +301,75 @@
                         </div>
                       </form>
                   </div>
+
+                  <div role="tabpanel" class="tab-pane" id="tips">
+                      <div class="row text-left">
+                          <form classs="form">
+                          <div class="form-group">
+                            <label for="end" class="col-sm-2 control-label">Dates</label>
+                            <div class="col-sm-4">
+                                <div class='input-group date' id='dateFilter'>
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <span id="dateRangeDisplay"></span>
+                          </div>
+                      </form>
+
+                        <table id="tipContainer" class="stripe row-border order-column">
+                          <thead>
+                              <tr>
+                                  <th>Name</th>
+                                  <th>Date</th>
+                                  <th>Location</th>
+                                  <th>Tipped Hours</th>
+                                  <th>Non Tipped Hours</th>
+                                  <th>Wash Tips</th>
+                                  <th>Detail Tips</th>
+                                  <th>Total Tips</th>
+                                  <th>Manager Review</th>
+                                  <th></th>
+                              </tr>
+                          </thead>
+                          <tfoot>
+                              <tr>
+                                  <th>Name</th>
+                                  <th>Date</th>
+                                  <th>Location</th>
+                                  <th>Tipped Hours</th>
+                                  <th>Non Tipped Hours</th>
+                                  <th>Wash Tips</th>
+                                  <th>Detail Tips</th>
+                                  <th>Total Tips</th>
+                                  <th>Manager Review</th>
+                                  <th></th>
+                              </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+
+                      <div class="modal fade" tabindex="-1" role="dialog" id="removeTipModal">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">Remove Tip</h4>
+                            </div>
+                            <div class="modal-body">
+                              <p>Are you sure you want to remove this tip?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                              <button type="button" class="btn btn-primary" onClick="confirmRemoveTip()" id="btnConfirmRemove">Yes</button>
+                            </div>
+                          </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                      </div><!-- /.modal -->
+                  </div>
                 </div>
 
 
@@ -296,7 +392,7 @@
                 </section>
             <?php } ?>
 
-            <section id="userTimesheet">
+            <section id="userTimesheet" class="panel-body">
                 <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
                 <form class="form-horizontal">
                     <div class="form-group">

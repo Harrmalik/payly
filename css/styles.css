@@ -20,7 +20,7 @@ h2 {
 	color: red;
 }
 
-#app, section#auth, #timesheetPage {
+#app, section#auth, #timesheetPage, #tipsPage {
     display: none;
     position: relative;
 }
@@ -236,4 +236,86 @@ tr, th {
 
 .swal2-popup {
 	font-size: 1.3rem !important;
+}
+
+
+
+/* TIPPPPS */
+.suspect {
+	color: red;
+	font-weight: bold;
+}
+
+
+.btn-number{
+	border:1px solid !important;
+	margin:2px !important;
+	background-color:#fff;
+
+	padding-top:20px !important;
+
+	height:60px;
+	width:60px;
+
+	font-size:16px !important;
+	font-weight: bold;
+}
+
+.btn-number:hover{
+	background-color:#7aa7ef;
+}
+
+#empNumberDisplay{
+	font-size:24px;
+	font-weight:bolder;
+	min-height:50px;
+}
+
+.questionRow{
+	padding-bottom:25px;
+}
+
+.panel-primary{
+	padding-bottom:50px !important;
+}
+
+canvas{
+  border:2px solid;
+  background-color:#fff;
+}
+
+.wrapper {
+  position: relative;
+  display:block;
+  width: 400px;
+  height: 200px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.signature-pad {
+  /*position: absolute;*/
+  display:block;
+  left: 0;
+  top: 0;
+  width:400px;
+  height:200px;
+  background-color: white;
+}
+/*
+.modal .modal-dialog{
+  width: 30% !important;
+}
+*/
+
+.adminCalWeekHighlight{
+	border: 3px solid #ff0000 !important;
+}
+
+
+div#tipContainer_wrapper div.dt-buttons{
+  padding-top:10px;
+  padding-bottom:10px;
 }
