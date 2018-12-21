@@ -3,7 +3,7 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (!USER::inGroup(74)) {
+    if (USER::inGroup(74)) {
             $isManager = 'false';
     } else {
             $isManager = 'true';
@@ -61,12 +61,12 @@
               <ul class="nav navbar-nav">
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show()">Dashboard</a></li>
-                  <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
-                  <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
-                  <li role="presentation"><a href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
-                  <li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
+                  <li role="presentation"><a class="adminBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <li role="presentation"><a class="adminBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
+                  <li role="presentation"><a class="adminBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
+                  <!-- <li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
                   <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
-                  <li role="presentation"><a href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li>
+                  <li role="presentation"><a href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>

@@ -222,7 +222,7 @@ $(document).ready(function () {
 	});
 
 	$checkOutBtn.on("click", () => {
-		openTips($('#tips')[0], $('#tipsPage'))
+		// openTips($('#tips')[0], $('#tipsPage'))
 		checkOut()
 	})
 
@@ -761,9 +761,16 @@ $(document).ready(function () {
 					message: `You have successfully been punched out.`
 				});
 			}
+			if (deltasonic == 1) {
+				iziToast.info({
+					timeout: 60000 * 60,
+					title: 'Punched Out',
+					message: `<b>30 Minutes</b> from now would be - <b>${moment.unix(checkOutTime.unix()).add(30,'minutes').format('h:mm a')}</b>`
+				});
+			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			$('#kissklock-app').hide()
+			// $('#kissklock-app').hide()
 		}).fail((result) => {
 			iziToast.error({
 				message: 'Kiss Klock could not be saved at this time'

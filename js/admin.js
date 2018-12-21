@@ -34,7 +34,7 @@ let empid,
 if (window.navigator.userAgent.indexOf("MSIE ") > 0 ) {
 	userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 }
-
+if (isManager) $('.adminBtn').hide()
 
 // Edit Timesheets tab
 
@@ -130,14 +130,10 @@ let saveChange = () => {
 	let punchintime = $('#punchintime').data("DateTimePicker").date(),
 		punchouttime = $('#punchouttime').data("DateTimePicker").date()
 
-
-
-
 	if (punchintime.hours() != moment.unix(timeslot.in).tz(timeslot.timezone).hours() &&
 	 	timeslot.timezone == 'America/Chicago') {
 		punchintime.add(1, 'hours')
 	}
-
 
 	if (punchouttime && punchouttime.hours() != moment.unix(timeslot.out).tz(timeslot.timezone).hours() &&
 		timeslot.timezone == 'America/Chicago') {
@@ -824,7 +820,7 @@ $(document).ready(function(){
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
 					${
-						isLocation ?
+						isLocation && isManager ?
 							`<td>
 								<select class="form-control roles" data-timeid="${timeslot.timeid}">
 									${roles.map(r => {
