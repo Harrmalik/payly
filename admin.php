@@ -8,19 +8,42 @@
     } else {
             $isManager = 'true';
     }
+    $isLocation = $_SESSION['location'] == 900 ? 'true' : 'false';
 ?>
+
+<!-- <script src="./js/datetimepicker.js"></script> -->
+
+<!--
+<link rel="stylesheet" href="../../DSCommons/public/css/datatables.min.css">
+-->
+<link rel="stylesheet" href="./css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="./css/datetimepicker.css">
+
+
+<!--
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+-->
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+
+
+<!--[if lt IE 9]>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+<![endif]-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
     <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
-<body data-isManager="<?php echo $isManager; ?>">
+<body data-isManager="<?php echo $isManager; ?>" data-islocation="<?php echo $isLocation; ?>">
     <div class="panel panel-primary container">
-        <div class="panel-heading">
-            <p class="text-center"><img src="../DSCommons/public/images/delta_logo.png" width="150px" /></p>
-        </div>
-
-        <nav class="navbar navbar-default">
+        <nav class="navbar navbar-inverse">
           <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -30,14 +53,20 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#"><b>Punch In Clock</b></a>
+              <a class="navbar-brand" href="#"><b>Kissklock Admin</b></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
-                  <li><a href="./" role="button">Home</a></li>
-                  <li class="active"><a href="./admin.php" role="button">Admin</a></li>
+                  <li><a href="./" role="button">Kissklock</a></li>
+                  <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show()">Dashboard</a></li>
+                  <li role="presentation"><a class="adminBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <li role="presentation"><a class="adminBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
+                  <li role="presentation"><a class="adminBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
+                  <!-- <li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
+                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
+                  <li role="presentation"><a href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>
@@ -48,276 +77,375 @@
         </nav>
 
         <div class="panel-body">
-            <?php if ($isManager == 'false') { ?>
-                <span id="alert"></span>
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" role="tablist">
-                  <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
-                  <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
-                  <li role="presentation"><a href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
-                </ul>
+            <span id="alert"></span>
+            <!-- Nav tabs -->
 
-                <br/>
-                <div class="tab-content">
-                  <div role="tabpanel" class="tab-pane active" id="home">
-                      <form class="form-horizontal" onsubmit="return getTimesheet();">
-                        <div class="form-group">
-                          <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
-                          <div class="col-sm-4">
-                            <input type="text" class="form-control" id="employeeID" placeholder="Employee ID">
-                          </div>
-                        </div>
-                    </form>
-                    <div id="loader2"></div>
+            <br/>
+            <div class="tab-content">
 
-                      <div class="modal fade" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <h4 class="modal-title" id="modal-title">Edit Timeslot</h4>
-                            </div>
+                <div role="tabpanel" class="tab-pane active" id="dashboard">
+                    <section id="employees">
+                        <h2>Employees</h2>
+                        <hr/>
+                        <table id="dashboardTable" class="table table-hover table-striped table-responsive">
+                            <thead>
+                                <th>Name</th>
+                                <th>Currently Working</th>
+                                <th>Has Break</th>
+                                <th>Today Hours</th>
+                                <th>This Week Hours</th>
+                                <th>Last Week Hours</th>
+                                <th>Hours Till Overtime</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody id="list">
 
-                            <div class="modal-body">
-                                <form class="form-horizontal" onsubmit="return getTimesheet();">
-                                    <div class="form-group" id="typefield">
-                                        <select class="form-control" id="type">
-                                            <option value="1">Vacation</option>
-                                            <option value="2">Sick</option>
-                                            <option value="0">Regular</option>
-                                            <option value="3">Floating</option>
-                                            <option value="4">Holiday</option>
-                                            <option value="5">Jury Duty</option>
-                                            <option value="6">Bereavement</option>
-                                          </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="punchintime" style="text-align: left;" class="col-sm-3 control-label">Punch In</label>
-                                        <div class="col-sm-9">
-                                            <div class='input-group date' id='punchintime'>
-                                                <input type='text' class="form-control" />
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="punchingout">
-                                        <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Punch Out</label>
-                                        <div class="col-sm-9">
-                                            <div class='input-group date' id='punchouttime'>
-                                                <input type='text' class="form-control" />
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group adding">
-                                        <h4>Hours</h4>
-                                        <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
-                                        <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
-                                    </div>
-                                    <div class="form-group adding">
-                                        <input type="number" class="form-control" id="selectHours">
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                              <span id="modal-button"></span>
-                            </div>
-                          </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                      </div><!-- /.modal -->
-                  </div>
-
-                  <div role="tabpanel" class="tab-pane" id="users">
-                      <form class="form-horizontal">
-                        <div class="form-group">
-                          <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
-                          <div class="col-sm-4">
-                            <input type="text" class="form-control" id="employeeid" placeholder="Employee ID">
-                          </div>
-                        </div>
-                    </form>
-
-                    <br><br>
-                    <form class="form-horizontal">
-                      <div class="form-group">
-                        <label for="uName" class="col-sm-2 control-label">Employee Name</label>
-                        <div class="col-sm-4">
-                          <input type="text" class="form-control" id="uName">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="uDeltasonic" class="col-sm-2 control-label">Company</label>
-                        <div class="col-sm-4">
-                            <select class="form-control" id="uDeltasonic">
-                                <option value="1">Deltasonic</option>
-                                <option value="0">Benderson</option>
-                            </select>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="uCode" class="col-sm-2 control-label">Company Code</label>
-                        <div class="col-sm-4">
-                            <select class="form-control" id="uCode">
-                                <option value="DSCW">DSCW</option>
-                                <option value="BDLLC">BDLLC</option>
-                                <option value="BROCH">BROCH</option>
-                            </select>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputPassword3" class="col-sm-2 control-label">Job Description</label>
-                        <div class="col-sm-4">
-                          <input type="text" class="form-control" id="uJob">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
-                        <div class="col-sm-4">
-                          <input type="text" class="form-control" id="uSupervisor" placeholder="Supervisor ID">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputPassword3" class="col-sm-2 control-label">Timezone</label>
-                        <div class="col-sm-4">
-                            <select class="form-control" id="uTimezone">
-                                <option value="America/New_York">EST</option>
-                                <option value="America/Chicago">CDT</option>
-                            </select>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputPassword3" class="col-sm-2 control-label">Holidays</label>
-                        <div class="col-sm-4">
-                          <input type="text" class="form-control" id="uHoliday" placeholder="How many hours">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="weekends" class="col-sm-2 control-label">Weekends</label>
-                        <div class="col-sm-4">
-                            <input id="weekends" type="checkbox"></input>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="nights" class="col-sm-2 control-label">Nights</label>
-                        <div class="col-sm-4">
-                            <input id="nights" type="checkbox"></input>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="alerts" class="col-sm-2 control-label">Alerts</label>
-                        <div class="col-sm-4">
-                            <input id="alerts" type="checkbox"></input>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="canCallIn" class="col-sm-2 control-label">Can Call In</label>
-                        <div class="col-sm-4">
-                            <input id="canCallIn" type="checkbox"></input>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="field" class="col-sm-2 control-label">Field</label>
-                        <div class="col-sm-4">
-                            <input id="field" type="checkbox"></input>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
-                          <div id="removeUser" class="btn btn-danger">Remove User</div>
-                          <div id="saveUser" class="btn btn-primary">Save Changes</div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-
-                  <div role="tabpanel" class="tab-pane" id="supervisors">
-                      <form class="form-horizontal">
-                        <div class="form-group">
-                          <label for="supervisorid" class="col-sm-2 control-label">Supervisor ID</label>
-                          <div class="col-sm-4">
-                            <input type="text" class="form-control" id="supervisorid" placeholder="empid">
-                          </div>
-                        </div>
-                      </form>
-
-                      <br><br>
-                      <form class="form-horizontal">
-                        <div class="form-group">
-                          <label for="sName" class="col-sm-2 control-label">Name</label>
-                          <div class="col-sm-4">
-                            <input type="text" class="form-control" id="sName">
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="sEmail" class="col-sm-2 control-label">Email</label>
-                          <div class="col-sm-4">
-                            <input type="text" class="form-control" id="sEmail" placeholder="supervisor@deltasoniccarwash.com">
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="supervisorEmployees" class="col-sm-2 control-label">Supervisor</label>
-                          <div class="col-sm-8">
-                            <select id="supervisorEmployees" data-placeholder="Add Employees" multiple class="form-control chosen-select" style="width:100%">
-                            </select>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <div class="col-sm-offset-2 col-sm-10">
-                            <div id="removeSupervisor" class="btn btn-danger">Remove Supervisor</div>
-                            <div id="saveSupervisor" class="btn btn-success">Save Changes</div>
-                          </div>
-                        </div>
-                      </form>
-                  </div>
+                            </tbody>
+                        </table>
+                    </section>
                 </div>
 
-
-            <?php } else { ?>
-                <section id="employees">
-                    <h2>Employees</h2>
-                    <hr/>
-                    <div id="loader"></div>
-                    <table class="table table-hover">
-                        <thead>
-                            <th>Name</th>
-                            <th>This Week Hours</th>
-                            <th>Last Week Hours</th>
-                            <th></th>
-                        </thead>
-                        <tbody id="list">
-
-                        </tbody>
-                    </table>
-                </section>
-            <?php } ?>
-
-            <section id="userTimesheet">
-                <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
-                <form class="form-horizontal">
+              <div role="tabpanel" class="tab-pane" id="home">
+                  <form class="form-horizontal" onsubmit="return getTimesheet();">
                     <div class="form-group">
-                      <label for="end" class="col-sm-2 control-label">Week Ending</label>
+                      <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
                       <div class="col-sm-4">
-                          <div class='input-group date' id='end'>
-                              <input type='text' class="form-control" />
-                              <span class="input-group-addon">
-                                  <span class="glyphicon glyphicon-calendar"></span>
-                              </span>
-                          </div>
+                        <input type="text" class="form-control" id="employeeID" placeholder="Employee ID">
                       </div>
                     </div>
                 </form>
-                <h2 id="username"></h2>
-                <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary" id="addTimeslot">Add Time</button>
+                <div id="loader2"></div>
+
+                  <div id="timesheetModal" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title" id="modal-title">Edit Timeslot</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <form class="form-horizontal" onsubmit="return getTimesheet();">
+                                <div class="form-group" id="typefield">
+                                    <select class="form-control" id="type">
+                                        <option value="1">Vacation</option>
+                                        <option value="2">Sick</option>
+                                        <option value="0">Regular</option>
+                                        <option value="3">Floating</option>
+                                        <option value="4">Holiday</option>
+                                        <option value="5">Jury Duty</option>
+                                        <option value="6">Bereavement</option>
+                                      </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="punchintime" style="text-align: left;" class="col-sm-3 control-label">Punch In</label>
+                                    <div class="col-sm-9">
+                                        <div class='input-group date' id='punchintime'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="punchingout">
+                                    <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Punch Out</label>
+                                    <div class="col-sm-9">
+                                        <div class='input-group date' id='punchouttime'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group adding">
+                                    <h4>Hours</h4>
+                                    <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
+                                    <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
+                                </div>
+                                <div class="form-group adding">
+                                    <input type="number" class="form-control" id="selectHours">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          <span id="modal-button"></span>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="users">
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="employeeID" class="col-sm-2 control-label">Employee ID</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" id="employeeid" placeholder="Employee ID">
+                      </div>
+                    </div>
+                </form>
+
+                <br><br>
+                <form class="form-horizontal">
+                  <div class="form-group">
+                    <label for="uName" class="col-sm-2 control-label">Employee Name</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" id="uName">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="uDeltasonic" class="col-sm-2 control-label">Company</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="uDeltasonic">
+                            <option value="1">Deltasonic</option>
+                            <option value="0">Benderson</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="uCode" class="col-sm-2 control-label">Company Code</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="uCode">
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Job Description</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" id="uJob">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" id="uSupervisor" placeholder="Supervisor ID">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Timezone</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="uTimezone">
+                            <option value="America/New_York">EST</option>
+                            <option value="America/Chicago">CDT</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Holidays</label>
+                    <div class="col-sm-4">
+                      <input type="number" class="form-control" id="uHoliday" placeholder="How many hours">
+                    </div>
+                  </div>
+                  <!-- <div class="form-group">
+                    <label for="weekends" class="col-sm-2 control-label">Weekends</label>
+                    <div class="col-sm-4">
+                        <input id="weekends" type="checkbox"></input>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="nights" class="col-sm-2 control-label">Nights</label>
+                    <div class="col-sm-4">
+                        <input id="nights" type="checkbox"></input>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="alerts" class="col-sm-2 control-label">Alerts</label>
+                    <div class="col-sm-4">
+                        <input id="alerts" type="checkbox"></input>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="canCallIn" class="col-sm-2 control-label">Can Call In</label>
+                    <div class="col-sm-4">
+                        <input id="canCallIn" type="checkbox"></input>
+                    </div>
+                  </div> -->
+                  <div class="form-group">
+                    <label for="field" class="col-sm-2 control-label">Field</label>
+                    <div class="col-sm-4">
+                        <input id="field" type="checkbox"></input>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="phone" class="col-sm-2 control-label">Phone</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" id="phone">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <div id="removeUser" class="btn btn-danger">Remove User</div>
+                      <div id="saveUser" class="btn btn-primary">Save User</div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="supervisors">
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="supervisorid" class="col-sm-2 control-label">Supervisor ID</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" id="supervisorid" placeholder="empid">
+                      </div>
+                    </div>
+                  </form>
+
+                  <br><br>
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="sName" class="col-sm-2 control-label">Name</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" id="sName">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="sEmail" class="col-sm-2 control-label">Email</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" id="sEmail" placeholder="supervisor@deltasoniccarwash.com">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="supervisorEmployees" class="col-sm-2 control-label">Supervisor</label>
+                      <div class="col-sm-8">
+                        <select id="supervisorEmployees" data-placeholder="Add Employees" multiple class="form-control chosen-select" style="width:100%">
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="nights" class="col-sm-2 control-label">Is Active</label>
+                      <div class="col-sm-4">
+                          <input id="sActive" type="checkbox"></input>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div id="removeSupervisor" class="btn btn-danger">Remove Supervisor</div>
+                        <div id="saveSupervisor" class="btn btn-success">Save Changes</div>
+                      </div>
+                    </div>
+                  </form>
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="tips">
+                  <div class="row text-left">
+                      <form classs="form">
+                      <div class="form-group">
+                        <label for="end" class="col-sm-2 control-label">Dates</label>
+                        <div class="col-sm-4">
+                            <div class='input-group date' id='dateFilter'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <span id="dateRangeDisplay"></span>
+                      </div>
+                  </form>
+
+                    <table id="tipContainer" class="stripe row-border order-column">
+                      <thead>
+                          <tr>
+                              <th>Name</th>
+                              <th>Date</th>
+                              <th>Location</th>
+                              <th>Tipped Hours</th>
+                              <th>Non Tipped Hours</th>
+                              <th>Wash Tips</th>
+                              <th>Detail Tips</th>
+                              <th>Total Tips</th>
+                              <th>Manager Review</th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tfoot>
+                          <tr>
+                              <th>Name</th>
+                              <th>Date</th>
+                              <th>Location</th>
+                              <th>Tipped Hours</th>
+                              <th>Non Tipped Hours</th>
+                              <th>Wash Tips</th>
+                              <th>Detail Tips</th>
+                              <th>Total Tips</th>
+                              <th>Manager Review</th>
+                              <th></th>
+                          </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+            <div role="tabpanel" class="tab-pane" id="reports">
+                <div class="form-group">
+                  <label for="phone" class="col-sm-2 control-label">Reports</label>
+                  <div class="col-sm-4">
+                      <select class="form-control" id="reports">
+                          <option value="America/New_York">Daily Hours</option>
+                          <option value="America/Chicago">Weekly Hours</option>
+                          <option value="America/Chicago">Labor Report</option>
+                          <option value="America/Chicago">Minors Report</option>
+                          <option value="America/Chicago">Didn't Punch Out</option>
+                          <option value="America/Chicago">Tips</option>
+                          <option value="America/Chicago">Night Hours</option>
+                          <option value="America/Chicago">Weekend Hours</option>
+                      </select>
+                  </div>
                 </div>
 
-                <table id="timesheet" class="table">
+            </div>
+            </div> <!-- /tab content -->
+          </div><!-- /panel body -->
+
+
+            <div class="modal fade" tabindex="-1" role="dialog" id="removeTipModal">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Remove Tip</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to remove this tip?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onClick="confirmRemoveTip()" id="btnConfirmRemove">Yes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+
+            <section id="userTimesheet" class="panel-body">
+                <section className="hero hero-page gray-bg padding-small" style={{margin: "-2em",padding: "50px 0",background:"#f5f5f5"}}>
+                  <div className="container">
+                      <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
+                      <form class="form-horizontal">
+                          <div class="form-group">
+                            <label for="end" class="col-sm-2 control-label">Week Ending</label>
+                            <div class="col-sm-4">
+                                <div class='input-group date' id='end'>
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                          </div>
+                      </form>
+                      <h2 id="username"></h2>
+                      <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3>
+                      <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-primary" id="addTimeslot">Add Time</button>
+                      </div>
+                  </div>
+                </section>
+
+                <table id="timesheet" class="table table-condensed">
                     <tbody id="timesheetTable">
 
                     </tbody>
