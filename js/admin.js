@@ -3,6 +3,7 @@ let empid,
 	empSite,
 	userData = $('title').data(),
 	isManager = $('body').data('ismanager'),
+	isLocation = $('body').data('islocation'),
 	buildTable,
 	makeTimesheet,
 	timezone,
@@ -74,7 +75,7 @@ $('#addTimeslot').on('click', () => {
 	$('#punchingout').hide();
 	$('.adding').show();
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="addTimeslot()" data-dismiss="modal">Add Timeslot</button>');
-	$('.modal').modal('show');
+	$('#timesheetModal').modal('show');
 });
 
 let fullday = () => {
@@ -119,21 +120,26 @@ let makeEdit = (row) => {
 	$('#typefield').hide();
 	$('#modal-button').html('<button type="button" class="btn btn-primary" onclick="saveChange()" data-dismiss="modal">Save changes</button>');
 	$('#punchintime').data("DateTimePicker").date(moment.unix(timeslot.in).tz(timeslot.timezone));
-	$('#punchouttime').data("DateTimePicker").date(moment.unix(timeslot.out).tz(timeslot.timezone));
+	$('#punchouttime').data("DateTimePicker").date(timeslot.out ? moment.unix(timeslot.out).tz(timeslot.timezone) : null);
 	$('#punchingout').show();
 	$('.adding').hide();
-	$('.modal').modal('show');
+	$('#timesheetModal').modal('show');
 };
 
 let saveChange = () => {
 	let punchintime = $('#punchintime').data("DateTimePicker").date(),
 		punchouttime = $('#punchouttime').data("DateTimePicker").date()
 
+
+
+
 	if (punchintime.hours() != moment.unix(timeslot.in).tz(timeslot.timezone).hours() &&
 	 	timeslot.timezone == 'America/Chicago') {
 		punchintime.add(1, 'hours')
 	}
-	if (punchouttime.hours() != moment.unix(timeslot.out).tz(timeslot.timezone).hours() &&
+
+
+	if (punchouttime && punchouttime.hours() != moment.unix(timeslot.out).tz(timeslot.timezone).hours() &&
 		timeslot.timezone == 'America/Chicago') {
 		punchouttime.add(1, 'hours')
 	}
@@ -146,7 +152,7 @@ let saveChange = () => {
 			oldin: timeslot.in,
 			punchintime: punchintime.unix(),
 			oldout: timeslot.out,
-			punchouttime: punchouttime.unix(),
+			punchouttime: punchouttime ? punchouttime.unix() : null,
 			timenow: moment().unix(),
 			action: 'editTimeslot',
 			module: 'admin'
@@ -156,8 +162,6 @@ let saveChange = () => {
 		iziToast.success({
 			title: 'Success',
 			message: `${data.result}`,
-
-
 		});
 		getTimesheet();
 	});
@@ -383,6 +387,8 @@ $(document).ready(function(){
     let $timesheet = $('#timesheetTable');
     let $totalHours = $('#totalHours');
 
+
+
 	// Autocomplete Searchboxes
 	$.ajax({
 		url: `./php/main.php?module=admin&action=getEmployees`
@@ -406,8 +412,85 @@ $(document).ready(function(){
 
 		allUsers = users
 
+		allUsers.forEach((user) => {
+			$('#supervisorEmployees').append(`
+				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
+			`)
+		});
 		$("#employeeID").easyAutocomplete(options)
 		$('.easy-autocomplete-container').css('z-index', 3)
+		$.ajax({
+			url: `./php/main.php?module=admin&action=getSupervisors`
+		}).done((supervisors) => {
+			let options = {
+				data: supervisors,
+				getValue: (supervisor) => {
+					return supervisor.employeeid + '. '  + supervisor.name
+				},
+				theme: "blue-light",
+				list: {
+					match: {
+						enabled: true
+					},
+					onChooseEvent: () => {
+						let supervisor = $("#supervisorid").getSelectedItemData()
+						$('#sName').val(supervisor.name)
+						$('#sEmail').val(supervisor.email)
+
+						// Get a faster route removing user hours
+						$.ajax({
+							url: `./php/main.php?module=admin&action=getMyEmployees&empid=${supervisor.employeeid}`
+						}).done((employees) => {
+							console.log(employees);
+							$("#supervisorEmployees").val(employees.map(employee => {
+								return employee.id
+							}))
+
+							$("#supervisorEmployees").trigger("chosen:updated");
+						})
+
+
+					}
+				}
+			}
+
+			$("#supervisorid").easyAutocomplete(options)
+			$("#uSupervisor").easyAutocomplete(options)
+			$('.easy-autocomplete-container').css('z-index', 3)
+
+			$("#supervisorEmployees").chosen().change((data, change) => {
+				if ($('#supervisorid').val().split('.')[0]) {
+					if (change.selected) {
+						// Change supervisor to me
+						data = {
+							module: 'admin',
+							action: 'addEmployeeToSupervisor',
+							employeeID: change.selected,
+							supervisor: $('#supervisorid').val().split('.')[0]
+						}
+					} else {
+						// Remove me as supervisor
+						data = {
+							module: 'admin',
+							action: 'addEmployeeToSupervisor',
+							employeeID: change.deselected,
+							supervisor: null
+						}
+					}
+
+					$.ajax({
+						url: `./php/main.php`,
+						method: 'post',
+						data
+					}).done((data) => {
+						iziToast.success({
+							title: 'Success',
+							message: `User supervisor changed.`,
+						});
+					});
+				}
+			})
+		})
 	})
 
 	$.ajax({
@@ -445,83 +528,19 @@ $(document).ready(function(){
 		$("#employeeid").easyAutocomplete(options)
 	})
 
-	$.ajax({
-		url: `./php/main.php?module=admin&action=getSupervisors`
-	}).done((supervisors) => {
-		let options = {
-			data: supervisors,
-			getValue: (supervisor) => {
-				return supervisor.employeeid + '. '  + supervisor.name
-			},
-			theme: "blue-light",
-			list: {
-				match: {
-					enabled: true
-				},
-				onChooseEvent: () => {
-					let supervisor = $("#supervisorid").getSelectedItemData()
-					$('#sName').val(supervisor.name)
-					$('#sEmail').val(supervisor.email)
-
-					// Get a faster route removing user hours
-					$.ajax({
-						url: `./php/main.php?module=admin&action=getMyEmployees&empid=${supervisor.employeeid}`
-					}).done((employees) => {
-						console.log(employees);
-						$("#supervisorEmployees").val(employees.map(employee => {
-							return employee.id
-						}))
-
-						$("#supervisorEmployees").trigger("chosen:updated");
-					})
 
 
-				}
-			}
-		}
-
-		allUsers.forEach((user) => {
-			$('#supervisorEmployees').append(`
-				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
+	$('#uDeltasonic').on('change', (e) => {
+		if (e.target.value == 1) {
+			$('#uCode').html(`
+				<option value="DSCW">DSCW</option>
 			`)
-		});
-		$("#supervisorid").easyAutocomplete(options)
-		$("#uSupervisor").easyAutocomplete(options)
-		$('.easy-autocomplete-container').css('z-index', 3)
-		setTimeout(function(){
-			$("#supervisorEmployees").chosen().change((data, change) => {
-				if ($('#supervisorid').val().split('.')[0]) {
-					if (change.selected) {
-						// Change supervisor to me
-						data = {
-							module: 'admin',
-							action: 'addEmployeeToSupervisor',
-							employeeID: change.selected,
-							supervisor: $('#supervisorid').val().split('.')[0]
-						}
-					} else {
-						// Remove me as supervisor
-						data = {
-							module: 'admin',
-							action: 'addEmployeeToSupervisor',
-							employeeID: change.deselected,
-							supervisor: null
-						}
-					}
-
-					$.ajax({
-						url: `./php/main.php`,
-						method: 'post',
-						data
-					}).done((data) => {
-						iziToast.success({
-							title: 'Success',
-							message: `User supervisor changed.`,
-						});
-					});
-				}
-			})
-		}, 3000);
+		} else {
+			$('#uCode').html(`
+				<option value="BDLLC">BDLLC</option>
+				<option value="BROCH">BROCH</option>
+			`)
+		}
 
 	})
 
@@ -562,7 +581,37 @@ $(document).ready(function(){
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
-			if (isManager) {
+			if (isManager && isLocation) {
+				console.log('logging headers');
+				$timesheet.append(`
+					<tr class="active headers">
+						<th style="width: 15%;">Date</th>
+						<th style="width: 15%;">Role</th>
+						<th style="width: 20%;">Check In</th>
+						<th style="width: 20%;">Check Out</th>
+						<th style="width: 10%;">Hours</th>
+						<th style="width: 20%;">Actions</th>
+					</tr>
+
+					<tr id="${day[4]}" class="timeslots">
+						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
+						<td>- -</td>
+						<td>- -</td>
+						<td>- -</td>
+						<td>0</td>
+						<td></td>
+					</tr>
+
+					<tr class="timeslots">
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td id="${day[4]}Hours" class="info"><b>0</b></td>
+						<td></td>
+					</tr>
+				`);
+			} else if (isManager) {
 				$timesheet.append(`
 					<tr class="active headers">
 						<th style="width: 25%;">Date</th>
@@ -635,7 +684,28 @@ $(document).ready(function(){
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
 			];
 		}
-		if (isManager) {
+
+		if (isManager && isLocation) {
+			console.log('logging rows');
+			$timesheet.append(`
+				<tr id="totalrow">
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th>Total Hours</th>
+					<th></th>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td id="totalHours" class="info"><b>0</b></td>
+					<th></th>
+				</tr>
+			`)
+		} else if (isManager) {
 			$timesheet.append(`
 				<tr id="totalrow">
 					<th></th>
@@ -675,16 +745,17 @@ $(document).ready(function(){
 		$('#loader').addClass('loader')
 		totalTime = 0;
         $.ajax({
-            url: `./php/main.php?module=kissklock&action=getInitialState`,
+            url: `./php/main.php?module=admin&action=getEmployeeHours`,
             data: {
-                id: empid,
+                empid,
                 startDate: startDate.hour(0).minute(0).format('YYYY-MM-DD'),
                 endDate: endDate.format('YYYY-MM-DD')
             }
         }).done((currentTimeslots) => {
-			timeslots = currentTimeslots
+			timeslots = currentTimeslots.timeslots
 			$('#loader2').hide()
-            let hours = 0;
+            let hours = 0,
+				roles = currentTimeslots.roles
 
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
@@ -712,23 +783,56 @@ $(document).ready(function(){
 
                 if (!$htmlDay.attr('clocked') || $htmlDay.attr('clocked') === 'false') {
                     $htmlDay.html('');
-                    addRow($htmlDay, timeslot, hoursSum);
+                    addRow($htmlDay, timeslot, hoursSum, roles);
                     $htmlDay.attr('clocked', true);
                 } else {
-                    addRow($htmlDay, timeslot, hoursSum)
+                    addRow($htmlDay, timeslot, hoursSum, roles)
                 }
 
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
                 $("td#totalHours.info").html(`<b>${totalTime.toFixed(2)}</b>`);
             });
+			$('.roles').on('change', e => {
+				$.ajax({
+					url: './php/main.php',
+					method: 'post',
+					data: {
+						module: 'admin',
+						action: 'changeTimeslotRole',
+						empid,
+						timeid: $(e.target).data('timeid'),
+						role: e.target.value
+					}
+				}).success(() => {
+					iziToast.success({
+						title: 'Success',
+						message: `Timeslot saved`,
+					});
+				}).fail(() => {
+					iziToast.error({
+						title: 'Error',
+						message: `Error saving timeslot`,
+					});
+				})
+			})
         });
     }
 
-    function addRow($element, timeslot, sum) {
+    function addRow($element, timeslot, sum, roles) {
         $(
             `
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
+					${
+						isLocation ?
+							`<td>
+								<select class="form-control roles" data-timeid="${timeslot.timeid}">
+									${roles.map(r => {
+										return `<option value=${r.job_code} ${timeslot.roleId == r.job_code ? 'selected' : ''}>${r.job_desc}</option>`
+									})}
+								  </select>
+							</td>` : ''
+					}
                     <td class="${timeslot.insource == 2 ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
 						${timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}
 					</td>
@@ -740,7 +844,7 @@ $(document).ready(function(){
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
 					${
-						isManager ? '' :
+						isManager && !isLocation ? '' :
 							`<td>
 								<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}><i class="glyphicon glyphicon-remove"></i></button>
 								<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
@@ -828,26 +932,25 @@ $(document).ready(function(){
 	});
 
 	let getInitialState = () => {
-		$('#loader').addClass('loader')
-		$.ajax({
-			url: `./php/main.php?module=admin&action=getMyEmployees`
-		}).done((employees) => {
-			$('#loader').hide()
-			if (employees.length > 0) {
-				employees.forEach((employee) => {
-					$('#list').append(`
-						<tr>
-							<td>${employee.name}</td>
-							<td>${employee.thisWeekHours}</td>
-							<td>${employee.lastWeekHours}</td>
-							<td><a class="btn btn-default" onclick="getTimesheet(${employee.id})">View Timesheet</a></td>
-						</tr>
-					`)
-				});
-			} else {
-				$('#employees').html('You are in charge of no employees');
-			}
-		})
+		let dashboard;
+		dashboard = $('#dashboardTable').DataTable( {
+	        "ajax": `./php/main.php?module=admin&action=getMyEmployees`,
+			"destroy": true,
+			"searching": true,
+			fixedColumns: false,
+			pageLength: 100,
+			"columns": [
+			  { "data": "name", "render": (data, type, row) => { return row.isMinor ? data + ' <i class="fas fa-child"></i>' : data } },
+			  { "data": "role", render: (data, type, row) => {return data ? data + ' <span class="badge badge-primary">' + row.hoursWorked.toFixed(2) + '</span>' : '' } },
+			  { "data": "hasBreak", render: (data) => { return data ? '<i class="fas fa-check"></i>' : '' } },
+			  { "data": "todayHours", render: (data) => { return data.toFixed(2) }},
+			  { "data": "thisWeekHours", render: (data) => { return data.toFixed(2) }},
+			  { "data": "lastWeekHours", render: (data) => { return data.toFixed(2) }},
+			  { "data": "thisWeekHours", render: (data, row) =>  {return (40 - data).toFixed(2)} },
+			  { "data": "id", render: (data) => {return `<a class="btn btn-default" onclick="getTimesheet(${data})">View Timesheet</a>`} }
+		  ],
+			"order": [[ 1, "desc" ]]
+		} );
 	};
 
 	if (isManager)

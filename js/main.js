@@ -19,6 +19,7 @@ deltasonic,
 autologout,
 checkIn,
 checkOut,
+openTips,
 timer = () => {
 	autologout = setTimeout(IdleTimeout, 60000)
 },
@@ -99,6 +100,7 @@ let login = (e) => {
 				timezone = user.timezone ? user.timezone : moment.tz.guess()
 				deltasonic = user.deltasonic
 				roles = user.roles
+				if (currentHours == 0) $('#checkIn').html('<h3>Start Day</h3>')
 				if (deltasonic) $('#overtime').hide()
 				if (user.hasOvertime) {
 					$('#overtimeReason').val(user.hasOvertime)
@@ -129,6 +131,12 @@ let login = (e) => {
 				if (hiredDate == todaysDate) {
 					$('#message').html(`<div class="alert alert-info" role="alert">Happy Anniversary <b>${user.empname}</b>! Thank you for your ${yearsWorked} year(s) of service.</b></div>`)
 				}
+
+				$('#notificationsList').append(`
+					<li class="list-group-item"><h2>Walden Notifications</h2></li>
+					<li class="list-group-item">Weather will be cold today</li>
+					<li class="list-group-item">Location will be closed after 2pm today</li>
+				`)
 			} else {
 				$(".modal-title").html(`User not found for employee ID: ${empid}`)
 				$(".modal-body").html(`
@@ -181,7 +189,8 @@ $(document).ready(function () {
 	checkInTime,
 	checkOutTime,
 	checkInIds = [],
-	totalTime = 0;
+	totalTime = 0,
+	timeslots = [];
 
 	// HTML Buttons
 	let $checkInBtn = $('#checkIn'),
@@ -204,11 +213,18 @@ $(document).ready(function () {
 	});
 
 	// Event Listeners
+	$('#notifications').on("click", () => {
+		$('#notificationsPanel').slideToggle()
+	});
+
 	$checkInBtn.on("click", () => {
 		checkIn()
 	});
 
-	$checkOutBtn.on("click", checkOut)
+	$checkOutBtn.on("click", () => {
+		openTips($('#tips')[0], $('#tipsPage'))
+		checkOut()
+	})
 
 	$lunchBreakBtn.on("click", () => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
@@ -276,44 +292,18 @@ $(document).ready(function () {
 		});
 	})
 
-	$('#home').on('click', () => {
-		$('#app').show()
-		$('#timesheetPage').hide()
+	$('#home').on('click', (e) => {
+		nextPage(e, $('#app'))
+		$('#kissklock-app').show()
 		$('#clockdate').show()
-		$timesheetBtn.parent().removeClass('active')
-		$('#home').parent().addClass('active')
-		$('#tipsPage').hide()
 	})
 
-	$('#tips').on('click', () => {
-		$('#app').hide()
-		$('#timesheetPage').hide()
-		$('#clockdate').hide()
-		$('#tipsPage').show()
-		$('#home').parent().removeClass('active')
-		$('#tips').parent().addClass('active')
-
-
-		lookupHours()
-
-		setQuestionNumber(1);
-
-		$("#employeeid").val(empid);
-
-		glbsection = 1;
-		$("#slide1").slideToggle("slow");
-		$("#slide2").slideToggle("slow");
-
-		$("#employeeNameDisplay").text(employeename);
+	$('#tips').on('click', (e) => {
+		openTips(e, $('#tipsPage'))
 	})
 
-	$timesheetBtn.on("click", () => {
-		$('#app').hide()
-		$('#timesheetPage').show()
-		$('#clockdate').hide()
-		$('#tipsPage').hide()
-		$timesheetBtn.parent().addClass('active')
-		$('#home').parent().removeClass('active')
+	$timesheetBtn.on("click", (e) => {
+		nextPage(e, $('#timesheetPage'))
 		// Javascript letiables
 		let startDate,
 		endDate,
@@ -586,6 +576,7 @@ $(document).ready(function () {
 				endDate : moment().add(1, 'days').format('YYYY-MM-DD')
 			}
 		}).done((timeslots) => {
+			timeslots = timeslots
 			$('#todayHours').empty()
 			checkInIds = []
 			totalTime  = 0
@@ -654,15 +645,24 @@ $(document).ready(function () {
 	};
 
 	let toggleButtons = () => {
+		let position;
+
 		if (counter % 2 == 0) {
 			$checkInBtn.show();
 			$checkOutBtn.hide();
 			$lunchBreakBtn.hide();
+			position = $('#checkIn').position()
 		} else {
 			$checkInBtn.hide();
 			$checkOutBtn.show();
 			$lunchBreakBtn.show();
+			position = $('#checkOut').position()
 		}
+		$('#clockdate').show().css({
+			'top': '2em',
+			'left': position.left + 16 + 'px',
+			'transform' : 'none',
+		})
 	};
 
 	let calculateHours = (start, end) => {
@@ -674,12 +674,24 @@ $(document).ready(function () {
 	let addRow = (start, end, total, role='') => {
 		$todayHours.append(`
 			<tr>
-				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''} ${role}</td>
+				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''} <span class="badge badge-primary">${role}</span></td>
 				<td>${start.format('h:mm a')}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'timeout'}">${ end ? end.format('h:mm a') : '- -'}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : '- -'}</td>
+				<td></td>
 			</tr>
 		`);
+	}
+
+	let nextPage = (e, page) => {
+		$('#app').hide()
+		$('#timesheetPage').hide()
+		$('#clockdate').hide()
+		$('#tipsPage').hide()
+		page.show()
+		$('nav li').removeClass('active')
+		$(e.target).parent().addClass('active')
+		e.target.id == 'home' ? $('#kissklock-app').show() : $('#kissklock-app').hide()
 	}
 
 	checkIn = () => {
@@ -751,6 +763,7 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
+			$('#kissklock-app').hide()
 		}).fail((result) => {
 			iziToast.error({
 				message: 'Kiss Klock could not be saved at this time'
@@ -760,6 +773,23 @@ $(document).ready(function () {
 			$('#checkOut').attr('disabled', false)
 			$('#checkOut').text('Punch Out')
 		});
+	}
+
+	openTips = (e) => {
+		nextPage(e, $('#tipsPage'))
+		$('#kissklock-app').hide()
+
+		lookupHours()
+
+		setQuestionNumber(1);
+
+		$("#employeeid").val(empid);
+
+		glbsection = 1;
+		$("#slide1").slideDown("slow");
+		$("#slide2").slideDown("slow");
+
+		$("#employeeNameDisplay").text(employeename);
 	}
 });
 
@@ -983,17 +1013,32 @@ function lookupHours(){
 		startDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD'),
 		endDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD')
 	};
-	$.get("./php/main.php?module=kissklock&action=getHoursByTip",data).done(function(response){
-		let tippedHours = 0;
-		let nonTippedHours = 0;
+
+	$('#washInput').hide()
+	$('#detailInput').hide()
+
+	$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
+		let tippedHours = 0,
+			nonTippedHours = 0,
+			detail = false,
+			wash = false;
 
 		response.forEach((timeslot) => {
-			if (timeslot.isTipped) {
+			if (timeslot.istipped) {
 				tippedHours += timeslot.totalHours
 			} else {
 				nonTippedHours += timeslot.totalHours
 			}
+
+			if (timeslot.role && timeslot.role.toLowerCase().match(/wash/))
+				wash = true
+
+			if (timeslot.role && timeslot.role.toLowerCase().match(/detail/))
+				detail = true
 		})
+
+		if (wash) $('#washInput').show()
+		if (detail) $('#detailInput').show()
 
 		$($('[name="tippedHours"]')[0]).val(tippedHours.toFixed(2));
 		$($('[name="nonTippedHours"]')[0]).val(nonTippedHours.toFixed(2));
