@@ -78,7 +78,7 @@
                 <form class="form-horizontal" onsubmit="return login()">
                   <div class="form-group">
                     <div class="col-sm-12">
-                      <input type="text" autocomplete="off" class="form-control" id="inputID" placeholder="Employee ID">
+                      <input type="number" autocomplete="off" class="form-control" id="inputID" placeholder="Employee ID">
                     </div>
                   </div>
                 </form>

@@ -239,7 +239,7 @@
                       <input type="number" class="form-control" id="uHoliday" placeholder="How many hours">
                     </div>
                   </div>
-                  <!-- <div class="form-group">
+                  <div class="form-group">
                     <label for="weekends" class="col-sm-2 control-label">Weekends</label>
                     <div class="col-sm-4">
                         <input id="weekends" type="checkbox"></input>
@@ -262,7 +262,7 @@
                     <div class="col-sm-4">
                         <input id="canCallIn" type="checkbox"></input>
                     </div>
-                  </div> -->
+                  </div>
                   <div class="form-group">
                     <label for="field" class="col-sm-2 control-label">Field</label>
                     <div class="col-sm-4">

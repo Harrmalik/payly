@@ -957,7 +957,7 @@ $(document).ready(function(){
 
 	getDateRange(nowStr, false);
 	displayDateRange();
-	getTips();
+	// getTips();
 });
 
 function getTips(){
