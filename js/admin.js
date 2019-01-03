@@ -3,6 +3,7 @@ let empid,
 	empSite,
 	userData = $('title').data(),
 	isManager = $('body').data('ismanager'),
+	isPayroll = $('body').data('ispayroll'),
 	isLocation = $('body').data('islocation'),
 	buildTable,
 	makeTimesheet,
@@ -18,13 +19,21 @@ let empid,
 	});
 	$('#end').datetimepicker({
 		defaultDate: moment().weekday(5),
-		format: 'MMMM Do',
+		format: 'MMMM Do YYYY',
 		daysOfWeekDisabled: [1,2,3,4,6]
 	});
 	$('#dateFilter').datetimepicker({
 		defaultDate: moment().weekday(5),
-		format: 'MMMM Do',
+		format: 'MMMM Do YYYY',
 		daysOfWeekDisabled: [1,2,3,4,6]
+	});
+	$('#startDate').datetimepicker({
+		defaultDate: moment().weekday(-1),
+		format: 'MMMM Do YYYY',
+	});
+	$('#endDate').datetimepicker({
+		defaultDate: moment().weekday(5),
+		format: 'MMMM Do YYYY',
 	});
 
 	var glbDataTable = '';
@@ -34,10 +43,27 @@ let empid,
 if (window.navigator.userAgent.indexOf("MSIE ") > 0 ) {
 	userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 }
-if (isManager) $('.adminBtn').hide()
+
+$('.adminsBtn').hide()
+$('.tipsBtn').hide()
+$('.payrollBtn').hide()
+$('.hrBtn').hide()
+
+if (isPayroll || isLocation) {
+	$('.adminsBtn').show()
+}
+
+if (isLocation) {
+	$('.tipsBtn').show()
+}
+
+if (isPayroll) {
+	$('.payrollBtn').show()
+}
+
+console.log(isManager, isLocation,isPayroll);
 
 // Edit Timesheets tab
-
 let getTimesheet = (userid) => {
 	empid = $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : userid ? userid : empid;
 	if (userid)	{
@@ -504,6 +530,7 @@ $(document).ready(function(){
 				},
 				onChooseEvent: () => {
 					let employee = $("#employeeid").getSelectedItemData()
+					populateCodeDropdown({target: {value: employee.deltasonic}})
 					$('#uEmployeeid').val(employee.employeeid)
 					$('#uName').val(employee.employeename)
 					$('#uDeltasonic').val(employee.deltasonic)
@@ -527,6 +554,9 @@ $(document).ready(function(){
 
 
 	$('#uDeltasonic').on('change', (e) => {
+		populateCodeDropdown(e)
+	})
+	let populateCodeDropdown = (e) => {
 		if (e.target.value == 1) {
 			$('#uCode').html(`
 				<option value="DSCW">DSCW</option>
@@ -537,8 +567,16 @@ $(document).ready(function(){
 				<option value="BROCH">BROCH</option>
 			`)
 		}
+	}
 
+	$('#runReport').on('click', () => {
+		$.ajax({
+			url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
+		}).done((user) => {
+			console.log(user);
+		});
 	})
+
 
     // Functions
     buildTable = () => {
@@ -564,7 +602,7 @@ $(document).ready(function(){
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
 			];
 		}
-		if (!isManager){
+		if (isPayroll){
 			$('#back').hide()
 		} else {
 			$('#addTimeslot').hide()
@@ -577,7 +615,7 @@ $(document).ready(function(){
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
-			if (isManager && isLocation) {
+			if ((isManager && isLocation) || isPayroll) {
 				console.log('logging headers');
 				$timesheet.append(`
 					<tr class="active headers">
@@ -607,7 +645,7 @@ $(document).ready(function(){
 						<td></td>
 					</tr>
 				`);
-			} else if (isManager) {
+			} else {
 				$timesheet.append(`
 					<tr class="active headers">
 						<th style="width: 25%;">Date</th>
@@ -628,32 +666,6 @@ $(document).ready(function(){
 						<td></td>
 						<td></td>
 						<td id="${day[4]}Hours" class="info"><b>0</b></td>
-					</tr>
-				`);
-			} else {
-				$timesheet.append(`
-					<tr class="active headers">
-						<th style="width: 20%;">Date</th>
-						<th style="width: 20%;">Check In</th>
-						<th style="width: 20%;">Check Out</th>
-						<th style="width: 10%;">Hours</th>
-						<th style="width: 30%;">Actions</th>
-					</tr>
-
-					<tr id="${day[4]}" class="timeslots">
-						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
-						<td>- -</td>
-						<td>- -</td>
-						<td>0</td>
-						<td></td>
-					</tr>
-
-					<tr class="timeslots">
-						<td></td>
-						<td></td>
-						<td></td>
-						<td id="${day[4]}Hours" class="info"><b>0</b></td>
-						<td></td>
 					</tr>
 				`);
 			}
@@ -681,7 +693,7 @@ $(document).ready(function(){
 			];
 		}
 
-		if (isManager && isLocation) {
+		if ((isManager && isLocation) || isPayroll) {
 			console.log('logging rows');
 			$timesheet.append(`
 				<tr id="totalrow">
@@ -701,21 +713,6 @@ $(document).ready(function(){
 					<th></th>
 				</tr>
 			`)
-		} else if (isManager) {
-			$timesheet.append(`
-				<tr id="totalrow">
-					<th></th>
-					<th></th>
-					<th></th>
-					<th>Total Hours</th>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td id="totalHours" class="info"><b>0</b></td>
-				</tr>
-			`)
 		} else {
 			$timesheet.append(`
 				<tr id="totalrow">
@@ -723,14 +720,12 @@ $(document).ready(function(){
 					<th></th>
 					<th></th>
 					<th>Total Hours</th>
-					<th></th>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
 					<td></td>
 					<td id="totalHours" class="info"><b>0</b></td>
-					<th></th>
 				</tr>
 			`)
 		}
@@ -820,7 +815,7 @@ $(document).ready(function(){
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
 					${
-						isLocation && isManager ?
+						(isManager && isLocation) || isPayroll ?
 							`<td>
 								<select class="form-control roles" data-timeid="${timeslot.timeid}">
 									${roles.map(r => {
@@ -840,7 +835,7 @@ $(document).ready(function(){
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
 					${
-						isManager && !isLocation ? '' :
+						(isManager && isLocation) || isPayroll ?
 							`<td>
 								<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}><i class="glyphicon glyphicon-remove"></i></button>
 								<button type="button" class="btn btn-default btn-small" onclick='makeEdit(this)'
@@ -852,7 +847,7 @@ $(document).ready(function(){
 									data-id=${timeslot.timeid}
 									data-in=${timeslot.punchintime}
 									data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-apple"></i></button>
-							</td>`
+							</td>` : ''
 					}
                 </tr>
             `
@@ -957,7 +952,7 @@ $(document).ready(function(){
 
 	getDateRange(nowStr, false);
 	displayDateRange();
-	// getTips();
+	getTips();
 });
 
 function getTips(){
