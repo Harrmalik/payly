@@ -27,6 +27,7 @@ removeTimer = () => {
 	clearTimeout(autologout)
 };
 
+$('body').css("overflow", "hidden")
 if (!ga) {
 	var ga = function (arg1, arg2, category = '', action = '', label = '') {
 		console.log(`${arg2} - category: ${category}, action: ${action}, label: ${label}`);
@@ -55,7 +56,7 @@ let empty = () => {
 let login = (e) => {
 	if (e)
 		e.preventDefault();
-	empid = empid ? empid : $('#inputID').val();
+	empid = empid ? empid : $('#inputID').val().replace(/[&<>]/g, '');
 
 	$.ajax({
 		url : `./php/main.php?module=getIp`
@@ -276,7 +277,7 @@ $(document).ready(function () {
 			data : {
 				weekending : moment().weekday(5).unix(),
 				empid      : empid,
-				reason     : $('#overtimeReason').val(),
+				reason     : $('#overtimeReason').val().replace(/[&<>]/g, ''),
 				otrId
 			}
 		}).success((checkin) => {
@@ -304,6 +305,7 @@ $(document).ready(function () {
 
 	$timesheetBtn.on("click", (e) => {
 		nextPage(e, $('#timesheetPage'))
+		$('body').css("overflow", "auto")
 		// Javascript letiables
 		let startDate,
 		endDate,

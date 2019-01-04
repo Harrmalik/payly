@@ -3,12 +3,14 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    if (USER::inGroup(74)) {
-            $isManager = 'false';
-    } else {
+    $isManager = 'false';$isPayroll = 'false';$isLocation = 'false';
+    if (!USER::inGroup(73)) {
             $isManager = 'true';
     }
-    $isLocation = $_SESSION['location'] == 900 ? 'true' : 'false';
+    if (USER::inGroup(74)) {
+            $isPayroll = 'true';
+    }
+    $isLocation = $_SESSION['location'] != 900 ? 'true' : 'false';
 ?>
 
 <!-- <script src="./js/datetimepicker.js"></script> -->
@@ -37,11 +39,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
 <![endif]-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css" rel="stylesheet"/>
+    <link href="./css/styles.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
     <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
-<body data-isManager="<?php echo $isManager; ?>" data-islocation="<?php echo $isLocation; ?>">
+<body data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>" data-islocation="<?php echo $isLocation; ?>">
     <div class="panel panel-primary container">
         <nav class="navbar navbar-inverse">
           <div class="container-fluid">
@@ -61,12 +64,12 @@
               <ul class="nav navbar-nav">
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show()">Dashboard</a></li>
-                  <li role="presentation"><a class="adminBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
-                  <li role="presentation"><a class="adminBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
-                  <li role="presentation"><a class="adminBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
-                  <!-- <li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
-                  <li role="presentation"><a href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
+                  <li role="presentation"><a class="payrollBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
+                  <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
+                  <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
+                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>
@@ -209,6 +212,7 @@
                     <label for="uCode" class="col-sm-2 control-label">Company Code</label>
                     <div class="col-sm-4">
                         <select class="form-control" id="uCode">
+                            <option value="DSCW">DSCW</option>
                         </select>
                     </div>
                   </div>
@@ -239,7 +243,7 @@
                       <input type="number" class="form-control" id="uHoliday" placeholder="How many hours">
                     </div>
                   </div>
-                  <!-- <div class="form-group">
+                  <div class="form-group">
                     <label for="weekends" class="col-sm-2 control-label">Weekends</label>
                     <div class="col-sm-4">
                         <input id="weekends" type="checkbox"></input>
@@ -262,7 +266,7 @@
                     <div class="col-sm-4">
                         <input id="canCallIn" type="checkbox"></input>
                     </div>
-                  </div> -->
+                  </div>
                   <div class="form-group">
                     <label for="field" class="col-sm-2 control-label">Field</label>
                     <div class="col-sm-4">
@@ -380,21 +384,47 @@
                   </div>
                 </div>
             <div role="tabpanel" class="tab-pane" id="reports">
-                <div class="form-group">
+                <div class="form-group" style="clear:both; margin:1em 0;">
+                    <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">Start Date</label>
+                    <div class="col-sm-4">
+                        <div class='input-group date' id='startDate'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="form-group" style="clear:both; margin:1em 0;">
+                    <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">End Date</label>
+                    <div class="col-sm-4">
+                        <div class='input-group date' id='endDate'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="form-group" style="clear:both; margin:1em 0;">
                   <label for="phone" class="col-sm-2 control-label">Reports</label>
                   <div class="col-sm-4">
-                      <select class="form-control" id="reports">
-                          <option value="America/New_York">Daily Hours</option>
+                      <select class="form-control" id="reportsDropdown">
+                          <!-- <option value="America/New_York">Daily Hours</option>
                           <option value="America/Chicago">Weekly Hours</option>
-                          <option value="America/Chicago">Labor Report</option>
-                          <option value="America/Chicago">Minors Report</option>
-                          <option value="America/Chicago">Didn't Punch Out</option>
+                          <option value="America/Chicago">Labor Report</option> -->
+                          <option value="minorReport">Minors Report</option>
+                          <!-- <option value="America/Chicago">Didn't Punch Out</option>
                           <option value="America/Chicago">Tips</option>
                           <option value="America/Chicago">Night Hours</option>
-                          <option value="America/Chicago">Weekend Hours</option>
+                          <option value="America/Chicago">Weekend Hours</option> -->
                       </select>
                   </div>
                 </div>
+
+                <div class="btn btn-primary" id="runReport">Run Report</div>
 
             </div>
             </div> <!-- /tab content -->
