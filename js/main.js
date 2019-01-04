@@ -28,6 +28,7 @@ removeTimer = () => {
 };
 
 $('body').css("overflow", "hidden")
+window.scrollTo(0,0);
 if (!ga) {
 	var ga = function (arg1, arg2, category = '', action = '', label = '') {
 		console.log(`${arg2} - category: ${category}, action: ${action}, label: ${label}`);
