@@ -22,14 +22,14 @@
         <meta charset="utf-8" />
         <title data-emp="<?php echo $_SESSION['userid']; ?>">Delta Sonic - Kiss Klock</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<link rel="stylesheet" href="<?php echo $assets; ?>css/main.css"/>
 		<link rel="stylesheet" href="css/styles.css"/>
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.min.js"></script>
 		<?php include_once($assets . "js/scripts.php"); ?>
-	    <script src="<?php echo $assets; ?>Helpers.js"></script>
+	    <!-- <script src="<?php echo $assets; ?>Helpers.js"></script> -->
 		<script src="js/moment-timezone.js"></script>
 
         <!--[if IE]>
