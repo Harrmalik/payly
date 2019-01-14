@@ -155,7 +155,7 @@
                 </section>
             </section>
 
-            <button class="circular ui big blue icon button" id="notifications">
+            <!-- <button class="circular ui big blue icon button" id="notifications">
               <i class="fas fa-newspaper"></i>
             </button>
 
@@ -170,7 +170,7 @@
                     <li class="list-group-item">Looking for 15 employees to star in our new commercial!</li>
                   </ul>
               </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="panel-body">
