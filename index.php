@@ -1,7 +1,6 @@
 <?php include_once './layouts/header.php' ?>
 
     <script src="./js/signature_pad.min.js"></script>
-    <script type="text/babel" src="./js/main.js"></script>
 </head>
 
 <body>
@@ -28,7 +27,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
                   <li class="active"><a id="home"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                  <!-- <li><a id="tips" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li> -->
+                  <li><a id="tips" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li>
                   <li><a id="timesheet" role="button"><i class="glyphicon glyphicon-list-alt"></i> Timesheet</a></li>
                   <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Edit Request</a></li> -->
               </ul>
@@ -366,3 +365,5 @@
         </div>
     </div>
 </body>
+
+<script src="./dist/main.js"></script>
