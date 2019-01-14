@@ -1,7 +1,6 @@
 <?php include_once './layouts/header.php' ?>
 
     <script src="./js/signature_pad.min.js"></script>
-    <script "text/babel" src="./dist/main.js"></script>
 </head>
 
 <body>
@@ -366,3 +365,5 @@
         </div>
     </div>
 </body>
+
+<script src="./dist/main.js"></script>
