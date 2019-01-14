@@ -4,7 +4,7 @@
     $core->inc('users');
     USER::authPage();
     $isManager = 'false';$isPayroll = 'false';$isLocation = 'false';
-    if (!USER::inGroup(73)) {
+    if (USER::inGroup(73)) {
             $isManager = 'true';
     }
     if (USER::inGroup(74)) {
