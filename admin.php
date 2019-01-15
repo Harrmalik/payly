@@ -41,7 +41,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css" rel="stylesheet"/>
     <link href="./css/styles.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
-    <script type="text/babel" src="./js/admin.js"></script>
 </head>
 
 <body data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>" data-islocation="<?php echo $isLocation; ?>">
@@ -118,67 +117,6 @@
                     </div>
                 </form>
                 <div id="loader2"></div>
-
-                  <div id="timesheetModal" class="modal fade" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                          <h4 class="modal-title" id="modal-title">Edit Timeslot</h4>
-                        </div>
-
-                        <div class="modal-body">
-                            <form class="form-horizontal" onsubmit="return getTimesheet();">
-                                <div class="form-group" id="typefield">
-                                    <select class="form-control" id="type">
-                                        <option value="1">Vacation</option>
-                                        <option value="2">Sick</option>
-                                        <option value="0">Regular</option>
-                                        <option value="3">Floating</option>
-                                        <option value="4">Holiday</option>
-                                        <option value="5">Jury Duty</option>
-                                        <option value="6">Bereavement</option>
-                                      </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="punchintime" style="text-align: left;" class="col-sm-3 control-label">Punch In</label>
-                                    <div class="col-sm-9">
-                                        <div class='input-group date' id='punchintime'>
-                                            <input type='text' class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group" id="punchingout">
-                                    <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Punch Out</label>
-                                    <div class="col-sm-9">
-                                        <div class='input-group date' id='punchouttime'>
-                                            <input type='text' class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group adding">
-                                    <h4>Hours</h4>
-                                    <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
-                                    <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
-                                </div>
-                                <div class="form-group adding">
-                                    <input type="number" class="form-control" id="selectHours">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                          <span id="modal-button"></span>
-                        </div>
-                      </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
               </div>
 
               <div role="tabpanel" class="tab-pane" id="users">
@@ -481,6 +419,70 @@
                     </tbody>
                 </table>
             </section>
+
+            <div id="timesheetModal" class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modal-title">Edit Timeslot</h4>
+                  </div>
+
+                  <div class="modal-body">
+                      <form class="form-horizontal" onsubmit="return getTimesheet();">
+                          <div class="form-group" id="typefield">
+                              <select class="form-control" id="type">
+                                  <option value="1">Vacation</option>
+                                  <option value="2">Sick</option>
+                                  <option value="0">Regular</option>
+                                  <option value="3">Floating</option>
+                                  <option value="4">Holiday</option>
+                                  <option value="5">Jury Duty</option>
+                                  <option value="6">Bereavement</option>
+                                </select>
+                          </div>
+                          <div class="form-group">
+                              <label for="punchintime" style="text-align: left;" class="col-sm-3 control-label">Punch In</label>
+                              <div class="col-sm-9">
+                                  <div class='input-group date' id='punchintime'>
+                                      <input type='text' class="form-control" />
+                                      <span class="input-group-addon">
+                                          <span class="glyphicon glyphicon-calendar"></span>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group" id="punchingout">
+                              <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Punch Out</label>
+                              <div class="col-sm-9">
+                                  <div class='input-group date' id='punchouttime'>
+                                      <input type='text' class="form-control" />
+                                      <span class="input-group-addon">
+                                          <span class="glyphicon glyphicon-calendar"></span>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group adding">
+                              <h4>Hours</h4>
+                              <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
+                              <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
+                          </div>
+                          <div class="form-group adding">
+                              <input type="number" class="form-control" id="selectHours">
+                          </div>
+                      </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <span id="modal-button"></span>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
         </div>
     </div>
 </body>
+
+
+<script src="./dist/admin.js"></script>

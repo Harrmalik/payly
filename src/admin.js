@@ -782,6 +782,7 @@ $(document).ready(function(){
 
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
                 $("td#totalHours.info").html(`<b>${totalTime.toFixed(2)}</b>`);
+				$('[data-toggle="tooltip"]').tooltip()
             });
 			$('.roles').on('change', e => {
 				$.ajax({
