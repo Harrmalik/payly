@@ -54,6 +54,7 @@ let empty = () => {
 	$('#inputID').val('');
 }
 
+
 let login = (e) => {
 	if (e)
 		e.preventDefault();
@@ -151,6 +152,13 @@ let login = (e) => {
 
 	return false;
 }
+
+$('#loginForm').on('submit',(e) => {
+	if (e)
+   		e.preventDefault();
+
+	login();
+});
 
 if (localStorage.getItem('empid')) {
 	empid = localStorage.getItem('empid')

@@ -98,12 +98,13 @@ tr, th {
 #inputID {
 	color: white;
 	font-size: 3em;
-	width: 10em;
+	width: 100%;
 	text-align: center;
-	height: auto;
+	height: 2em;
 	margin: auto;
 	border: none;
 	background-color: rgba(0,0,0,.8);
+	border-radius: 10px 0 0 10px;
 }
 
 #numpad {
@@ -128,13 +129,19 @@ tr, th {
 }
 
 #login {
-    width: 25em;
-    height: 4em;
-    margin: 1em auto;
+    width: 100%;
+	font-size: 3em;
+	height: 2em;
+    margin: 0;
 	background-color: white;
 	color: black;
 	border: none;
 	box-shadow: 0 0 5px black;
+	border-radius: 0 10px 10px 0;
+}
+
+.no-padding {
+	padding: 0;
 }
 
 #weather {

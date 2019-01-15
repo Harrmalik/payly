@@ -74,13 +74,13 @@
             </div>
 
             <section id="auth" style="display:none">
-                <form class="form-horizontal" onsubmit="return login()">
+                <form id="loginForm" class="form-horizontal" style="width:30em;margin:auto">
                   <div class="form-group">
-                    <div class="col-sm-6">
+                    <div class="col-sm-8 no-padding">
                       <input type="text" autocomplete="off" class="form-control" id="inputID" placeholder="Employee ID">
                     </div>
-                    <div class="col-sm-6">
-                      <button type="button" id="login" class="btn btn-success btn-lg" onClick="login()">Log In</button>
+                    <div class="col-sm-4 no-padding">
+                      <button type="submit" id="login" class="btn btn-success btn-lg" onclick="login()">Log In</button>
                     </div>
                   </div>
                 </form>

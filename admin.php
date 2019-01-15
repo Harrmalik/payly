@@ -67,7 +67,7 @@
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
                   <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
@@ -350,14 +350,14 @@
                   <label for="phone" class="col-sm-2 control-label">Reports</label>
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsDropdown">
-                          <!-- <option value="America/New_York">Daily Hours</option>
+                          <option value="America/New_York">Daily Hours</option>
                           <option value="America/Chicago">Weekly Hours</option>
-                          <option value="America/Chicago">Labor Report</option> -->
+                          <option value="America/Chicago">Labor Report</option>
                           <option value="minorReport">Minors Report</option>
-                          <!-- <option value="America/Chicago">Didn't Punch Out</option>
+                          <option value="America/Chicago">Didn't Punch Out</option>
                           <option value="America/Chicago">Tips</option>
                           <option value="America/Chicago">Night Hours</option>
-                          <option value="America/Chicago">Weekend Hours</option> -->
+                          <option value="America/Chicago">Weekend Hours</option>
                       </select>
                   </div>
                 </div>
