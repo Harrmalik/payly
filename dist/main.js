@@ -151,6 +151,11 @@ var login = function login(e) {
   return false;
 };
 
+$('#loginForm').on('submit', function (e) {
+  if (e) e.preventDefault();
+  login();
+});
+
 if (localStorage.getItem('empid')) {
   empid = localStorage.getItem('empid');
   login();
