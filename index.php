@@ -76,8 +76,11 @@
             <section id="auth" style="display:none">
                 <form class="form-horizontal" onsubmit="return login()">
                   <div class="form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6">
                       <input type="text" autocomplete="off" class="form-control" id="inputID" placeholder="Employee ID">
+                    </div>
+                    <div class="col-sm-6">
+                      <button type="button" id="login" class="btn btn-success btn-lg" onClick="login()">Log In</button>
                     </div>
                   </div>
                 </form>
@@ -102,7 +105,6 @@
                       <button type="button" class="btn btn-default" onClick="empty()"><i class="glyphicon glyphicon-remove" style="padding-top:10px"></i></button>
                     </div>
                 </section>
-                <button type="button" id="login" class="btn btn-success btn-block btn-lg" onClick="login()">Log In</button>
             </section>
 
             <section id="app">

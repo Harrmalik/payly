@@ -218,7 +218,7 @@ $(document).ready(function () {
     checkIn();
   });
   $checkOutBtn.on("click", function () {
-    openTips($('#tips')[0], $('#tipsPage'));
+    // openTips($('#tips')[0], $('#tipsPage'))
     checkOut();
   });
   $lunchBreakBtn.on("click", function () {
