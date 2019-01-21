@@ -20,6 +20,7 @@
 -->
 <link rel="stylesheet" href="./css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="./css/datetimepicker.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
 
 <!--
@@ -67,8 +68,8 @@
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
-                  <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li>
+                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>
@@ -86,24 +87,145 @@
             <div class="tab-content">
 
                 <div role="tabpanel" class="tab-pane active" id="dashboard">
+                    <section id="employeesLoader" style="display:none">
+                        Loading Data ....
+                    </section>
                     <section id="employees">
-                        <h2>Employees</h2>
-                        <hr/>
-                        <table id="dashboardTable" class="table table-hover table-striped table-responsive">
-                            <thead>
-                                <th>Name</th>
-                                <th>Currently Working</th>
-                                <th>Has Break</th>
-                                <th>Today Hours</th>
-                                <th>This Week Hours</th>
-                                <th>Last Week Hours</th>
-                                <th>Hours Till Overtime</th>
-                                <th>Action</th>
-                            </thead>
-                            <tbody id="list">
+                        <?php if($isLocation) { ?>
+                            <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
+                                <div class="table-card">
+                                    <h2 class="table-name"> Booth </h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
+                                              <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="boothTable">
 
-                            </tbody>
-                        </table>
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card">
+                                    <h2 class="table-name"> Power Wash </h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
+                                              <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="powerTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card">
+                                    <h2 class="table-name"> Wash Exit </h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
+                                              <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="washTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card">
+                                    <h2 class="table-name"> Management </h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Break</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="managementTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card">
+                                    <h2 class="table-name"> Other </h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Hrs</th>
+                                              <th>Name</th>
+                                              <th>Break</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="otherTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+                            </article>
+                            <article style="width:30%;float:left;padding: 1em;height:85vh;overflow:scroll">
+                                <h2 class="table-name"> Worked Today </h2>
+                                <table class="table">
+                                  <thead>
+                                      <tr>
+                                          <th></th>
+                                          <th>Hrs</th>
+                                          <th>Name</th>
+                                          <th>Break</th>
+                                          <th></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="totalTable">
+
+                                  </tbody>
+                                </table>
+                            </article>
+                        <?php } else { ?>
+                            <h2>Employees</h2>
+                            <hr/>
+                            <table id="dashboardTable" class="table table-hover table-striped table-responsive">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Currently Working</th>
+                                    <th>Has Break</th>
+                                    <th>Today Hours</th>
+                                    <th>This Week Hours</th>
+                                    <th>Last Week Hours</th>
+                                    <th>Hours Till Overtime</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody id="list">
+
+                                </tbody>
+                            </table>
+                        <?php } ?>
                     </section>
                 </div>
 

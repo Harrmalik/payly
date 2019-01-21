@@ -584,7 +584,7 @@ $(document).ready(function () {
 
   var addRow = function addRow(start, end, total) {
     var role = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-    $todayHours.append("\n\t\t\t<tr>\n\t\t\t\t<td>".concat(checkInIds.length == 1 ? moment().format('dddd, MMM Do') : '', " <span class=\"badge badge-primary\">").concat(role, "</span></td>\n\t\t\t\t<td>").concat(start.format('h:mm a'), "</td>\n\t\t\t\t<td id=\"").concat(checkInIds[checkInIds.length - 1] + 'timeout', "\">").concat(end ? end.format('h:mm a') : '- -', "</td>\n\t\t\t\t<td id=\"").concat(checkInIds[checkInIds.length - 1] + 'hours', "\" class=\"").concat(total > 6 ? 'red' : '', "\">").concat(total ? total.toFixed(2) : '- -', "</td>\n\t\t\t\t<td></td>\n\t\t\t</tr>\n\t\t"));
+    $todayHours.append("\n\t\t\t<tr>\n\t\t\t\t<td>".concat(role, "</td>\n\t\t\t\t<td>").concat(start.format('h:mm a'), "</td>\n\t\t\t\t<td id=\"").concat(checkInIds[checkInIds.length - 1] + 'timeout', "\">").concat(end ? end.format('h:mm a') : '- -', "</td>\n\t\t\t\t<td id=\"").concat(checkInIds[checkInIds.length - 1] + 'hours', "\" class=\"").concat(total > 6 ? 'red' : '', "\">").concat(total ? total.toFixed(2) : '- -', "</td>\n\t\t\t\t<td></td>\n\t\t\t</tr>\n\t\t"));
   };
 
   var nextPage = function nextPage(e, page) {
