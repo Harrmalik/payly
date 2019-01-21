@@ -80,7 +80,7 @@
                       <input type="text" autocomplete="off" class="form-control" id="inputID" placeholder="Employee ID">
                     </div>
                     <div class="col-sm-4 no-padding">
-                      <button type="submit" id="login" class="btn btn-success btn-lg" onclick="login()">Log In</button>
+                      <button type="submit" id="login" class="btn btn-success btn-lg">Log In</button>
                     </div>
                   </div>
                 </form>
@@ -117,7 +117,9 @@
                             <p>Total Hours will be: <span id="overallHours"></span></p>
                         </button>
                         <!-- <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button> -->
-                        <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
+                        <?php if ($_SERVER['SERVER_ADDR'] != '172.18.100.7') { ?>
+                            <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
+                        <?php } ?>
                     </section>
                 </section>
 

@@ -685,7 +685,7 @@ $(document).ready(function () {
 	let addRow = (start, end, total, role='') => {
 		$todayHours.append(`
 			<tr>
-				<td>${checkInIds.length == 1 ? moment().format('dddd, MMM Do') : ''} <span class="badge badge-primary">${role}</span></td>
+				<td>${role}</td>
 				<td>${start.format('h:mm a')}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'timeout'}">${ end ? end.format('h:mm a') : '- -'}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : '- -'}</td>

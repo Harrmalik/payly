@@ -413,7 +413,7 @@ $(document).ready(function(){
 
 	// Autocomplete Searchboxes
 	$.ajax({
-		url: `./php/main.php?module=admin&action=getEmployees`
+		url: `./php/main.php?module=admin&action=${isLocation ? 'getEmployeesByLocation' : 'getEmployees'}`
 	}).done((users) => {
 		let options = {
 			data: users,
@@ -516,7 +516,7 @@ $(document).ready(function(){
 	})
 
 	$.ajax({
-		url: `./php/main.php?module=admin&action=getEmployees`
+		url: `./php/main.php?module=admin&action=${isLocation ? 'getEmployeesByLocation' : 'getEmployees'}`
 	}).done((users) => {
 		let options = {
 			data: users,
@@ -602,8 +602,8 @@ $(document).ready(function(){
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
 			];
 		}
-		if (isPayroll){
-			$('#back').hide()
+		if (isPayroll || (isLocation && isManager)){
+			//$('#back').hide()
 		} else {
 			$('#addTimeslot').hide()
 		}
@@ -616,7 +616,6 @@ $(document).ready(function(){
 
         days.forEach((day,index) => {
 			if ((isManager && isLocation) || isPayroll) {
-				console.log('logging headers');
 				$timesheet.append(`
 					<tr class="active headers">
 						<th style="width: 15%;">Date</th>
@@ -694,7 +693,6 @@ $(document).ready(function(){
 		}
 
 		if ((isManager && isLocation) || isPayroll) {
-			console.log('logging rows');
 			$timesheet.append(`
 				<tr id="totalrow">
 					<th></th>
@@ -782,7 +780,6 @@ $(document).ready(function(){
 
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
                 $("td#totalHours.info").html(`<b>${totalTime.toFixed(2)}</b>`);
-				$('[data-toggle="tooltip"]').tooltip()
             });
 			$('.roles').on('change', e => {
 				$.ajax({
@@ -928,25 +925,121 @@ $(document).ready(function(){
 	});
 
 	let getInitialState = () => {
-		let dashboard;
-		dashboard = $('#dashboardTable').DataTable( {
-	        "ajax": `./php/main.php?module=admin&action=getMyEmployees`,
-			"destroy": true,
-			"searching": true,
-			fixedColumns: false,
-			pageLength: 100,
-			"columns": [
-			  { "data": "name", "render": (data, type, row) => { return row.isMinor ? data + ' <i class="fas fa-child"></i>' : data } },
-			  { "data": "role", render: (data, type, row) => {return data ? data + ' <span class="badge badge-primary">' + row.hoursWorked.toFixed(2) + '</span>' : '' } },
-			  { "data": "hasBreak", render: (data) => { return data ? '<i class="fas fa-check"></i>' : '' } },
-			  { "data": "todayHours", render: (data) => { return data.toFixed(2) }},
-			  { "data": "thisWeekHours", render: (data) => { return data.toFixed(2) }},
-			  { "data": "lastWeekHours", render: (data) => { return data.toFixed(2) }},
-			  { "data": "thisWeekHours", render: (data, row) =>  {return (40 - data).toFixed(2)} },
-			  { "data": "id", render: (data) => {return `<a class="btn btn-default" onclick="getTimesheet(${data})">View Timesheet</a>`} }
-		  ],
-			"order": [[ 1, "desc" ]]
-		} );
+
+		if (isLocation) {
+			$('#employees').toggle()
+			$('#employeesLoader').toggle()
+			$.ajax({
+				url: `./php/main.php?module=admin&action=getLocationEmployees`
+			}).done((employees) => {
+				if (employees.data && employees.data.length > 0) {
+					let counter = 1;
+					employees.data.forEach(e => {
+						if (e.role) {
+							let r = e.role.toLowerCase()
+							e.hoursWorked = e.hoursWorked.toFixed(2)
+							e.todayHours = e.todayHours.toFixed(2)
+
+							if (r.match(/wash|program/g)) {
+								$('#powerTable').append(`
+									<tr>
+										<td></td>
+										<td>${e.name}</td>
+										<td>${e.todayHours}</td>
+										<td>${e.hoursWorked}</td>
+										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+										<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+										<td>${e.role}</td>
+										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+									</tr>
+								`)
+							} else if (r.match(/cashier|advisor/g)) {
+								$('#boothTable').append(`
+									<tr>
+										<td></td>
+										<td>${e.name}</td>
+										<td>${e.todayHours}</td>
+										<td>${e.hoursWorked}</td>
+										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+										<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+										<td>${e.role}</td>
+										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+									</tr>
+								`)
+							} else if (r.match(/tech/g)) {
+								$('#washTable').append(`
+									<tr>
+										<td></td>
+										<td>${e.name}</td>
+										<td>${e.todayHours}</td>
+										<td>${e.hoursWorked}</td>
+										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+										<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+										<td>${e.role}</td>
+										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+									</tr>
+								`)
+							} else if (r.match(/manager/g)) {
+								$('#managementTable').append(`
+									<tr>
+										<td></td>
+										<td>${e.hoursWorked}</td>
+										<td>${e.name}</td>
+										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+									</tr>
+								`)
+							} else {
+								$('#otherTable').append(`
+									<tr>
+										<td>${e.hoursWorked}</td>
+										<td>${e.name}</td>
+										<td>${e.role}</td>
+										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+									</tr>
+								`)
+							}
+						} else {
+							$('#totalTable').append(`
+								<tr>
+									<td>${counter}</td>
+									<td>${e.hoursWorked}</td>
+									<td>${e.name}</td>
+									<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+								</tr>
+							`)
+							counter++
+						}
+					})
+				} else {
+					$('#employees').html('No Employees found for you')
+				}
+
+				$('#employees').toggle()
+				$('#employeesLoader').toggle()
+			})
+		} else {
+			let dashboard;
+			dashboard = $('#dashboardTable').DataTable( {
+				"ajax": `./php/main.php?module=admin&action=${isLocation ? 'getLocationEmployees' : 'getMyEmployees'}`,
+				"destroy": true,
+				"searching": true,
+				fixedColumns: false,
+				pageLength: 100,
+				"columns": [
+				  { "data": "name", "render": (data, type, row) => { return row.isMinor ? data + ' <i class="fas fa-child"></i>' : data } },
+				  { "data": "role", render: (data, type, row) => {return data ? data + ' <span class="badge badge-primary">' + row.hoursWorked.toFixed(2) + '</span>' : '' } },
+				  { "data": "hasBreak", render: (data) => { return data ? '<i class="fas fa-check"></i>' : '' } },
+				  { "data": "todayHours", render: (data) => { return data.toFixed(2) }},
+				  { "data": "thisWeekHours", render: (data) => { return data.toFixed(2) }},
+				  { "data": "lastWeekHours", render: (data) => { return data.toFixed(2) }},
+				  { "data": "thisWeekHours", render: (data, row) =>  {return (40 - data).toFixed(2)} },
+				  { "data": "id", render: (data) => {return `<a class="btn btn-default" onclick="getTimesheet(${data})">View Timesheet</a>`} }
+			  ],
+				"order": [[ 1, "desc" ]]
+			} );
+		}
 	};
 
 	if (isManager)

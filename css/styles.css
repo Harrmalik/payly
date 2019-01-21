@@ -175,6 +175,18 @@ tr, th {
 	bottom: 10em;
 }
 
+.table-card {
+	box-shadow: 0 0 10px;
+    border-radius: 5px;
+	padding: 1em;
+	margin: 2em 0;
+}
+
+.table-name {
+	text-align: center;
+	margin-bottom: .5em !important;
+}
+
 #userTimesheet {
 	display:none;
 }
