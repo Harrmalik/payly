@@ -732,29 +732,53 @@ $(document).ready(function () {
         url: "./php/main.php?module=admin&action=getLocationEmployees"
       }).done(function (employees) {
         if (employees.data && employees.data.length > 0) {
-          var counter = 1;
+          var active = 0,
+              nonActive = 0,
+              booth = 0,
+              power = 0,
+              wash = 0,
+              managers = 0,
+              other = 0;
           employees.data.forEach(function (e) {
             if (e.role) {
               var r = e.role.toLowerCase();
               e.hoursWorked = e.hoursWorked.toFixed(2);
               e.todayHours = e.todayHours.toFixed(2);
 
-              if (r.match(/wash|program/g)) {
-                $('#powerTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
-              } else if (r.match(/cashier|advisor/g)) {
-                $('#boothTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
-              } else if (r.match(/tech/g)) {
-                $('#washTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
-              } else if (r.match(/manager/g)) {
-                $('#managementTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
+              if (e.endTime) {
+                active++;
+                $('#workedTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(active, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
               } else {
-                $('#otherTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
+                if (r.match(/power|program/g)) {
+                  power++;
+                  $('#powerTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
+                } else if (r.match(/bd|advisor/g)) {
+                  booth++;
+                  $('#boothTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
+                } else if (r.match(/wash t/g)) {
+                  wash++;
+                  $('#washTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
+                } else if (r.match(/manager|supervisor/g)) {
+                  managers++;
+                  $('#managementTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
+                } else {
+                  other++;
+                  $('#otherTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
+                }
               }
             } else {
-              $('#totalTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(counter, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
-              counter++;
+              nonActive++;
+              $('#totalTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
             }
           });
+          $('#boothCount').text(booth);
+          $('#powerCount').text(power);
+          $('#washCount').text(wash);
+          $('#managersCount').text(managers);
+          $('#otherCount').text(other);
+          $('#workingCount').text(booth + power + wash + managers + other);
+          $('#activeCount').text(active);
+          $('#nonActiveCount').text(nonActive);
         } else {
           $('#employees').html('No Employees found for you');
         }

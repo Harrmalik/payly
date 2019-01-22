@@ -18,6 +18,7 @@ var empid,
     alerts,
     timezone,
     deltasonic,
+    isField,
     autologout,
     checkIn,
     checkOut,
@@ -106,6 +107,7 @@ var login = function login(e) {
         alerts = user.alerts;
         timezone = user.timezone ? user.timezone : moment.tz.guess();
         deltasonic = user.deltasonic;
+        isField = user.field;
         roles = user.roles;
         if (currentHours == 0) $('#checkIn').html('<h3>Start Day</h3>');
         if (deltasonic) $('#overtime').hide();
@@ -223,7 +225,6 @@ $(document).ready(function () {
     checkIn();
   });
   $checkOutBtn.on("click", function () {
-    // openTips($('#tips')[0], $('#tipsPage'))
     checkOut();
   });
   $lunchBreakBtn.on("click", function () {
@@ -354,7 +355,11 @@ $(document).ready(function () {
     function buildTable() {
       $('#timesheetTable').empty();
       days.forEach(function (day, index) {
-        $('#timesheetTable').append("\n\t\t\t\t\t<tr class=\"active\">\n\t\t\t\t\t\t<th>Date</th>\n\t\t\t\t\t\t<th>Check In</th>\n\t\t\t\t\t\t<th>Check Out</th>\n\t\t\t\t\t\t<th>Hours</th>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr id=\"".concat(day[4], "\" class=\"timeslots\">\n\t\t\t\t\t\t<td>").concat($('#end').data("DateTimePicker").date().weekday(deltasonic ? index - 1 : index).format('dddd, MMM Do'), "</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>0</td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td id=\"").concat(day[4], "Hours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t</tr>\n\t\t\t\t"));
+        if (isField) {
+          $('#timesheetTable').append("\n\t\t\t\t\t\t<tr class=\"active\">\n\t\t\t\t\t\t\t<th>Date</th>\n\t\t\t\t\t\t\t<th>Role</th>\n\t\t\t\t\t\t\t<th>Check In</th>\n\t\t\t\t\t\t\t<th>Check Out</th>\n\t\t\t\t\t\t\t<th>Hours</th>\n\t\t\t\t\t\t</tr>\n\n\t\t\t\t\t\t<tr id=\"".concat(day[4], "\" class=\"timeslots\">\n\t\t\t\t\t\t\t<td>").concat($('#end').data("DateTimePicker").date().weekday(deltasonic ? index - 1 : index).format('dddd, MMM Do'), "</td>\n\t\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t\t<td>0</td>\n\t\t\t\t\t\t</tr>\n\n\t\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td id=\"").concat(day[4], "Hours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t"));
+        } else {
+          $('#timesheetTable').append("\n\t\t\t\t\t\t<tr class=\"active\">\n\t\t\t\t\t\t\t<th>Date</th>\n\t\t\t\t\t\t\t<th>Check In</th>\n\t\t\t\t\t\t\t<th>Check Out</th>\n\t\t\t\t\t\t\t<th>Hours</th>\n\t\t\t\t\t\t</tr>\n\n\t\t\t\t\t\t<tr id=\"".concat(day[4], "\" class=\"timeslots\">\n\t\t\t\t\t\t\t<td>").concat($('#end').data("DateTimePicker").date().weekday(deltasonic ? index - 1 : index).format('dddd, MMM Do'), "</td>\n\t\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t\t<td>0</td>\n\t\t\t\t\t\t</tr>\n\n\t\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td id=\"").concat(day[4], "Hours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t"));
+        }
       });
 
       if (deltasonic) {
@@ -363,7 +368,11 @@ $(document).ready(function () {
         days = [[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'], [$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'], [$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'], [$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'], [$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'], [$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'], [$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday']];
       }
 
-      $('#timesheetTable').append("\n\t\t\t\t<tr id=\"totalrow\">\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th>Total Hours</th>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td id=\"totalHours\" class=\"info\"><b>0</b></td>\n\t\t\t\t</tr>\n\t\t\t");
+      if (isField) {
+        $('#timesheetTable').append("\n\t\t\t\t\t<tr id=\"totalrow\">\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th>Total Hours</th>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td id=\"totalHours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t</tr>\n\t\t\t\t");
+      } else {
+        $('#timesheetTable').append("\n\t\t\t\t\t<tr id=\"totalrow\">\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th></th>\n\t\t\t\t\t\t<th>Total Hours</th>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td id=\"totalHours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t</tr>\n\t\t\t\t");
+      }
     }
 
     function makeTimesheet() {
@@ -422,7 +431,12 @@ $(document).ready(function () {
     }
 
     function addRow($element, timeslot, sum) {
-      $("\n\t\t            <tr class=\"timeslots\">\n\t\t                <td>".concat(!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : '', "</td>\n\t\t                <td class=\"").concat(timeslot.insource == 1 || timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "</td>\n\t\t                <td class=\"").concat(timeslot.outsource == 1 || timeslot.outsource == 2 ? 'warning' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -', "</td>\n\t\t                <td class=\n\t\t                    ").concat(sum.toFixed(2) > 6 ? 'red' : '', ">").concat(sum.toFixed(2), "\n\t\t                    ").concat(timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t                </td>\n\t\t            </tr>\n\t\t        ")).insertBefore($element);
+      if (isField) {
+        $("\n\t\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t\t<td>".concat(!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : '', "</td>\n\t\t\t\t\t\t\t<td>").concat(timeslot.role, "</td>\n\t\t\t\t\t\t\t<td class=\"").concat(timeslot.insource == 1 || timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "</td>\n\t\t\t\t\t\t\t<td class=\"").concat(timeslot.outsource == 1 || timeslot.outsource == 2 ? 'warning' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -', "</td>\n\t\t\t\t\t\t\t<td class=\n\t\t\t\t\t\t\t\t").concat(sum.toFixed(2) > 6 ? 'red' : '', ">").concat(sum.toFixed(2), "\n\t\t\t\t\t\t\t\t").concat(timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t")).insertBefore($element);
+      } else {
+        $("\n\t\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t\t<td>".concat(!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : '', "</td>\n\t\t\t\t\t\t\t<td class=\"").concat(timeslot.insource == 1 || timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "</td>\n\t\t\t\t\t\t\t<td class=\"").concat(timeslot.outsource == 1 || timeslot.outsource == 2 ? 'warning' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -', "</td>\n\t\t\t\t\t\t\t<td class=\n\t\t\t\t\t\t\t\t").concat(sum.toFixed(2) > 6 ? 'red' : '', ">").concat(sum.toFixed(2), "\n\t\t\t\t\t\t\t\t").concat(timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t")).insertBefore($element);
+      }
+
       setPopover(timeslot.timeid);
     }
 
@@ -621,10 +635,12 @@ $(document).ready(function () {
       checkInIds.push(checkin);
       makeUpdate();
       ga('send', 'event', 'CheckIn', empid, 'Successful');
+      $('.iziToast').hide();
       iziToast.success({
         message: 'You have been successfully checked in'
       });
     }).fail(function (result) {
+      $('.iziToast').hide();
       iziToast.error({
         message: 'Kiss Klock could not be saved at this time'
       });
@@ -656,6 +672,8 @@ $(document).ready(function () {
         alerts: alerts
       }
     }).success(function (hours) {
+      $('.iziToast').hide();
+
       if (deltasonic == 1) {
         iziToast.info({
           title: 'Punched Out',
@@ -672,8 +690,10 @@ $(document).ready(function () {
       }
 
       makeUpdate(true);
-      ga('send', 'event', 'CheckOut', empid, 'Successful'); // $('#kissklock-app').hide()
+      ga('send', 'event', 'CheckOut', empid, 'Successful');
+      if (isField) openTips($('#tips')[0], $('#tipsPage'));
     }).fail(function (result) {
+      $('.iziToast').hide();
       iziToast.error({
         message: 'Kiss Klock could not be saved at this time'
       });

@@ -13,8 +13,6 @@
     $isLocation = $_SESSION['location'] != 900 ? 'true' : 'false';
 ?>
 
-<!-- <script src="./js/datetimepicker.js"></script> -->
-
 <!--
 <link rel="stylesheet" href="../../DSCommons/public/css/datatables.min.css">
 -->
@@ -23,10 +21,6 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
 
-<!--
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
--->
 <script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -93,8 +87,9 @@
                     <section id="employees">
                         <?php if($isLocation) { ?>
                             <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
+                                <h2 class="table-name"> Working Now <span id="workingCount" class="badge"></span></h2>
                                 <div class="table-card">
-                                    <h2 class="table-name"> Booth </h2>
+                                    <h2 class="table-name"> Booth <span id="boothCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
@@ -115,7 +110,7 @@
                                 </div>
 
                                 <div class="table-card">
-                                    <h2 class="table-name"> Power Wash </h2>
+                                    <h2 class="table-name"> Power Wash <span id="powerCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
@@ -136,7 +131,7 @@
                                 </div>
 
                                 <div class="table-card">
-                                    <h2 class="table-name"> Wash Exit </h2>
+                                    <h2 class="table-name"> Wash Exit <span id="washCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
@@ -157,7 +152,7 @@
                                 </div>
 
                                 <div class="table-card">
-                                    <h2 class="table-name"> Management </h2>
+                                    <h2 class="table-name"> Management <span id="managersCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
@@ -174,7 +169,7 @@
                                 </div>
 
                                 <div class="table-card">
-                                    <h2 class="table-name"> Other </h2>
+                                    <h2 class="table-name"> Other <span id="otherCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
@@ -191,7 +186,23 @@
                                 </div>
                             </article>
                             <article style="width:30%;float:left;padding: 1em;height:85vh;overflow:scroll">
-                                <h2 class="table-name"> Worked Today </h2>
+                                <h2 class="table-name"> Worked Today <span id="activeCount" class="badge"></span></h2>
+                                <table class="table">
+                                  <thead>
+                                      <tr>
+                                          <th></th>
+                                          <th>Hrs</th>
+                                          <th>Name</th>
+                                          <th>Break</th>
+                                          <th></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="workedTable">
+
+                                  </tbody>
+                                </table>
+
+                                <h2 class="table-name"> Didn't Worked Today <span id="nonActiveCount" class="badge"></span></h2>
                                 <table class="table">
                                   <thead>
                                       <tr>

@@ -16,6 +16,7 @@ ipaddress = '',
 alerts,
 timezone,
 deltasonic,
+isField,
 autologout,
 checkIn,
 checkOut,
@@ -102,6 +103,7 @@ let login = (e) => {
 				alerts = user.alerts
 				timezone = user.timezone ? user.timezone : moment.tz.guess()
 				deltasonic = user.deltasonic
+				isField = user.field
 				roles = user.roles
 				if (currentHours == 0) $('#checkIn').html('<h3>Start Day</h3>')
 				if (deltasonic) $('#overtime').hide()
@@ -232,7 +234,6 @@ $(document).ready(function () {
 	});
 
 	$checkOutBtn.on("click", () => {
-		// openTips($('#tips')[0], $('#tipsPage'))
 		checkOut()
 	})
 
@@ -387,28 +388,56 @@ $(document).ready(function () {
 		function buildTable() {
 			$('#timesheetTable').empty()
 			days.forEach((day, index) => {
-				$('#timesheetTable').append(`
-					<tr class="active">
-						<th>Date</th>
-						<th>Check In</th>
-						<th>Check Out</th>
-						<th>Hours</th>
-					</tr>
+				if (isField) {
+					$('#timesheetTable').append(`
+						<tr class="active">
+							<th>Date</th>
+							<th>Role</th>
+							<th>Check In</th>
+							<th>Check Out</th>
+							<th>Hours</th>
+						</tr>
 
-					<tr id="${day[4]}" class="timeslots">
-						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
-						<td>- -</td>
-						<td>- -</td>
-						<td>0</td>
-					</tr>
+						<tr id="${day[4]}" class="timeslots">
+							<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
+							<td>- -</td>
+							<td>- -</td>
+							<td>- -</td>
+							<td>0</td>
+						</tr>
 
-					<tr class="timeslots">
-						<td></td>
-						<td></td>
-						<td></td>
-						<td id="${day[4]}Hours" class="info"><b>0</b></td>
-					</tr>
-				`);
+						<tr class="timeslots">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td id="${day[4]}Hours" class="info"><b>0</b></td>
+						</tr>
+					`);
+				} else {
+					$('#timesheetTable').append(`
+						<tr class="active">
+							<th>Date</th>
+							<th>Check In</th>
+							<th>Check Out</th>
+							<th>Hours</th>
+						</tr>
+
+						<tr id="${day[4]}" class="timeslots">
+							<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
+							<td>- -</td>
+							<td>- -</td>
+							<td>0</td>
+						</tr>
+
+						<tr class="timeslots">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td id="${day[4]}Hours" class="info"><b>0</b></td>
+						</tr>
+					`);
+				}
 			});
 
 			if (deltasonic) {
@@ -433,20 +462,40 @@ $(document).ready(function () {
 				];
 			}
 
-			$('#timesheetTable').append(`
-				<tr id="totalrow">
-					<th></th>
-					<th></th>
-					<th></th>
-					<th>Total Hours</th>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td id="totalHours" class="info"><b>0</b></td>
-				</tr>
-			`)
+			if (isField) {
+				$('#timesheetTable').append(`
+					<tr id="totalrow">
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th>Total Hours</th>
+					</tr>
+					<tr>
+						<td></td>
+						<th></th>
+						<td></td>
+						<td></td>
+						<td id="totalHours" class="info"><b>0</b></td>
+					</tr>
+				`)
+			} else {
+				$('#timesheetTable').append(`
+					<tr id="totalrow">
+						<th></th>
+						<th></th>
+						<th></th>
+						<th>Total Hours</th>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td id="totalHours" class="info"><b>0</b></td>
+					</tr>
+				`)
+			}
+
 		}
 
 		function makeTimesheet() {
@@ -504,18 +553,34 @@ $(document).ready(function () {
 		}
 
 		function addRow($element, timeslot, sum) {
-			$(
-					`
-		            <tr class="timeslots">
-		                <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
-		                <td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
-		                <td class="${(timeslot.outsource == 1 || timeslot.outsource == 2) ? 'warning' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
-		                <td class=
-		                    ${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}
-		                    ${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
-		                </td>
-		            </tr>
-		        `).insertBefore($element);
+			if (isField) {
+				$(
+						`
+						<tr class="timeslots">
+							<td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
+							<td>${timeslot.role}</td>
+							<td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
+							<td class="${(timeslot.outsource == 1 || timeslot.outsource == 2) ? 'warning' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+							<td class=
+								${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}
+								${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
+							</td>
+						</tr>
+					`).insertBefore($element);
+			} else {
+				$(
+						`
+						<tr class="timeslots">
+							<td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
+							<td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
+							<td class="${(timeslot.outsource == 1 || timeslot.outsource == 2) ? 'warning' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
+							<td class=
+								${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}
+								${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
+							</td>
+						</tr>
+					`).insertBefore($element);
+			}
 			setPopover(timeslot.timeid);
 		};
 
@@ -729,10 +794,12 @@ $(document).ready(function () {
 			checkInIds.push(checkin);
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
+			$('.iziToast').hide()
 			iziToast.success({
 				message: 'You have been successfully checked in'
 			});
 		}).fail((result) => {
+			$('.iziToast').hide()
 			iziToast.error({
 				message: 'Kiss Klock could not be saved at this time'
 			});
@@ -766,6 +833,7 @@ $(document).ready(function () {
 				alerts   : alerts
 			}
 		}).success((hours) => {
+			$('.iziToast').hide()
 			if (deltasonic == 1) {
 				iziToast.info({
 					title: 'Punched Out',
@@ -781,8 +849,10 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			// $('#kissklock-app').hide()
+			if (isField)
+				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
+			$('.iziToast').hide()
 			iziToast.error({
 				message: 'Kiss Klock could not be saved at this time'
 			});
