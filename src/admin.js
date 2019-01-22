@@ -933,85 +933,118 @@ $(document).ready(function(){
 				url: `./php/main.php?module=admin&action=getLocationEmployees`
 			}).done((employees) => {
 				if (employees.data && employees.data.length > 0) {
-					let counter = 1;
+					let active = 0,
+						nonActive = 0,
+						booth = 0,
+						power= 0,
+						wash = 0,
+						managers = 0,
+						other = 0;
+
 					employees.data.forEach(e => {
 						if (e.role) {
 							let r = e.role.toLowerCase()
 							e.hoursWorked = e.hoursWorked.toFixed(2)
 							e.todayHours = e.todayHours.toFixed(2)
 
-							if (r.match(/wash|program/g)) {
-								$('#powerTable').append(`
+							if (e.endTime) {
+								active++
+								$('#workedTable').append(`
 									<tr>
-										<td></td>
-										<td>${e.name}</td>
+										<td>${active}</td>
 										<td>${e.todayHours}</td>
-										<td>${e.hoursWorked}</td>
-										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
-										<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-										<td>${e.role}</td>
-										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-									</tr>
-								`)
-							} else if (r.match(/cashier|advisor/g)) {
-								$('#boothTable').append(`
-									<tr>
-										<td></td>
-										<td>${e.name}</td>
-										<td>${e.todayHours}</td>
-										<td>${e.hoursWorked}</td>
-										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
-										<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-										<td>${e.role}</td>
-										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-									</tr>
-								`)
-							} else if (r.match(/tech/g)) {
-								$('#washTable').append(`
-									<tr>
-										<td></td>
-										<td>${e.name}</td>
-										<td>${e.todayHours}</td>
-										<td>${e.hoursWorked}</td>
-										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
-										<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-										<td>${e.role}</td>
-										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-									</tr>
-								`)
-							} else if (r.match(/manager/g)) {
-								$('#managementTable').append(`
-									<tr>
-										<td></td>
-										<td>${e.hoursWorked}</td>
 										<td>${e.name}</td>
 										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
 										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
 									</tr>
 								`)
 							} else {
-								$('#otherTable').append(`
-									<tr>
-										<td>${e.hoursWorked}</td>
-										<td>${e.name}</td>
-										<td>${e.role}</td>
-										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-									</tr>
-								`)
+								if (r.match(/power|program/g)) {
+									power++
+									$('#powerTable').append(`
+										<tr>
+											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+											<td>${e.name}</td>
+											<td>${e.todayHours}</td>
+											<td>${e.hoursWorked}</td>
+											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+											<td>${e.role}</td>
+											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+										</tr>
+									`)
+								} else if (r.match(/bd|advisor/g)) {
+									booth++
+									$('#boothTable').append(`
+										<tr>
+											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+											<td>${e.name}</td>
+											<td>${e.todayHours}</td>
+											<td>${e.hoursWorked}</td>
+											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+											<td>${e.role}</td>
+											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+										</tr>
+									`)
+								} else if (r.match(/wash t/g)) {
+									wash++
+									$('#washTable').append(`
+										<tr>
+											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+											<td>${e.name}</td>
+											<td>${e.todayHours}</td>
+											<td>${e.hoursWorked}</td>
+											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+											<td>${e.role}</td>
+											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+										</tr>
+									`)
+								} else if (r.match(/manager|supervisor/g)) {
+									managers++
+									$('#managementTable').append(`
+										<tr>
+											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+											<td>${e.todayHours}</td>
+											<td>${e.name}</td>
+											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+										</tr>
+									`)
+								} else {
+									other++
+									$('#otherTable').append(`
+										<tr>
+											<td>${e.todayHours}</td>
+											<td>${e.name}</td>
+											<td>${e.role}</td>
+											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
+										</tr>
+									`)
+								}
 							}
 						} else {
+							nonActive++
 							$('#totalTable').append(`
 								<tr>
-									<td>${counter}</td>
-									<td>${e.hoursWorked}</td>
+									<td>${nonActive}</td>
+									<td>${e.todayHours}</td>
 									<td>${e.name}</td>
 									<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
 									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
 								</tr>
 							`)
-							counter++
 						}
 					})
+					$('#boothCount').text(booth)
+					$('#powerCount').text(power)
+					$('#washCount').text(wash)
+					$('#managersCount').text(managers)
+					$('#otherCount').text(other)
+					$('#workingCount').text(booth + power + wash + managers + other)
+					$('#activeCount').text(active)
+					$('#nonActiveCount').text(nonActive)
 				} else {
 					$('#employees').html('No Employees found for you')
 				}
