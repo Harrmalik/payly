@@ -23,20 +23,31 @@ $dataArray = json_decode($response->raw_body, true);
 $cleanedDataArray = array();
 foreach($dataArray as $d){
 	$key = count($returnArray['data']);
-
 	$returnArray['data'][$key][0] = $d['empname'];
 	$returnArray['data'][$key][1] = $d['dateFormat'];
 	$returnArray['data'][$key][2] = $d['punchSite'];
-
 	$returnArray['data'][$key][3] = $d['tippedHours'];
 	$returnArray['data'][$key][4] = $d['nonTippedHours'];
+	$totalHours = $d['tippedHours'] + $d['nonTippedHours'];
+	$lessThanFourHoursAcknowledged = $d['lessThanFourHoursUnderstand'];
 
-	$returnArray['data'][$key][5] = $d['washTTips'];
-	$returnArray['data'][$key][6] = $d['detailTTips'];
-
-	$returnArray['data'][$key][7] = ($d['detailTTips'] + $d['washTTips']);
-	$returnArray['data'][$key][8] = ($d['reviewManager'] == "" ? "<div class=\"btn btn-success\" onClick=\"reviewTip(this, ".$d['tipid'].")\">Review</div>" : $d['reviewManager'] );
-	$returnArray['data'][$key][9] = "<div class=\"btn btn-danger\" onClick=\"removeTip(this, ".$d['tipid'].", '".$d['empnumber']."', '".$d['dateSimple']."')\">Remove</div>";
+	$fourHourDisplay = '-';
+	$fourHourClass = 'neutral';
+	if($totalHours < 4){
+		if($lessThanFourHoursAcknowledged){
+			$fourHourDisplay = 'Yes';
+			$fourHourClass = 'green';
+		} else {
+			$fourHourDisplay = 'No';
+			$fourHourClass = 'red';
+		}
+	}
+	$returnArray['data'][$key][5] = "<div class='fourhour_".$fourHourClass."'>".$fourHourDisplay."</div>";
+	$returnArray['data'][$key][6] = $d['washTTips'];
+	$returnArray['data'][$key][7] = $d['detailTTips'];
+	$returnArray['data'][$key][8] = ($d['detailTTips'] + $d['washTTips']);
+	$returnArray['data'][$key][9] = ($d['reviewManager'] == "" ? "<div class=\"btn btn-success\" onClick=\"reviewTip(this, ".$d['tipid'].")\">Review</div>" : $d['reviewManager'] );
+	$returnArray['data'][$key][10] = "<div class=\"btn btn-danger\" onClick=\"removeTip(this, ".$d['tipid'].", '".$d['empnumber']."', '".$d['dateSimple']."')\">Remove</div>";
 }
 ob_clean();
 header('Content-Type: application/json');

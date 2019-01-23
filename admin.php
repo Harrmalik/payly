@@ -38,7 +38,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
 </head>
 
-<body data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>" data-islocation="<?php echo $isLocation; ?>">
+<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>" data-islocation="<?php echo $isLocation; ?>">
     <div class="panel panel-primary container">
         <nav class="navbar navbar-inverse">
           <div class="container-fluid">
@@ -85,7 +85,7 @@
                         Loading Data ....
                     </section>
                     <section id="employees">
-                        <?php if($isLocation) { ?>
+                        <?php if($isLocation == 'true') { ?>
                             <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
                                 <h2 class="table-name"> Working Now <span id="workingCount" class="badge"></span></h2>
                                 <div class="table-card">
@@ -430,6 +430,7 @@
                               <th>Location</th>
                               <th>Tipped Hours</th>
                               <th>Non Tipped Hours</th>
+                              <th>4 Hour Acknowledgement</th>
                               <th>Wash Tips</th>
                               <th>Detail Tips</th>
                               <th>Total Tips</th>
@@ -444,6 +445,7 @@
                               <th>Location</th>
                               <th>Tipped Hours</th>
                               <th>Non Tipped Hours</th>
+                              <th>4 Hour Acknowledgement</th>
                               <th>Wash Tips</th>
                               <th>Detail Tips</th>
                               <th>Total Tips</th>

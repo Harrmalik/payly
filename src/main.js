@@ -988,18 +988,13 @@ function saveTips(){
 
 		var tippedHours = $($('[name="tippedHours"]')[0]).val();
 		var nonTippedHours = $($('[name="nonTippedHours"]')[0]).val();
-		var washTips = $($('[name="washTTips"]')[0]).val();
-		var detailTips = $($('[name="detailTTips"]')[0]).val();
+		var washTips = $($('[name="washTTips"]')[0]).val() ? $($('[name="washTTips"]')[0]).val() : 0;
+		var detailTips = $($('[name="detailTTips"]')[0]).val() ? $($('[name="detailTTips"]')[0]).val() : 0;
 
 		var signatureData = encodeURIComponent(glbSignaturePad.toDataURL('image/png'));
 		formData += "&signatureData=" + signatureData;
 
-		if(		!isNaN(parseInt(tippedHours))
-			&&	!isNaN(parseInt(nonTippedHours))
-			&&	!isNaN(parseInt(washTips))
-			&&	!isNaN(parseInt(detailTips))
-			&&	!glbSignaturePad.isEmpty()
-		){
+		if(!glbSignaturePad.isEmpty()){
 			$("#btnCommand").addClass("disabled");
 			$.ajax({
 				url: "./php/call.php",
