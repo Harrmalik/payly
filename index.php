@@ -232,8 +232,9 @@
                             </div>
 
                             <div id="tipsection2" style="display:none;">
-                                <div>
-                                    By clicking the box below I acknowledge that I have voluntarily chose to end my shift early. I understand that I could have stayed and choose to work at least 4 hours.
+                                <div style="width:80%;padding-left: 20%;;">
+                                    <p class="text-left">On today’s date, I have voluntarily decided to work less than four (4) hours.  It is my voluntary decision to leave without working a minimum four-hour shift. Management is not requiring me to leave at this time.  I understand that I can work a minimum four-hour shift, but am voluntarily choosing to not do so on today's date. </p>
+                                    <p class="text-left">By clicking the box below, I am acknowledging my understanding and decision to work less than a four-hour minimum shift. </p>
                                     <br/>
                                     <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value=""/>
                                     <div class="btn btn-lg btn-success btnLessthanfourhoursunderstand">I understand</div>

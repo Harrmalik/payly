@@ -2,6 +2,7 @@
 let empid,
 	empSite,
 	userData = $('title').data(),
+	myEmpid = $('body').data('myempid'),
 	isManager = $('body').data('ismanager'),
 	isPayroll = $('body').data('ispayroll'),
 	isLocation = $('body').data('islocation'),
@@ -61,6 +62,12 @@ if (isPayroll) {
 	$('.payrollBtn').show()
 }
 
+
+$.ajax({
+	url: `./php/main.php?module=getManager`
+}).done((user) => {
+	myEmpid = user[0].employeeid
+});
 console.log(isManager, isLocation,isPayroll);
 
 // Edit Timesheets tab
@@ -602,8 +609,9 @@ $(document).ready(function(){
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
 			];
 		}
-		if (isPayroll || (isLocation && isManager)){
+		if (((isManager && isLocation) || isPayroll) && empid != myEmpid){
 			//$('#back').hide()
+			$('#addTimeslot').show()
 		} else {
 			$('#addTimeslot').hide()
 		}
@@ -615,7 +623,7 @@ $(document).ready(function(){
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
-			if ((isManager && isLocation) || isPayroll) {
+			if (((isManager && isLocation) || isPayroll) && empid != myEmpid) {
 				$timesheet.append(`
 					<tr class="active headers">
 						<th style="width: 15%;">Date</th>
@@ -692,7 +700,7 @@ $(document).ready(function(){
 			];
 		}
 
-		if ((isManager && isLocation) || isPayroll) {
+		if (((isManager && isLocation) || isPayroll) && empid != myEmpid) {
 			$timesheet.append(`
 				<tr id="totalrow">
 					<th></th>
@@ -813,7 +821,7 @@ $(document).ready(function(){
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
 					${
-						(isManager && isLocation) || isPayroll ?
+						((isManager && isLocation) || isPayroll) && empid != myEmpid ?
 							`<td>
 								<select class="form-control roles" data-timeid="${timeslot.timeid}">
 									${roles.map(r => {
@@ -833,7 +841,7 @@ $(document).ready(function(){
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
 					${
-						(isManager && isLocation) || isPayroll ?
+						((isManager && isLocation) || isPayroll) && empid != myEmpid ?
 							`<td>
 								<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}
 								data-toggle="tooltip" data-placement="top" title="Delete timeslot"
@@ -925,7 +933,6 @@ $(document).ready(function(){
 	});
 
 	let getInitialState = () => {
-
 		if (isLocation) {
 			$('#employees').toggle()
 			$('#employeesLoader').toggle()
@@ -1089,7 +1096,7 @@ $(document).ready(function(){
 function getTips(){
 	glbDataTable = $('#tipContainer').DataTable( {
 		"createdRow":function(row,data,dataIndex) {
-			if (data[3] > 0 && data[7] == 0 && data[1] != moment().format("MM/DD/Y")) {
+			if (data[3] > 0 && data[8] == 0 && data[1] != moment().format("MM/DD/Y")) {
 				$(row).addClass("suspect");
 			}
 		},
@@ -1098,13 +1105,13 @@ function getTips(){
 			{
 				extend: "csv",
 				exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
                 }
 			},
 			{
 				extend: "excel",
 				exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
                 }
 			}
         ],
@@ -1114,7 +1121,8 @@ function getTips(){
 		"columnDefs": [
 			{ "targets": 0, "width": "200px" }, // name
 			{ "targets": 1, "width": "135px", "type": "date"}, // date
-			{ "targets": [3, 4, 5, 6, 7], "width": "125px" ,"type":"num", render: $.fn.dataTable.render.number(',','.',2)} // tips
+			{ "targets": 5, "width": "100px"},
+			{ "targets": [3, 4, 6, 7, 8], "width": "125px" ,"type":"num", render: $.fn.dataTable.render.number(',','.',2)} // tips
 		],
 		fixedColumns: false,
 		"order": [[ 1, "desc" ]]
