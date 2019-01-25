@@ -24,7 +24,7 @@ var empid,
     checkOut,
     openTips,
     timer = function timer() {
-  autologout = setTimeout(IdleTimeout, 60000);
+  autologout = setTimeout(IdleTimeout, 300000);
 },
     removeTimer = function removeTimer() {
   clearTimeout(autologout);
