@@ -22,7 +22,7 @@ checkIn,
 checkOut,
 openTips,
 timer = () => {
-	autologout = setTimeout(IdleTimeout, 60000)
+	autologout = setTimeout(IdleTimeout, 300000)
 },
 removeTimer = () => {
 	clearTimeout(autologout)
