@@ -409,6 +409,7 @@ canvas{
   width:400px;
   height:200px;
   background-color: white;
+  margin: auto;
 }
 /*
 .modal .modal-dialog{
