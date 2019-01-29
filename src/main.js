@@ -111,6 +111,7 @@ let login = (e) => {
 					$('#overtimeReason').val(user.hasOvertime)
 					otrId = user.otrId
 				}
+				if (!isField) $('.isField').hide()
 				var birthday = moment(user.birthday).add(5, 'hours').format('MMDD')
 				var hiredDate = moment(user.hiredDate).add(5, 'hours').format('MMDD')
 				var yearsWorked = moment().format('YYYY') - moment(user.hiredDate).add(5, 'hours').format('YYYY')
@@ -731,7 +732,7 @@ $(document).ready(function () {
 		} else {
 			$checkInBtn.hide();
 			$checkOutBtn.show();
-			$lunchBreakBtn.show();
+			if (isField) $lunchBreakBtn.show();
 			position = $('#checkOut').position()
 		}
 		$('#clockdate').show().css({
@@ -1099,6 +1100,9 @@ function lookupHours(){
 
 	$('#washInput').hide()
 	$('#detailInput').hide()
+	$('#underFourText').hide()
+	$('.hasTips').hide()
+	$('#shiftsWorked').empty()
 
 	$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
 		let tippedHours = 0,
@@ -1118,13 +1122,21 @@ function lookupHours(){
 
 			if (timeslot.role && timeslot.role.toLowerCase().match(/detail/))
 				detail = true
+
+			$('#shiftsWorked').append(`
+				<li>${timeslot.role} (${timeslot.tipped ? 'tipped' : 'non tipped'}): ${moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a')} - ${moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a')} - <b>${timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A'} Hrs</b></li>
+			`)
 		})
 
+		console.log((tippedHours + nonTippedHours), (tippedHours + nonTippedHours) < 4);
 		if (wash) $('#washInput').show()
 		if (detail) $('#detailInput').show()
+		if ((tippedHours + nonTippedHours) < 4) $('#underFourText').show()
+		if (tippedHours) $('.hasTips').show()
 
 		$($('[name="tippedHours"]')[0]).val(tippedHours.toFixed(2));
 		$($('[name="nonTippedHours"]')[0]).val(nonTippedHours.toFixed(2));
+		$($('[name="totalDayHours"]')[0]).val((tippedHours + nonTippedHours).toFixed(2));
 
 		$("#tippedHours_display").html(tippedHours.toFixed(2));
 		$("#nonTippedHours_display").html(nonTippedHours.toFixed(2));

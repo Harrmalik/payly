@@ -27,7 +27,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
                   <li class="active"><a id="home"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                  <li><a id="tips" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li>
+                  <li class="isField"><a id="tips" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li>
                   <li><a id="timesheet" role="button"><i class="glyphicon glyphicon-list-alt"></i> Timesheet</a></li>
                   <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Edit Request</a></li> -->
               </ul>
@@ -111,7 +111,7 @@
                 <section id="main-content">
                     <section class="mainBtns">
                         <button type="button" class="btn btn-primary btn-lg" id="checkIn"><h3>Punch In</h3></button>
-                        <!-- <button type="button" class="btn btn-primary btn-lg" id="lunchBreak"><h3>Lunch Break</h3></button> -->
+                        <button type="button" class="btn btn-primary btn-lg isField" id="lunchBreak"><h3>Lunch Break</h3></button>
                         <button type="button" class="btn btn-primary btn-lg" id="checkOut">
                             <h3>Punch out</h3>
                             <p>Total Hours will be: <span id="overallHours"></span></p>
@@ -202,11 +202,11 @@
                 <div id="slide1" style="display:none;">
                     <div id="msg-status"><br/></div>
 
-                    <div>Employee: <span id="employeeNameDisplay"></span></div>
+                    <div><b>Employee</b>: <span id="employeeNameDisplay"></span></div><br/>
 
                     <form class="form-horizontal" style="margin:auto;width:500px">
                         <div class="form-group">
-                            <label for="end" style="text-align: left;" class="col-sm-2 control-label">Tips for</label>
+                            <label for="end" style="text-align: left;" class="col-sm-2 control-label">Date</label>
 
                             <div class='input-group date' id='tipDate'>
                               <input type='text' class="form-control" />
@@ -216,14 +216,18 @@
                             </div>
                         </div>
                     </form>
+                    <hr/>
+
                     <form id="frmtips">
                     <div id="todaystips">
                         <div>
                             <input type="hidden" name="employeeid" id="employeeid"/>
                             <input type="hidden" id="site" value="<?php echo $site;?>"/>
+                            <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>
+                            <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value="1"/>
 
-                            <div id="tipsection1" style="display:block;">
-                                <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>Have you worked less than 4 hours today?
+                            <!-- <div id="tipsection1" style="display:block;">
+                                Have you worked less than 4 hours today?
 
                                 <div class="text-center">
                                     <div class="btn btn-lg btn-success btnLessthanfourhours" id="btnLessthanfourhours1" ds_value="1">Yes</div>
@@ -236,50 +240,68 @@
                                     <p class="text-left">On today’s date, I have voluntarily decided to work less than four (4) hours.  It is my voluntary decision to leave without working a minimum four-hour shift. Management is not requiring me to leave at this time.  I understand that I can work a minimum four-hour shift, but am voluntarily choosing to not do so on today's date. </p>
                                     <p class="text-left">By clicking the box below, I am acknowledging my understanding and decision to work less than a four-hour minimum shift. </p>
                                     <br/>
-                                    <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value=""/>
+
                                     <div class="btn btn-lg btn-success btnLessthanfourhoursunderstand">I understand</div>
                                 </div>
-                            </div>
+                            </div> -->
 
 
-                            <div id="tipsection3" style="display:none;margin:auto;" class="container text-left">
+                            <div id="tipsection1" style="display:none;margin:auto;" class="container text-left">
+                                <h3>Shifts Worked</h3>
+                                <ol id="shiftsWorked">
+
+                                </ol>
+                                <br/>
 
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label for="tippedHours">How many <b>Tipped hours</b> have you worked today?</label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control" disabled name="tippedHours" style="width:100px;"/>
+                                            <label for="tippedHours" class="col-sm-3"><b>Tipped hours</b></label>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" disabled name="tippedHours" style="width:100px;"/>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <br/><br/>
+
+                                    <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label for="nonTippedHours">How many <b>Non Tipped hours</b> have you worked today?</label>
-                                                <input type="number" step=".01" autocomplete="off" class="form-control" disabled name="nonTippedHours" style="width:100px;"/>
+                                            <label for="nonTippedHours" class="col-sm-3"><b>Non Tipped hours</b></label>
+                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" disabled name="nonTippedHours" style="width:100px;"/>
                                         </div>
                                     </div>
+                                    <br/><br/>
+
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="nonTippedHours" class="col-sm-3"><b>Total Hours</b></label>
+                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" disabled name="totalDayHours" style="width:100px;"/>
+                                        </div>
+                                    </div>
+                                    <br/><br/>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6" id="detailInput" style="display:none;">
+                                    <div class="col-sm-12" id="detailInput" style="display:none;">
                                         <div class="form-group">
-                                            <label for="detailTTips">How much have you earned in <b>tips</b> today while working under <b>Detail T</b>?</label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control" name="detailTTips" style="width:100px;"/>
+                                            <label for="detailTTips" class="col-sm-3"><b>Detail T</b> tips earned</label>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" name="detailTTips" style="width:100px;"/>
                                         </div>
+                                        <br/><br/>
                                     </div>
-                                    <div class="col-sm-6" id="washInput" style="display:none;">
+                                    <div class="col-sm-12" id="washInput" style="display:none;">
                                         <div class="form-group">
-                                            <label for="washTTips">How much have you earned in <b>tips</b> today while working under <b>Wash T</b>?</label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control" name="washTTips" style="width:100px;"/>
+                                            <label for="washTTips" class="col-sm-3"><b>Wash T</b> tips earned</label>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" name="washTTips" style="width:100px;"/>
                                         </div>
+                                        <br/><br/>
                                     </div>
                                 </div>
 
                                 <div class="row text-center">
-                                    <small>Please check and verify your above time entries and notify management of any errors. Please claim all your tips you've earned today, no more no less.</small>
-                                    <?php
-                                    // show the lookup tool, but only if the user is from the register
-                                    if($_SERVER['SERVER_ADDR'] == "172.18.100.7"){
-                                        echo '<a href="javascript:;" onClick="lookupHours()"><i class="fa fa-search" aria-hidden="true"></i> Lookup Hours</a>';
-                                    }?>
+                                    <b>Please check and verify your above time entries and notify management of any errors. <span class="hasTips" style="display:none;">Please claim all your tips you've earned today, no more no less.</span></b>
+                                    <div id="underFourText" style="display:none;">
+                                        <p>On today’s date, I have voluntarily decided to work less than four (4) hours.  It is my voluntary decision to leave without working a minimum four-hour shift. Management is not requiring me to leave at this time.  I understand that I can work a minimum four-hour shift, but am voluntarily choosing to not do so on today's date. </p>
+                                        <p>By clicking the box below, I am acknowledging my understanding and decision to work less than a four-hour minimum shift. </p>
+                                    </div>
+                                    <br/>
                                 </div>
 
                                 <div class="questionRow row">
@@ -289,7 +311,7 @@
                                         </button>
                                     </div>
                                     <div class="col-sm-5">
-                                        <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()">Submit Tips</div>
+                                        <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()">Submit</div>
                                     </div>
                                 </div>
                             </div>
