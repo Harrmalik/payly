@@ -939,7 +939,7 @@ $(document).ready(function(){
 			$.ajax({
 				url: `./php/main.php?module=admin&action=getLocationEmployees`
 			}).done((employees) => {
-				if (employees.data && employees.data.length > 0) {
+				if (employees && employees.length > 0) {
 					let active = 0,
 						nonActive = 0,
 						booth = 0,
@@ -948,20 +948,21 @@ $(document).ready(function(){
 						managers = 0,
 						other = 0;
 
-					employees.data.forEach(e => {
-						if (e.role) {
+					employees.forEach(e => {
+						if (e.todayHours) {
 							let r = e.role.toLowerCase()
-							e.hoursWorked = e.hoursWorked.toFixed(2)
-							e.todayHours = e.todayHours.toFixed(2)
+							e.hoursWorked = (e.hoursWorked/60).toFixed(2)
+							e.todayHours = (e.todayHours/60).toFixed(2)
+							e.breakTime = (e.breakTime/60).toFixed(2)
 
-							if (e.endTime) {
+							if (!e.workingNow) {
 								active++
 								$('#workedTable').append(`
 									<tr>
 										<td>${active}</td>
 										<td>${e.todayHours}</td>
 										<td>${e.name}</td>
-										<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+										<td>${e.breakTime}</td>
 										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
 									</tr>
 								`)
@@ -974,7 +975,7 @@ $(document).ready(function(){
 											<td>${e.name}</td>
 											<td>${e.todayHours}</td>
 											<td>${e.hoursWorked}</td>
-											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td>${e.breakTime}</td>
 											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
 											<td>${e.role}</td>
 											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
@@ -988,7 +989,7 @@ $(document).ready(function(){
 											<td>${e.name}</td>
 											<td>${e.todayHours}</td>
 											<td>${e.hoursWorked}</td>
-											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td>${e.breakTime}</td>
 											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
 											<td>${e.role}</td>
 											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
@@ -1002,7 +1003,7 @@ $(document).ready(function(){
 											<td>${e.name}</td>
 											<td>${e.todayHours}</td>
 											<td>${e.hoursWorked}</td>
-											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+											<td>${e.breakTime}</td>
 											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
 											<td>${e.role}</td>
 											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>

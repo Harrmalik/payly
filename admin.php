@@ -294,6 +294,15 @@
                     </div>
                   </div>
                   <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Timezone</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="uTimezone">
+                            <option value=""></option>
+                            <option value="America/Chicago">CDT</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
                     <div class="col-sm-4">
                       <input type="text" class="form-control" id="uSupervisor" placeholder="Supervisor ID">
@@ -456,7 +465,8 @@
                     </table>
                   </div>
                 </div>
-            <div role="tabpanel" class="tab-pane" id="reports">
+
+              <div role="tabpanel" class="tab-pane" id="reports">
                 <div class="form-group" style="clear:both; margin:1em 0;">
                     <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">Start Date</label>
                     <div class="col-sm-4">

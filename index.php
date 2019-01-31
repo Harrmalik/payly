@@ -202,9 +202,10 @@
                 <div id="slide1" style="display:none;">
                     <div id="msg-status"><br/></div>
 
-                    <div><b>Employee</b>: <span id="employeeNameDisplay"></span></div><br/>
 
-                    <form class="form-horizontal" style="margin:auto;width:500px">
+
+                    <form class="form" style="margin:auto;width:500px;">
+                        <div><b>Employee</b>: <span id="employeeNameDisplay"></span></div>
                         <div class="form-group">
                             <label for="end" style="text-align: left;" class="col-sm-2 control-label">Date</label>
 
@@ -226,28 +227,8 @@
                             <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>
                             <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value="1"/>
 
-                            <!-- <div id="tipsection1" style="display:block;">
-                                Have you worked less than 4 hours today?
-
-                                <div class="text-center">
-                                    <div class="btn btn-lg btn-success btnLessthanfourhours" id="btnLessthanfourhours1" ds_value="1">Yes</div>
-                                    <div class="btn btn-lg btn-danger btnLessthanfourhours" id="btnLessthanfourhours0" ds_value="0">No</div>
-                                </div>
-                            </div>
-
-                            <div id="tipsection2" style="display:none;">
-                                <div style="width:80%;padding-left: 20%;;">
-                                    <p class="text-left">On today’s date, I have voluntarily decided to work less than four (4) hours.  It is my voluntary decision to leave without working a minimum four-hour shift. Management is not requiring me to leave at this time.  I understand that I can work a minimum four-hour shift, but am voluntarily choosing to not do so on today's date. </p>
-                                    <p class="text-left">By clicking the box below, I am acknowledging my understanding and decision to work less than a four-hour minimum shift. </p>
-                                    <br/>
-
-                                    <div class="btn btn-lg btn-success btnLessthanfourhoursunderstand">I understand</div>
-                                </div>
-                            </div> -->
-
-
                             <div id="tipsection1" style="display:none;margin:auto;" class="container text-left">
-                                <h3>Shifts Worked</h3>
+                                <p><b>Shifts Worked</b></p>
                                 <ol id="shiftsWorked">
 
                                 </ol>

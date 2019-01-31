@@ -29,7 +29,6 @@ removeTimer = () => {
 };
 
 $('body').css("overflow", "hidden")
-window.scrollTo(0,0);
 if (!ga) {
 	var ga = function (arg1, arg2, category = '', action = '', label = '') {
 		console.log(`${arg2} - category: ${category}, action: ${action}, label: ${label}`);
@@ -150,6 +149,9 @@ let login = (e) => {
 				`)
 				$('#unknownusermodal').modal('toggle')
 			}
+
+			window.scrollTo(0,0);
+			$('body').css("overflow", "auto")
 		});
 	})
 
@@ -270,6 +272,9 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
+
+			if (isField && tippedRole)
+				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
 			iziToast.error({
 				message: 'Kiss Klock could not be saved at this time'
@@ -316,7 +321,6 @@ $(document).ready(function () {
 
 	$timesheetBtn.on("click", (e) => {
 		nextPage(e, $('#timesheetPage'))
-		$('body').css("overflow", "auto")
 		// Javascript letiables
 		let startDate,
 		endDate,
@@ -850,7 +854,7 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			if (isField)
+			if (isField && tippedRole)
 				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
 			$('.iziToast').hide()
@@ -1124,11 +1128,10 @@ function lookupHours(){
 				detail = true
 
 			$('#shiftsWorked').append(`
-				<li>${timeslot.role} (${timeslot.tipped ? 'tipped' : 'non tipped'}): ${moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a')} - ${moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a')} - <b>${timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A'} Hrs</b></li>
+				<li>${timeslot.role} (${timeslot.istipped ? 'tipped' : 'non tipped'}): ${moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a')} - ${moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a')} - <b>${timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A'} Hrs</b></li>
 			`)
 		})
 
-		console.log((tippedHours + nonTippedHours), (tippedHours + nonTippedHours) < 4);
 		if (wash) $('#washInput').show()
 		if (detail) $('#detailInput').show()
 		if ((tippedHours + nonTippedHours) < 4) $('#underFourText').show()

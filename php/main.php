@@ -20,7 +20,7 @@
             $response = doGetRequest("https://api1.dscws.com/universalaccess/users?fields=userid,realname,position,employeeid&filter=userid=" . $_SESSION['userid'], $username, $password);
             break;
         case 'admin':
-            $response = doGetRequest($NodeServer . "/admin?action=" . $_REQUEST['action'] . "&empid=" . $_REQUEST['empid'] . "&startDate=" . $_REQUEST['startDate'] . "&endDate=" . $_REQUEST['endDate'] . "&report=" . $_REQUEST['report'], $username, $password);
+            $response = doGetRequest($NodeServer . "/admin?action=" . $_REQUEST['action'] . "&empid=" . $_REQUEST['empid'] . "&startDate=" . $_REQUEST['startDate'] . "&endDate=" . $_REQUEST['endDate'] . "&report=" . $_REQUEST['report'] . "&location=" . $_REQUEST['location'], $username, $password);
             break;
       }
 
