@@ -31,7 +31,6 @@ var empid,
 };
 
 $('body').css("overflow", "hidden");
-window.scrollTo(0, 0);
 
 if (!ga) {
   var ga = function ga(arg1, arg2) {
@@ -149,6 +148,9 @@ var login = function login(e) {
         $(".modal-body").html("\n\t\t\t\t\t  <p>The Employee number <b>".concat(empid, "</b> Was not found in the system. Would you like to punch it in anyway</p>\n\t\t\t\t"));
         $('#unknownusermodal').modal('toggle');
       }
+
+      window.scrollTo(0, 0);
+      $('body').css("overflow", "auto");
     });
   });
   return false;
@@ -259,6 +261,7 @@ $(document).ready(function () {
 
       makeUpdate(true);
       ga('send', 'event', 'CheckOut', empid, 'Successful');
+      if (isField && tippedRole) openTips($('#tips')[0], $('#tipsPage'));
     }).fail(function (result) {
       iziToast.error({
         message: 'Kiss Klock could not be saved at this time'
@@ -300,8 +303,7 @@ $(document).ready(function () {
     openTips(e, $('#tipsPage'));
   });
   $timesheetBtn.on("click", function (e) {
-    nextPage(e, $('#timesheetPage'));
-    $('body').css("overflow", "auto"); // Javascript letiables
+    nextPage(e, $('#timesheetPage')); // Javascript letiables
 
     var startDate,
         endDate,
@@ -692,7 +694,7 @@ $(document).ready(function () {
 
       makeUpdate(true);
       ga('send', 'event', 'CheckOut', empid, 'Successful');
-      if (isField) openTips($('#tips')[0], $('#tipsPage'));
+      if (isField && tippedRole) openTips($('#tips')[0], $('#tipsPage'));
     }).fail(function (result) {
       $('.iziToast').hide();
       iziToast.error({
@@ -941,9 +943,8 @@ function lookupHours() {
 
       if (timeslot.role && timeslot.role.toLowerCase().match(/wash/)) wash = true;
       if (timeslot.role && timeslot.role.toLowerCase().match(/detail/)) detail = true;
-      $('#shiftsWorked').append("\n\t\t\t\t<li>".concat(timeslot.role, " (").concat(timeslot.tipped ? 'tipped' : 'non tipped', "): ").concat(moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a'), " - ").concat(moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a'), " - <b>").concat(timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A', " Hrs</b></li>\n\t\t\t"));
+      $('#shiftsWorked').append("\n\t\t\t\t<li>".concat(timeslot.role, " (").concat(timeslot.istipped ? 'tipped' : 'non tipped', "): ").concat(moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a'), " - ").concat(moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a'), " - <b>").concat(timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A', " Hrs</b></li>\n\t\t\t"));
     });
-    console.log(tippedHours + nonTippedHours, tippedHours + nonTippedHours < 4);
     if (wash) $('#washInput').show();
     if (detail) $('#detailInput').show();
     if (tippedHours + nonTippedHours < 4) $('#underFourText').show();
