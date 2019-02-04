@@ -584,6 +584,7 @@
                                   <option value="4">Holiday</option>
                                   <option value="5">Jury Duty</option>
                                   <option value="6">Bereavement</option>
+                                  <option value="7">Office Closed</option>
                                 </select>
                           </div>
                           <div class="form-group">

@@ -776,8 +776,10 @@ $(document).ready(function () {
                 }
               }
             } else {
+              e.todayHours = (e.todayHours / 60).toFixed(2);
+              e.breakTime = (e.breakTime / 60).toFixed(2);
               nonActive++;
-              $('#totalTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
+              $('#totalTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.totalHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.breakTime, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
             }
           });
           $('#boothCount').text(booth);
