@@ -1033,13 +1033,15 @@ $(document).ready(function(){
 								}
 							}
 						} else {
+							e.todayHours = (e.todayHours/60).toFixed(2)
+							e.breakTime = (e.breakTime/60).toFixed(2)
 							nonActive++
 							$('#totalTable').append(`
 								<tr>
 									<td>${nonActive}</td>
-									<td>${e.todayHours}</td>
+									<td>${e.totalHours}</td>
 									<td>${e.name}</td>
-									<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+									<td>${e.breakTime}</td>
 									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
 								</tr>
 							`)
