@@ -11,7 +11,8 @@ let empid,
 	timezone,
 	deltasonic,
 	timeslot,
-	allUsers;
+	allUsers,
+	employees;
 	$('#punchintime').datetimepicker({
 		sideBySide: true
 	});
@@ -738,6 +739,129 @@ $(document).ready(function(){
 		$('#userTimesheet').show();
     }
 
+	let buildDashboard = (dashboard) => {
+		console.log(dashboard);
+		$('#workedTable').empty()
+		$('#powerTable').empty()
+		$('#boothTable').empty()
+		$('#washTable').empty()
+		$('#managementTable').empty()
+		$('#otherTable').empty()
+		$('#totalTable').empty()
+
+		if (employees && employees.length > 0) {
+			let active = 0,
+				nonActive = 0,
+				booth = 0,
+				power= 0,
+				wash = 0,
+				detail = 0,
+				store = 0,
+				food = 0,
+				lube = 0,
+				managers = 0,
+				other = 0;
+
+			employees.forEach(e => {
+				if (e.todayHours) {
+					let r = e.role.toLowerCase(),
+						hoursWorked = (e.hoursWorked/60).toFixed(2),
+						todayHours = (e.todayHours/60).toFixed(2),
+						totalHours = (e.totalHours/60).toFixed(2),
+						breakTime = (e.breakTime/60).toFixed(2)
+
+					if (!e.workingNow) {
+						active++
+						$('#workedTable').append(`
+							<tr>
+								<td>${active}</td>
+								<td>${todayHours}</td>
+								<td>${e.name}</td>
+								<td>${breakTime}</td>
+								<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
+							</tr>
+						`)
+					} else {
+						if (r.match(/manager|supervisor/g)) {
+							managers++
+							$('#managementTable').append(`
+								<tr>
+									<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+									<td>${todayHours}</td>
+									<td>${e.name}</td>
+									<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+									<td>${e.role}</td>
+									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
+								</tr>
+							`)
+						} else if (r.match(/power|program/g)) {
+							power++
+							addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/bd|advisor/g)) {
+							booth++
+							addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/wash t/g)) {
+							wash++
+							addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/detail|quality/g)) {
+							detail++
+							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/c-store/g)) {
+							store++
+							addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/coffee|food/g)) {
+							food++
+							addDashboardRow(e, '#foodTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/lube/g)) {
+							lube++
+							addDashboardRow(e, '#lubeTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else {
+							other++
+							$('#otherTable').append(`
+								<tr>
+									<td>${todayHours}</td>
+									<td>${e.name}</td>
+									<td>${e.role}</td>
+									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
+								</tr>
+							`)
+						}
+					}
+				} else {
+					let totalHours = (e.totalHours/60).toFixed(2)
+					let breakTime = (e.breakTime/60).toFixed(2)
+					nonActive++
+					$('#totalTable').append(`
+						<tr>
+							<td>${nonActive}</td>
+							<td>${totalHours}</td>
+							<td>${e.name}</td>
+							<td>${breakTime}</td>
+							<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
+						</tr>
+					`)
+				}
+			})
+			$('#boothCount').text(booth)
+			$('#powerCount').text(power)
+			$('#washCount').text(wash)
+			$('#detailCount').text(detail)
+			$('#storeCount').text(store)
+			$('#foodCount').text(food)
+			$('#lubeCount').text(lube)
+			$('#managersCount').text(managers)
+			$('#otherCount').text(other)
+			$('#workingCount').text(booth + power + wash + managers + detail + food + store + lube + other)
+			$('#activeCount').text(active)
+			$('#nonActiveCount').text(nonActive)
+		} else {
+			$('#employees').html('No Employees found for you')
+		}
+
+		$('#employees').show()
+		$('#employeesLoader').hide()
+	}
+
     makeTimesheet = () => {
 		$('#loader').addClass('loader')
 		totalTime = 0;
@@ -866,6 +990,23 @@ $(document).ready(function(){
 		$('.datetime').datetimepicker();
     }
 
+	function addDashboardRow (e, ele, todayHours, totalHours, hoursWorked, breakTime) {
+		// <td>${40-totalHours > 0 ? 40-totalHours : 0}</td>
+		$(ele).append(`
+			<tr>
+				<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+				<td>${e.name}</td>
+				<td>${todayHours}</td>
+				<td class="${hoursWorked > 6 ? 'red' : '' }">${hoursWorked}</td>
+				<td>${breakTime}</td>
+				<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+				<td>${e.role}</td>
+				<td class="${totalHours > 40 ? 'red' : '' }">${40-totalHours}</td>
+				<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
+			</tr>
+		`)
+	}
+
 	function setPopover(id) {
 		$.ajax({
 			url: `./php/main.php?module=kissklock&action=getChanges&id=${id}`
@@ -919,148 +1060,15 @@ $(document).ready(function(){
 		});
 	}
 
-	$('#end').on('dp.change', () => {
-		if (empid) {
-			buildTable()
-			getTimesheet();
-		}
-	});
-
-	$('#dateFilter').on('dp.change', () => {
-		getDateRange($('#dateFilter').data("DateTimePicker").date().weekday(5).hour(23).minute(59).format("M/D/Y"), true);
-		displayDateRange();
-		getTips();
-	});
-
 	let getInitialState = () => {
 		if (isLocation) {
-			$('#employees').toggle()
-			$('#employeesLoader').toggle()
+			$('#employees').hide()
+			$('#employeesLoader').show()
 			$.ajax({
 				url: `./php/main.php?module=admin&action=getLocationEmployees`
-			}).done((employees) => {
-				if (employees && employees.length > 0) {
-					let active = 0,
-						nonActive = 0,
-						booth = 0,
-						power= 0,
-						wash = 0,
-						managers = 0,
-						other = 0;
-
-					employees.forEach(e => {
-						if (e.todayHours) {
-							let r = e.role.toLowerCase()
-							e.hoursWorked = (e.hoursWorked/60).toFixed(2)
-							e.todayHours = (e.todayHours/60).toFixed(2)
-							e.breakTime = (e.breakTime/60).toFixed(2)
-
-							if (!e.workingNow) {
-								active++
-								$('#workedTable').append(`
-									<tr>
-										<td>${active}</td>
-										<td>${e.todayHours}</td>
-										<td>${e.name}</td>
-										<td>${e.breakTime}</td>
-										<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-									</tr>
-								`)
-							} else {
-								if (r.match(/power|program/g)) {
-									power++
-									$('#powerTable').append(`
-										<tr>
-											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-											<td>${e.name}</td>
-											<td>${e.todayHours}</td>
-											<td>${e.hoursWorked}</td>
-											<td>${e.breakTime}</td>
-											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-											<td>${e.role}</td>
-											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-										</tr>
-									`)
-								} else if (r.match(/bd|advisor/g)) {
-									booth++
-									$('#boothTable').append(`
-										<tr>
-											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-											<td>${e.name}</td>
-											<td>${e.todayHours}</td>
-											<td>${e.hoursWorked}</td>
-											<td>${e.breakTime}</td>
-											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-											<td>${e.role}</td>
-											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-										</tr>
-									`)
-								} else if (r.match(/wash t/g)) {
-									wash++
-									$('#washTable').append(`
-										<tr>
-											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-											<td>${e.name}</td>
-											<td>${e.todayHours}</td>
-											<td>${e.hoursWorked}</td>
-											<td>${e.breakTime}</td>
-											<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-											<td>${e.role}</td>
-											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-										</tr>
-									`)
-								} else if (r.match(/manager|supervisor/g)) {
-									managers++
-									$('#managementTable').append(`
-										<tr>
-											<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-											<td>${e.todayHours}</td>
-											<td>${e.name}</td>
-											<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
-											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-										</tr>
-									`)
-								} else {
-									other++
-									$('#otherTable').append(`
-										<tr>
-											<td>${e.todayHours}</td>
-											<td>${e.name}</td>
-											<td>${e.role}</td>
-											<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-										</tr>
-									`)
-								}
-							}
-						} else {
-							e.todayHours = (e.todayHours/60).toFixed(2)
-							e.breakTime = (e.breakTime/60).toFixed(2)
-							nonActive++
-							$('#totalTable').append(`
-								<tr>
-									<td>${nonActive}</td>
-									<td>${e.totalHours}</td>
-									<td>${e.name}</td>
-									<td>${e.breakTime}</td>
-									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">View Timesheet</a></td>
-								</tr>
-							`)
-						}
-					})
-					$('#boothCount').text(booth)
-					$('#powerCount').text(power)
-					$('#washCount').text(wash)
-					$('#managersCount').text(managers)
-					$('#otherCount').text(other)
-					$('#workingCount').text(booth + power + wash + managers + other)
-					$('#activeCount').text(active)
-					$('#nonActiveCount').text(nonActive)
-				} else {
-					$('#employees').html('No Employees found for you')
-				}
-
-				$('#employees').toggle()
-				$('#employeesLoader').toggle()
+			}).done((data) => {
+				employees = data
+				buildDashboard()
 			})
 		} else {
 			let dashboard;
@@ -1085,6 +1093,26 @@ $(document).ready(function(){
 		}
 	};
 
+	// EVENT LISTENERS
+	$('#end').on('dp.change', () => {
+		if (empid) {
+			buildTable()
+			getTimesheet();
+		}
+	});
+
+	$('#dateFilter').on('dp.change', () => {
+		getDateRange($('#dateFilter').data("DateTimePicker").date().weekday(5).hour(23).minute(59).format("M/D/Y"), true);
+		displayDateRange();
+		getTips();
+	});
+
+	$('.dashboard-tab').on('click', (e) => {
+		buildDashboard(e.currentTarget.id)
+	})
+
+
+	// STARTING APPLICATION
 	if (isManager)
 		getInitialState();
 

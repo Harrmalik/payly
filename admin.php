@@ -58,12 +58,12 @@
               <ul class="nav navbar-nav">
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show()">Dashboard</a></li>
-                  <li role="presentation"><a class="payrollBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
-                  <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
+                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
+                  <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>
@@ -86,9 +86,37 @@
                     </section>
                     <section id="employees">
                         <?php if($isLocation == 'true') { ?>
+                            <form class="form-inline">
+                                <div class="checkbox" style="padding-right:5px">
+                                  <label>
+                                    <input type="checkbox" checked onclick="$('.wash-cards').toggle()"> Wash
+                                  </label>
+                                </div>
+                                <div class="checkbox" style="padding-right:5px">
+                                  <label>
+                                    <input type="checkbox" checked onclick="$('#detailCard').toggle()"> Detail
+                                  </label>
+                                </div>
+                                <div class="checkbox" style="padding-right:5px">
+                                  <label>
+                                    <input type="checkbox" checked onclick="$('#storeCard').toggle()"> Store
+                                  </label>
+                                </div>
+                                <div class="checkbox" style="padding-right:5px">
+                                  <label>
+                                    <input type="checkbox" checked onclick="$('#foodCard').toggle()"> Food
+                                  </label>
+                                </div>
+                                <div class="checkbox" style="padding-right:5px">
+                                  <label>
+                                    <input type="checkbox" checked onclick="$('#lubeCard').toggle()"> Lube
+                                  </label>
+                                </div>
+                            </form>
+
                             <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
                                 <h2 class="table-name"> Working Now <span id="workingCount" class="badge"></span></h2>
-                                <div class="table-card">
+                                <div class="table-card wash-cards" id="boothCard">
                                     <h2 class="table-name"> Booth <span id="boothCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
@@ -100,6 +128,8 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -109,7 +139,7 @@
                                     </table>
                                 </div>
 
-                                <div class="table-card">
+                                <div class="table-card wash-cards" id="powerCard">
                                     <h2 class="table-name"> Power Wash <span id="powerCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
@@ -121,6 +151,8 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -130,7 +162,7 @@
                                     </table>
                                 </div>
 
-                                <div class="table-card">
+                                <div class="table-card wash-cards" id="washCard">
                                     <h2 class="table-name"> Wash Exit <span id="washCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
@@ -142,6 +174,8 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -151,14 +185,108 @@
                                     </table>
                                 </div>
 
-                                <div class="table-card">
-                                    <h2 class="table-name"> Management <span id="managersCount" class="badge"></span></h2>
+                                <div class="table-card" id="detailCard">
+                                    <h2 class="table-name"> Detail <span id="detailCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
                                               <th>Start Time</th>
                                               <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
                                               <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="detailTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card" id="storeCard">
+                                    <h2 class="table-name"> C-Store <span id="storeCount" class="badge"></span></h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
+                                              <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="storeTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card" id="foodCard">
+                                    <h2 class="table-name"> Food Service <span id="foodCount" class="badge"></span></h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
+                                              <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="foodTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card" id="lubeCard">
+                                    <h2 class="table-name"> Lube <span id="lubeCount" class="primary badge"></span></h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Name</th>
+                                              <th>Day Hrs</th>
+                                              <th>Role Hrs</th>
+                                              <th>Break</th>
+                                              <th>Minor</th>
+                                              <th>Role</th>
+                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Till O/T</th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="lubeTable">
+
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-card" id="managementCard">
+                                    <h2 class="table-name"> Management <span id="managersCount" class="badge"></span></h2>
+                                    <table class="table table-condensed table-hover table-striped">
+                                      <thead>
+                                          <tr>
+                                              <th>Start Time</th>
+                                              <th>Today Hrs</th>
+                                              <th>Name</th>
+                                              <th>Break</th>
+                                              <th>Role</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -168,7 +296,7 @@
                                     </table>
                                 </div>
 
-                                <div class="table-card">
+                                <div class="table-card" id="otherCard">
                                     <h2 class="table-name"> Other <span id="otherCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
