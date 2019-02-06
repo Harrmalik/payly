@@ -12,7 +12,8 @@ var empid,
     timezone,
     deltasonic,
     timeslot,
-    allUsers;
+    allUsers,
+    employees;
 $('#punchintime').datetimepicker({
   sideBySide: true
 });
@@ -588,6 +589,98 @@ $(document).ready(function () {
     $('#userTimesheet').show();
   };
 
+  var buildDashboard = function buildDashboard(dashboard) {
+    console.log(dashboard);
+    $('#workedTable').empty();
+    $('#powerTable').empty();
+    $('#boothTable').empty();
+    $('#washTable').empty();
+    $('#managementTable').empty();
+    $('#otherTable').empty();
+    $('#totalTable').empty();
+
+    if (employees && employees.length > 0) {
+      var active = 0,
+          nonActive = 0,
+          booth = 0,
+          power = 0,
+          wash = 0,
+          detail = 0,
+          store = 0,
+          food = 0,
+          lube = 0,
+          managers = 0,
+          other = 0;
+      employees.forEach(function (e) {
+        if (e.todayHours) {
+          var r = e.role.toLowerCase(),
+              hoursWorked = (e.hoursWorked / 60).toFixed(2),
+              todayHours = (e.todayHours / 60).toFixed(2),
+              totalHours = (e.totalHours / 60).toFixed(2),
+              breakTime = (e.breakTime / 60).toFixed(2);
+
+          if (!e.workingNow) {
+            active++;
+            $('#workedTable').append("\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>".concat(active, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(breakTime, "</td>\n\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t"));
+          } else {
+            if (r.match(/manager|supervisor/g)) {
+              managers++;
+              $('#managementTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
+            } else if (r.match(/power|program/g)) {
+              power++;
+              addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/bd|advisor/g)) {
+              booth++;
+              addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/wash t/g)) {
+              wash++;
+              addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/detail|quality/g)) {
+              detail++;
+              addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/c-store/g)) {
+              store++;
+              addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/coffee|food/g)) {
+              food++;
+              addDashboardRow(e, '#foodTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/lube/g)) {
+              lube++;
+              addDashboardRow(e, '#lubeTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else {
+              other++;
+              $('#otherTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
+            }
+          }
+        } else {
+          var _totalHours = (e.totalHours / 60).toFixed(2);
+
+          var _breakTime = (e.breakTime / 60).toFixed(2);
+
+          nonActive++;
+          $('#totalTable').append("\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t<td>").concat(_totalHours, "</td>\n\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t<td>").concat(_breakTime, "</td>\n\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t"));
+        }
+      });
+      $('#boothCount').text(booth);
+      $('#powerCount').text(power);
+      $('#washCount').text(wash);
+      $('#detailCount').text(detail);
+      $('#storeCount').text(store);
+      $('#foodCount').text(food);
+      $('#lubeCount').text(lube);
+      $('#managersCount').text(managers);
+      $('#otherCount').text(other);
+      $('#workingCount').text(booth + power + wash + managers + detail + food + store + lube + other);
+      $('#activeCount').text(active);
+      $('#nonActiveCount').text(nonActive);
+    } else {
+      $('#employees').html('No Employees found for you');
+    }
+
+    $('#employees').show();
+    $('#employeesLoader').hide();
+  };
+
   makeTimesheet = function makeTimesheet() {
     $('#loader').addClass('loader');
     totalTime = 0;
@@ -675,6 +768,11 @@ $(document).ready(function () {
     $('.datetime').datetimepicker();
   }
 
+  function addDashboardRow(e, ele, todayHours, totalHours, hoursWorked, breakTime) {
+    // <td>${40-totalHours > 0 ? 40-totalHours : 0}</td>
+    $(ele).append("\n\t\t\t<tr>\n\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t<td class=\"").concat(hoursWorked > 6 ? 'red' : '', "\">").concat(hoursWorked, "</td>\n\t\t\t\t<td>").concat(breakTime, "</td>\n\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t<td class=\"").concat(totalHours > 40 ? 'red' : '', "\">").concat(40 - totalHours, "</td>\n\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t</tr>\n\t\t"));
+  }
+
   function setPopover(id) {
     $.ajax({
       url: "./php/main.php?module=kissklock&action=getChanges&id=".concat(id)
@@ -720,82 +818,15 @@ $(document).ready(function () {
     });
   }
 
-  $('#end').on('dp.change', function () {
-    if (empid) {
-      buildTable();
-      getTimesheet();
-    }
-  });
-  $('#dateFilter').on('dp.change', function () {
-    getDateRange($('#dateFilter').data("DateTimePicker").date().weekday(5).hour(23).minute(59).format("M/D/Y"), true);
-    displayDateRange();
-    getTips();
-  });
-
   var getInitialState = function getInitialState() {
     if (isLocation) {
-      $('#employees').toggle();
-      $('#employeesLoader').toggle();
+      $('#employees').hide();
+      $('#employeesLoader').show();
       $.ajax({
         url: "./php/main.php?module=admin&action=getLocationEmployees"
-      }).done(function (employees) {
-        if (employees && employees.length > 0) {
-          var active = 0,
-              nonActive = 0,
-              booth = 0,
-              power = 0,
-              wash = 0,
-              managers = 0,
-              other = 0;
-          employees.forEach(function (e) {
-            if (e.todayHours) {
-              var r = e.role.toLowerCase();
-              e.hoursWorked = (e.hoursWorked / 60).toFixed(2);
-              e.todayHours = (e.todayHours / 60).toFixed(2);
-              e.breakTime = (e.breakTime / 60).toFixed(2);
-
-              if (!e.workingNow) {
-                active++;
-                $('#workedTable').append("\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td>".concat(active, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t<td>").concat(e.breakTime, "</td>\n\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t"));
-              } else {
-                if (r.match(/power|program/g)) {
-                  power++;
-                  $('#powerTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.breakTime, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
-                } else if (r.match(/bd|advisor/g)) {
-                  booth++;
-                  $('#boothTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.breakTime, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
-                } else if (r.match(/wash t/g)) {
-                  wash++;
-                  $('#washTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hoursWorked, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.breakTime, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
-                } else if (r.match(/manager|supervisor/g)) {
-                  managers++;
-                  $('#managementTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
-                } else {
-                  other++;
-                  $('#otherTable').append("\n\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t<td>".concat(e.todayHours, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t"));
-                }
-              }
-            } else {
-              e.todayHours = (e.todayHours / 60).toFixed(2);
-              e.breakTime = (e.breakTime / 60).toFixed(2);
-              nonActive++;
-              $('#totalTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.totalHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.breakTime, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">View Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
-            }
-          });
-          $('#boothCount').text(booth);
-          $('#powerCount').text(power);
-          $('#washCount').text(wash);
-          $('#managersCount').text(managers);
-          $('#otherCount').text(other);
-          $('#workingCount').text(booth + power + wash + managers + other);
-          $('#activeCount').text(active);
-          $('#nonActiveCount').text(nonActive);
-        } else {
-          $('#employees').html('No Employees found for you');
-        }
-
-        $('#employees').toggle();
-        $('#employeesLoader').toggle();
+      }).done(function (data) {
+        employees = data;
+        buildDashboard();
       });
     } else {
       var dashboard;
@@ -849,7 +880,23 @@ $(document).ready(function () {
         "order": [[1, "desc"]]
       });
     }
-  };
+  }; // EVENT LISTENERS
+
+
+  $('#end').on('dp.change', function () {
+    if (empid) {
+      buildTable();
+      getTimesheet();
+    }
+  });
+  $('#dateFilter').on('dp.change', function () {
+    getDateRange($('#dateFilter').data("DateTimePicker").date().weekday(5).hour(23).minute(59).format("M/D/Y"), true);
+    displayDateRange();
+    getTips();
+  });
+  $('.dashboard-tab').on('click', function (e) {
+    buildDashboard(e.currentTarget.id);
+  }); // STARTING APPLICATION
 
   if (isManager) getInitialState();
   var now = new Date();
