@@ -237,7 +237,7 @@ $(document).ready(function () {
 	});
 
 	$checkOutBtn.on("click", () => {
-		checkOut()
+		checkOut(true)
 	})
 
 	$lunchBreakBtn.on("click", () => {
@@ -815,7 +815,7 @@ $(document).ready(function () {
 		});
 	}
 
-	checkOut = () => {
+	checkOut = (doneForDay = false) => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
 		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
 		iziToast.show({
@@ -854,7 +854,7 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			if (isField && tippedRole)
+			if ((isField && tippedRole) || (isField && doneForDay))
 				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
 			$('.iziToast').hide()

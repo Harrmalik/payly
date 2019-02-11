@@ -623,14 +623,14 @@
                   <label for="phone" class="col-sm-2 control-label">Reports</label>
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsDropdown">
-                          <option value="America/New_York">Daily Hours</option>
+                          <!-- <option value="America/New_York">Daily Hours</option> -->
                           <option value="America/Chicago">Weekly Hours</option>
-                          <option value="America/Chicago">Labor Report</option>
+                          <!-- <option value="America/Chicago">Labor Report</option> -->
                           <option value="minorReport">Minors Report</option>
-                          <option value="America/Chicago">Didn't Punch Out</option>
+                          <!-- <option value="dailyNoSignOutReport">Didn't Punch Out</option>
                           <option value="America/Chicago">Tips</option>
                           <option value="America/Chicago">Night Hours</option>
-                          <option value="America/Chicago">Weekend Hours</option>
+                          <option value="America/Chicago">Weekend Hours</option> -->
                       </select>
                   </div>
                 </div>
@@ -759,4 +759,4 @@
 </body>
 
 
-<script src="./dist/admin.js"></script>
+<script src="./src/admin.js"></script>

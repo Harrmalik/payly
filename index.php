@@ -372,6 +372,17 @@
         </section>
         </div>
     </div>
+
+    <script>
+    console.log('yo');
+    console.log(navigator);
+    if('serviceWorker' in navigator) {
+        console.log('foudn wokder');
+      navigator.serviceWorker
+               .register('sw.js')
+               .then(function() { console.log("Service Worker Registered"); });
+    }
+    </script>
 </body>
 
 <script src="./dist/main.js"></script>

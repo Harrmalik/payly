@@ -228,7 +228,7 @@ $(document).ready(function () {
     checkIn();
   });
   $checkOutBtn.on("click", function () {
-    checkOut();
+    checkOut(true);
   });
   $lunchBreakBtn.on("click", function () {
     ga('send', 'event', 'CheckOut', empid, 'Attempted');
@@ -655,6 +655,7 @@ $(document).ready(function () {
   };
 
   checkOut = function checkOut() {
+    var doneForDay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     ga('send', 'event', 'CheckOut', empid, 'Attempted');
     checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
     iziToast.show({
@@ -694,7 +695,7 @@ $(document).ready(function () {
 
       makeUpdate(true);
       ga('send', 'event', 'CheckOut', empid, 'Successful');
-      if (isField && tippedRole) openTips($('#tips')[0], $('#tipsPage'));
+      if (isField && tippedRole || isField && doneForDay) openTips($('#tips')[0], $('#tipsPage'));
     }).fail(function (result) {
       $('.iziToast').hide();
       iziToast.error({
