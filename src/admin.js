@@ -5,6 +5,9 @@ let empid,
 	myEmpid = $('body').data('myempid'),
 	isManager = $('body').data('ismanager'),
 	isPayroll = $('body').data('ispayroll'),
+	isHr = $('body').data('ishr'),
+	isTrainer = $('body').data('istrainer'),
+	isDm = $('body').data('isdm'),
 	isLocation = $('body').data('islocation'),
 	buildTable,
 	makeTimesheet,
@@ -51,17 +54,10 @@ $('.tipsBtn').hide()
 $('.payrollBtn').hide()
 $('.hrBtn').hide()
 
-if (isPayroll || isLocation) {
-	$('.adminsBtn').show()
-}
-
-if (isLocation) {
-	$('.tipsBtn').show()
-}
-
-if (isPayroll) {
-	$('.payrollBtn').show()
-}
+if (isPayroll || isLocation) $('.adminsBtn').show()
+if (isLocation) $('.tipsBtn').show()
+if (isPayroll) $('.payrollBtn').show()
+if (isHr) $('.hrBtn').show()
 
 
 $.ajax({
@@ -69,7 +65,15 @@ $.ajax({
 }).done((user) => {
 	myEmpid = user[0].employeeid
 });
-console.log(isManager, isLocation,isPayroll);
+
+console.log({
+	isManager,
+	isPayroll,
+	isTrainer,
+	isDm,
+	isHr,
+	isLocation
+});
 
 // Edit Timesheets tab
 let getTimesheet = (userid) => {
@@ -281,6 +285,57 @@ $('#removeUser').on('click', () => {
 
 		});
 	});
+})
+
+$('#savingUsers').on('click', () => {
+
+
+	let data = {
+		module: 'admin',
+		action: 'saveUser',
+		employeeID: $('#employeeid').val().split('.')[0],
+		employeeName: $('#uName').val(),
+		deltasonic: $('#uDeltasonic').val(),
+		companyCode: $('#uCode').val(),
+		job: $('#uJob').val(),
+		supervisor: $('#uSupervisor').val().split('.')[0],
+		timezone: $('#uTimezone').val(),
+		holidays: $('#uHoliday').val(),
+		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+		nights: $('#nights').is(':checked') == true ? 1 : 0,
+		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
+		canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
+		field: $('#field').is(':checked') == true ? 1 : 0,
+	}
+	if (!$('#employeeid').val().split('.')[1]) {
+		data['action'] = 'addUser';
+
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `User Added`,
+			});
+		});
+	} else {
+		data['action'] = 'saveUser';
+
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `User saved`,
+
+
+			});
+		});
+	}
 })
 
 $('#saveUser').on('click', () => {
@@ -862,7 +917,7 @@ $(document).ready(function(){
 		$('#employeesLoader').hide()
 	}
 
-    makeTimesheet = () => {
+  makeTimesheet = () => {
 		$('#loader').addClass('loader')
 		totalTime = 0;
         $.ajax({
@@ -939,7 +994,7 @@ $(document).ready(function(){
         });
     }
 
-    function addRow($element, timeslot, sum, roles) {
+  function addRow($element, timeslot, sum, roles) {
         $(
             `
                 <tr class="timeslots">

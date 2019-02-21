@@ -6,6 +6,9 @@ var empid,
     myEmpid = $('body').data('myempid'),
     isManager = $('body').data('ismanager'),
     isPayroll = $('body').data('ispayroll'),
+    isHr = $('body').data('ishr'),
+    isTrainer = $('body').data('istrainer'),
+    isDm = $('body').data('isdm'),
     isLocation = $('body').data('islocation'),
     buildTable,
     makeTimesheet,
@@ -50,25 +53,23 @@ $('.adminsBtn').hide();
 $('.tipsBtn').hide();
 $('.payrollBtn').hide();
 $('.hrBtn').hide();
-
-if (isPayroll || isLocation) {
-  $('.adminsBtn').show();
-}
-
-if (isLocation) {
-  $('.tipsBtn').show();
-}
-
-if (isPayroll) {
-  $('.payrollBtn').show();
-}
-
+if (isPayroll || isLocation) $('.adminsBtn').show();
+if (isLocation) $('.tipsBtn').show();
+if (isPayroll) $('.payrollBtn').show();
+if (isHr) $('.hrBtn').show();
 $.ajax({
   url: "./php/main.php?module=getManager"
 }).done(function (user) {
   myEmpid = user[0].employeeid;
 });
-console.log(isManager, isLocation, isPayroll); // Edit Timesheets tab
+console.log({
+  isManager: isManager,
+  isPayroll: isPayroll,
+  isTrainer: isTrainer,
+  isDm: isDm,
+  isHr: isHr,
+  isLocation: isLocation
+}); // Edit Timesheets tab
 
 var getTimesheet = function getTimesheet(userid) {
   empid = $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : userid ? userid : empid;
@@ -266,6 +267,51 @@ $('#removeUser').on('click', function () {
       message: "User removed"
     });
   });
+});
+$('#savingUsers').on('click', function () {
+  var data = {
+    module: 'admin',
+    action: 'saveUser',
+    employeeID: $('#employeeid').val().split('.')[0],
+    employeeName: $('#uName').val(),
+    deltasonic: $('#uDeltasonic').val(),
+    companyCode: $('#uCode').val(),
+    job: $('#uJob').val(),
+    supervisor: $('#uSupervisor').val().split('.')[0],
+    timezone: $('#uTimezone').val(),
+    holidays: $('#uHoliday').val(),
+    weekends: $('#weekends').is(':checked') == true ? 1 : 0,
+    nights: $('#nights').is(':checked') == true ? 1 : 0,
+    alerts: $('#alerts').is(':checked') == true ? 1 : 0,
+    canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
+    field: $('#field').is(':checked') == true ? 1 : 0
+  };
+
+  if (!$('#employeeid').val().split('.')[1]) {
+    data['action'] = 'addUser';
+    $.ajax({
+      url: "./php/main.php",
+      method: 'post',
+      data: data
+    }).done(function (data) {
+      iziToast.success({
+        title: 'Success',
+        message: "User Added"
+      });
+    });
+  } else {
+    data['action'] = 'saveUser';
+    $.ajax({
+      url: "./php/main.php",
+      method: 'post',
+      data: data
+    }).done(function (data) {
+      iziToast.success({
+        title: 'Success',
+        message: "User saved"
+      });
+    });
+  }
 });
 $('#saveUser').on('click', function () {
   var data = {
