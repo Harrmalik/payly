@@ -3,14 +3,13 @@
     require_once('/var/www/resources/core/index.php');
     $core->inc('users');
     USER::authPage();
-    $isManager = 'false';$isPayroll = 'false';$isLocation = 'false';
-    if (USER::inGroup(73)) {
-            $isManager = 'true';
-    }
-    if (USER::inGroup(74)) {
-            $isPayroll = 'true';
-    }
-    $isLocation = $_SESSION['location'] != 900 ? 'true' : 'false';
+
+    $isManager   = USER::inGroup(73) ? 'true' : 'false';
+    $isPayroll   = USER::inGroup(74) ? 'true' : 'false';
+    $isTrainer   = USER::inGroup(21) ? 'true' : 'false';
+    $isHr        = USER::inGroup(57) ? 'true' : 'false';
+    $isDm = USER::inGroup(65) ? 'true' : 'false';
+    $isLocation  = $_SESSION['location'] != 900 ? 'true' : 'false';
 ?>
 
 <!--
@@ -38,7 +37,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
 </head>
 
-<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>" data-islocation="<?php echo $isLocation; ?>">
+<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>"
+  data-islocation="<?php echo $isLocation; ?>" data-ishr="<?php echo $isHr; ?>" data-istrainer="<?php echo $isTrainer; ?>" data-isdm="<?php echo $isDm; ?>">
     <div class="panel panel-primary container">
         <nav class="navbar navbar-inverse">
           <div class="container-fluid">
@@ -59,11 +59,12 @@
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show()">Dashboard</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <!-- <li role="presentation"><a class="trainerBtn" href="#addusers" aria-controls="addusers" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Add users</a></li> -->
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
-                  <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li>
+                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>
@@ -74,13 +75,9 @@
         </nav>
 
         <div class="panel-body">
-            <span id="alert"></span>
-            <!-- Nav tabs -->
-
-            <br/>
             <div class="tab-content">
 
-                <div role="tabpanel" class="tab-pane active" id="dashboard">
+              <div role="tabpanel" class="tab-pane active" id="dashboard">
                     <section id="employeesLoader" style="display:none">
                         Loading Data ....
                     </section>
@@ -330,7 +327,7 @@
                                   </tbody>
                                 </table>
 
-                                <h2 class="table-name"> Didn't Worked Today <span id="nonActiveCount" class="badge"></span></h2>
+                                <h2 class="table-name"> Didn't Work Today <span id="nonActiveCount" class="badge"></span></h2>
                                 <table class="table">
                                   <thead>
                                       <tr>
@@ -380,6 +377,49 @@
                 <div id="loader2"></div>
               </div>
 
+              <div role="tabpanel" class="tab-pane" id="addusers">
+                <div id='addinguser' class="btn btn-primary">Add User</div>
+
+
+
+                <br><br>
+                <form class="form-inline">
+                  <div class="form-group">
+                    <label for="uName" class="col-sm-6 control-label">Employee #</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="uName" class="col-sm-6 control-label">Employee Name</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-6 control-label">Location</label>
+                    <div class="col-sm-6">
+                        <select class="form-control">
+                            <option value="">Select a Location</option>
+                            <option value="900">900. Office</option>
+                            <option value="807">807. Main Street</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-6 control-label">Timezone</label>
+                    <div class="col-sm-6">
+                        <select class="form-control">
+                            <option value="America/New_York">EST</option>
+                            <option value="America/Chicago">CDT</option>
+                        </select>
+                    </div>
+                  </div>
+                </form>
+
+                <div id="savingUsers" class="btn btn-primary btn-block">Save User</div>
+              </div>
+
               <div role="tabpanel" class="tab-pane" id="users">
                   <form class="form-horizontal">
                     <div class="form-group">
@@ -422,11 +462,12 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Timezone</label>
+                    <label for="inputPassword3" class="col-sm-2 control-label">Location</label>
                     <div class="col-sm-4">
-                        <select class="form-control" id="uTimezone">
-                            <option value=""></option>
-                            <option value="America/Chicago">CDT</option>
+                        <select class="form-control" id="uLocation">
+                            <option value="">Select a Location</option>
+                            <option value="900">900. Office</option>
+                            <option value="807">807. Main Street</option>
                         </select>
                     </div>
                   </div>
@@ -623,21 +664,24 @@
                   <label for="phone" class="col-sm-2 control-label">Reports</label>
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsDropdown">
-                          <option value="America/New_York">Daily Hours</option>
+                          <!-- <option value="America/New_York">Daily Hours</option> -->
                           <option value="America/Chicago">Weekly Hours</option>
-                          <option value="America/Chicago">Labor Report</option>
+                          <!-- <option value="America/Chicago">Labor Report</option> -->
                           <option value="minorReport">Minors Report</option>
-                          <option value="America/Chicago">Didn't Punch Out</option>
+                          <!-- <option value="dailyNoSignOutReport">Didn't Punch Out</option>
                           <option value="America/Chicago">Tips</option>
                           <option value="America/Chicago">Night Hours</option>
-                          <option value="America/Chicago">Weekend Hours</option>
+                          <option value="America/Chicago">Weekend Hours</option> -->
                       </select>
                   </div>
                 </div>
 
                 <div class="btn btn-primary" id="runReport">Run Report</div>
 
-            </div>
+              <div role="tabpanel" class="tab-pane" id="reports">
+
+              </div>
+
             </div> <!-- /tab content -->
           </div><!-- /panel body -->
 

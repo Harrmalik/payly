@@ -143,8 +143,8 @@ let login = (e) => {
 					<li class="list-group-item">Location will be closed after 2pm today</li>
 				`)
 			} else {
-				$(".modal-title").html(`User not found for employee ID: ${empid}`)
-				$(".modal-body").html(`
+				$("#unknownusermodal .modal-title").html(`User not found for employee ID: ${empid}`)
+				$("#unknownusermodal .modal-body").html(`
 					  <p>The Employee number <b>${empid}</b> Was not found in the system. Would you like to punch it in anyway</p>
 				`)
 				$('#unknownusermodal').modal('toggle')
@@ -237,7 +237,7 @@ $(document).ready(function () {
 	});
 
 	$checkOutBtn.on("click", () => {
-		checkOut()
+		checkOut(true)
 	})
 
 	$lunchBreakBtn.on("click", () => {
@@ -815,7 +815,7 @@ $(document).ready(function () {
 		});
 	}
 
-	checkOut = () => {
+	checkOut = (doneForDay = false) => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
 		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
 		iziToast.show({
@@ -854,7 +854,7 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			if (isField && tippedRole)
+			if ((isField && tippedRole) || (isField && doneForDay))
 				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
 			$('.iziToast').hide()
@@ -1127,9 +1127,11 @@ function lookupHours(){
 			if (timeslot.role && timeslot.role.toLowerCase().match(/detail/))
 				detail = true
 
-			$('#shiftsWorked').append(`
-				<li>${timeslot.role} (${timeslot.istipped ? 'tipped' : 'non tipped'}): ${moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a')} - ${moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a')} - <b>${timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A'} Hrs</b></li>
-			`)
+			if (timeslot.punchouttime) {
+				$('#shiftsWorked').append(`
+					<li>${timeslot.role} (${timeslot.istipped ? 'tipped' : 'non tipped'}): ${moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a')} - ${moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a')} - <b>${timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A'} Hrs</b></li>
+				`)
+			}
 		})
 
 		if (wash) $('#washInput').show()

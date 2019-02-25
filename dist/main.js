@@ -144,8 +144,8 @@ var login = function login(e) {
 
         $('#notificationsList').append("\n\t\t\t\t\t<li class=\"list-group-item\"><h2>Walden Notifications</h2></li>\n\t\t\t\t\t<li class=\"list-group-item\">Weather will be cold today</li>\n\t\t\t\t\t<li class=\"list-group-item\">Location will be closed after 2pm today</li>\n\t\t\t\t");
       } else {
-        $(".modal-title").html("User not found for employee ID: ".concat(empid));
-        $(".modal-body").html("\n\t\t\t\t\t  <p>The Employee number <b>".concat(empid, "</b> Was not found in the system. Would you like to punch it in anyway</p>\n\t\t\t\t"));
+        $("#unknownusermodal .modal-title").html("User not found for employee ID: ".concat(empid));
+        $("#unknownusermodal .modal-body").html("\n\t\t\t\t\t  <p>The Employee number <b>".concat(empid, "</b> Was not found in the system. Would you like to punch it in anyway</p>\n\t\t\t\t"));
         $('#unknownusermodal').modal('toggle');
       }
 
@@ -228,7 +228,7 @@ $(document).ready(function () {
     checkIn();
   });
   $checkOutBtn.on("click", function () {
-    checkOut();
+    checkOut(true);
   });
   $lunchBreakBtn.on("click", function () {
     ga('send', 'event', 'CheckOut', empid, 'Attempted');
@@ -655,6 +655,7 @@ $(document).ready(function () {
   };
 
   checkOut = function checkOut() {
+    var doneForDay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     ga('send', 'event', 'CheckOut', empid, 'Attempted');
     checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
     iziToast.show({
@@ -694,7 +695,7 @@ $(document).ready(function () {
 
       makeUpdate(true);
       ga('send', 'event', 'CheckOut', empid, 'Successful');
-      if (isField && tippedRole) openTips($('#tips')[0], $('#tipsPage'));
+      if (isField && tippedRole || isField && doneForDay) openTips($('#tips')[0], $('#tipsPage'));
     }).fail(function (result) {
       $('.iziToast').hide();
       iziToast.error({
@@ -943,7 +944,10 @@ function lookupHours() {
 
       if (timeslot.role && timeslot.role.toLowerCase().match(/wash/)) wash = true;
       if (timeslot.role && timeslot.role.toLowerCase().match(/detail/)) detail = true;
-      $('#shiftsWorked').append("\n\t\t\t\t<li>".concat(timeslot.role, " (").concat(timeslot.istipped ? 'tipped' : 'non tipped', "): ").concat(moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a'), " - ").concat(moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a'), " - <b>").concat(timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A', " Hrs</b></li>\n\t\t\t"));
+
+      if (timeslot.punchouttime) {
+        $('#shiftsWorked').append("\n\t\t\t\t\t<li>".concat(timeslot.role, " (").concat(timeslot.istipped ? 'tipped' : 'non tipped', "): ").concat(moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a'), " - ").concat(moment.unix(timeslot.punchouttime).tz(timeslot.punchintimezone).format('h:mm a'), " - <b>").concat(timeslot.totalHours ? timeslot.totalHours.toFixed(2) : 'N/A', " Hrs</b></li>\n\t\t\t\t"));
+      }
     });
     if (wash) $('#washInput').show();
     if (detail) $('#detailInput').show();

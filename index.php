@@ -1,4 +1,8 @@
 <?php include_once './layouts/header.php' ?>
+<?php
+    require_once('/var/www/resources/core/index.php');
+    $core->inc('users');
+?>
 
     <script src="./js/signature_pad.min.js"></script>
 </head>
@@ -27,8 +31,11 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
                   <li class="active"><a id="home"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                  <li class="isField"><a id="tips" role="button"><i class="glyphicon glyphicon-home"></i> Tips</a></li>
+                  <li class="isField"><a id="tips" role="button"><i class="glyphicon glyphicon-usd"></i> Tips</a></li>
                   <li><a id="timesheet" role="button"><i class="glyphicon glyphicon-list-alt"></i> Timesheet</a></li>
+                  <?php if (USER::inGroup(73)) { ?>
+                    <li><a href="./admin.php" role="button"><i class="glyphicon glyphicon-lock"></i> Admin</a></li>
+                  <?php } ?>
                   <!-- <li><a id="home" role="button"><i class="glyphicon glyphicon-home"></i> Edit Request</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
@@ -372,6 +379,17 @@
         </section>
         </div>
     </div>
+
+    <script>
+    console.log('yo');
+    console.log(navigator);
+    if('serviceWorker' in navigator) {
+        console.log('foudn wokder');
+      navigator.serviceWorker
+               .register('sw.js')
+               .then(function() { console.log("Service Worker Registered"); });
+    }
+    </script>
 </body>
 
 <script src="./dist/main.js"></script>
