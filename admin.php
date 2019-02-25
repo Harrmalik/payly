@@ -464,7 +464,7 @@
                   <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">Location</label>
                     <div class="col-sm-4">
-                        <select class="form-control" id="uTimezone">
+                        <select class="form-control" id="uLocation">
                             <option value="">Select a Location</option>
                             <option value="900">900. Office</option>
                             <option value="807">807. Main Street</option>
