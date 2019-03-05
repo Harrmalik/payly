@@ -251,6 +251,9 @@ var deleteTimeslot = function deleteTimeslot(row) {
 }; // Edit Users Tab
 
 
+$('#addinguser').on('click', function () {
+  $('#user-form').append("\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"uName\" class=\"col-sm-6 control-label\">Employee #</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t<input type=\"text\" class=\"form-control\">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"uName\" class=\"col-sm-6 control-label\">Employee Name</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t<input type=\"text\" class=\"form-control\">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"inputPassword3\" class=\"col-sm-6 control-label\">Location</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t\t<select class=\"form-control\">\n\t\t\t\t\t\t\t<option value=\"\">Select a Location</option>\n\t\t\t\t\t\t\t<option value=\"900\">900. Office</option>\n\t\t\t\t\t\t\t<option value=\"807\">807. Main Street</option>\n\t\t\t\t\t</select>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"inputPassword3\" class=\"col-sm-6 control-label\">Timezone</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t\t<select class=\"form-control\">\n\t\t\t\t\t\t\t<option value=\"America/New_York\">EST</option>\n\t\t\t\t\t\t\t<option value=\"America/Chicago\">CDT</option>\n\t\t\t\t\t</select>\n\t\t\t</div>\n\t\t</div>\n\t");
+});
 $('#removeUser').on('click', function () {
   var data = {
     module: 'admin',
