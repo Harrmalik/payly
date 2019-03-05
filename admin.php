@@ -59,7 +59,7 @@
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show()">Dashboard</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
-                  <!-- <li role="presentation"><a class="trainerBtn" href="#addusers" aria-controls="addusers" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Add users</a></li> -->
+                  <li role="presentation"><a class="trainerBtn" href="#addusers" aria-controls="addusers" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Add users</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
@@ -378,46 +378,40 @@
               </div>
 
               <div role="tabpanel" class="tab-pane" id="addusers">
-                <div id='addinguser' class="btn btn-primary">Add User</div>
-
-
+                <div id='addinguser' class="btn btn-primary">Add Another User</div>
 
                 <br><br>
-                <form class="form-inline">
-                  <div class="form-group">
-                    <label for="uName" class="col-sm-6 control-label">Employee #</label>
-                    <div class="col-sm-6">
-                      <input type="text" class="form-control">
+                <form class="form-inline" id="user-form">
+                  <div class="form-group" style="display:block;">
+                    <div class="form-group">
+                      <label for="uName" class=" control-label">Employee #</label>
+                      <input name="empid" type="text" class="form-control">
                     </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="uName" class="col-sm-6 control-label">Employee Name</label>
-                    <div class="col-sm-6">
-                      <input type="text" class="form-control">
+                    <div class="form-group">
+                      <label for="uName" class=" control-label">Name</label>
+                      <input name="name" type="text" class="form-control">
                     </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-6 control-label">Location</label>
-                    <div class="col-sm-6">
-                        <select class="form-control">
-                            <option value="">Select a Location</option>
-                            <option value="900">900. Office</option>
-                            <option value="807">807. Main Street</option>
-                        </select>
+                    <div class="form-group">
+                      <label for="inputPassword3" class=" control-label">Location</label>
+                      <select name="location" class="form-control">
+                          <option value="">Select a Location</option>
+                          <option value="900">900. Office</option>
+                          <option value="807">807. Main Street</option>
+                      </select>
                     </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-6 control-label">Timezone</label>
-                    <div class="col-sm-6">
-                        <select class="form-control">
-                            <option value="America/New_York">EST</option>
-                            <option value="America/Chicago">CDT</option>
-                        </select>
+                    <div class="form-group">
+                      <label for="inputPassword3" class=" control-label">Timezone</label>
+                      <select name="timezone" class="form-control">
+                          <option value="America/New_York">EST</option>
+                          <option value="America/Chicago">CDT</option>
+                      </select>
                     </div>
+                    </br></br>
                   </div>
                 </form>
 
-                <div id="savingUsers" class="btn btn-primary btn-block">Save User</div>
+                <br/><br/>
+                <div id="savingMassUsers" class="btn btn-primary btn-block">Save Users</div>
               </div>
 
               <div role="tabpanel" class="tab-pane" id="users">

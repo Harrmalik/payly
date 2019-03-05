@@ -266,6 +266,88 @@ let deleteTimeslot = (row) => {
 }
 
 // Edit Users Tab
+$('#addinguser').on('click', () => {
+	$('#user-form').append(`
+		<div class="form-group" style="display:block;">
+			<div class="form-group">
+				<label for="uName" class=" control-label">Employee #</label>
+				<input name="empid" type="text" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="uName" class=" control-label">Name</label>
+				<input name="name" type="text" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="inputPassword3" class=" control-label">Location</label>
+				<select name="location" class="form-control">
+						<option value="">Select a Location</option>
+						<option value="900">900. Office</option>
+						<option value="807">807. Main Street</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="inputPassword3" class=" control-label">Timezone</label>
+				<select name="timezone" class="form-control">
+						<option value="America/New_York">EST</option>
+						<option value="America/Chicago">CDT</option>
+				</select>
+			</div>
+			</br></br>
+		</div>
+	`)
+})
+
+$('#savingMassUsers').on('click', () => {
+	let formData = $('#user-form').serialize().split('&'),
+			users = [],
+			counter = 0;
+
+		formData.forEach(e => {
+			let values = e.split('=')
+			if (counter % 4 == 0) {
+				users.push({[values[0]]: values[1]})
+			} else {
+				users[users.length-1][values[0]] = values[1].replace(/%2F/ig,'/')
+			}
+			counter++
+		})
+
+		users.forEach(u => {
+			let data = {
+				module: 'admin',
+				action: 'addUser',
+				employeeID: u.empid,
+				employeeName: u.name,
+				deltasonic: 1,
+				companyCode: 'DSCW',
+				job: '',
+				supervisor: '',
+				timezone: u.timezone,
+				holidays: 0,
+				weekends: 0,
+				nights: 0,
+				alerts: 0,
+				canCallIn: 0,
+				field: 1,
+				location: u.location
+			}
+
+			$.ajax({
+				url: `./php/main.php`,
+				method: 'post',
+				data
+			}).done((data) => {
+				iziToast.success({
+					title: 'Success',
+					message: `User Added`,
+				});
+			});
+		})
+
+
+		console.log(users);
+})
+
 $('#removeUser').on('click', () => {
 	let data = {
 		module: 'admin',
@@ -287,57 +369,6 @@ $('#removeUser').on('click', () => {
 	});
 })
 
-$('#savingUsers').on('click', () => {
-
-
-	let data = {
-		module: 'admin',
-		action: 'saveUser',
-		employeeID: $('#employeeid').val().split('.')[0],
-		employeeName: $('#uName').val(),
-		deltasonic: $('#uDeltasonic').val(),
-		companyCode: $('#uCode').val(),
-		job: $('#uJob').val(),
-		supervisor: $('#uSupervisor').val().split('.')[0],
-		timezone: $('#uTimezone').val(),
-		holidays: $('#uHoliday').val(),
-		weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-		nights: $('#nights').is(':checked') == true ? 1 : 0,
-		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
-		canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
-		field: $('#field').is(':checked') == true ? 1 : 0,
-	}
-	if (!$('#employeeid').val().split('.')[1]) {
-		data['action'] = 'addUser';
-
-		$.ajax({
-			url: `./php/main.php`,
-			method: 'post',
-			data
-		}).done((data) => {
-			iziToast.success({
-				title: 'Success',
-				message: `User Added`,
-			});
-		});
-	} else {
-		data['action'] = 'saveUser';
-
-		$.ajax({
-			url: `./php/main.php`,
-			method: 'post',
-			data
-		}).done((data) => {
-			iziToast.success({
-				title: 'Success',
-				message: `User saved`,
-
-
-			});
-		});
-	}
-})
-
 $('#saveUser').on('click', () => {
 	let data = {
 		module: 'admin',
@@ -355,6 +386,7 @@ $('#saveUser').on('click', () => {
 		alerts: $('#alerts').is(':checked') == true ? 1 : 0,
 		canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
 		field: $('#field').is(':checked') == true ? 1 : 0,
+		location: $('#uLocation').val()
 	}
 	if (!$('#employeeid').val().split('.')[1]) {
 		data['action'] = 'addUser';
@@ -607,6 +639,7 @@ $(document).ready(function(){
 					$('#alerts').prop('checked', employee.alerts == 1 ? true : false)
 					$('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false)
 					$('#field').prop('checked', employee.field == 1 ? true : false)
+					$('#uLocation').val(employee.location)
 				}
 			}
 		}
