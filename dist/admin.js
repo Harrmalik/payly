@@ -1,5 +1,7 @@
 'use strict';
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var empid,
     empSite,
     userData = $('title').data(),
@@ -53,6 +55,7 @@ $('.adminsBtn').hide();
 $('.tipsBtn').hide();
 $('.payrollBtn').hide();
 $('.hrBtn').hide();
+$('.trainerBtn').hide();
 if (isPayroll || isLocation) $('.adminsBtn').show();
 if (isLocation) $('.tipsBtn').show();
 if (isPayroll) $('.payrollBtn').show();
@@ -252,7 +255,54 @@ var deleteTimeslot = function deleteTimeslot(row) {
 
 
 $('#addinguser').on('click', function () {
-  $('#user-form').append("\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"uName\" class=\"col-sm-6 control-label\">Employee #</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t<input type=\"text\" class=\"form-control\">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"uName\" class=\"col-sm-6 control-label\">Employee Name</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t<input type=\"text\" class=\"form-control\">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"inputPassword3\" class=\"col-sm-6 control-label\">Location</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t\t<select class=\"form-control\">\n\t\t\t\t\t\t\t<option value=\"\">Select a Location</option>\n\t\t\t\t\t\t\t<option value=\"900\">900. Office</option>\n\t\t\t\t\t\t\t<option value=\"807\">807. Main Street</option>\n\t\t\t\t\t</select>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"form-group\">\n\t\t\t<label for=\"inputPassword3\" class=\"col-sm-6 control-label\">Timezone</label>\n\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t\t<select class=\"form-control\">\n\t\t\t\t\t\t\t<option value=\"America/New_York\">EST</option>\n\t\t\t\t\t\t\t<option value=\"America/Chicago\">CDT</option>\n\t\t\t\t\t</select>\n\t\t\t</div>\n\t\t</div>\n\t");
+  $('#user-form').append("\n\t\t<div class=\"form-group\" style=\"display:block;\">\n\t\t\t<div class=\"form-group\">\n\t\t\t\t<label for=\"uName\" class=\" control-label\">Employee #</label>\n\t\t\t\t<input name=\"empid\" type=\"text\" class=\"form-control\">\n\t\t\t</div>\n\t\t\t<div class=\"form-group\">\n\t\t\t\t<label for=\"uName\" class=\" control-label\">Name</label>\n\t\t\t\t<input name=\"name\" type=\"text\" class=\"form-control\">\n\t\t\t</div>\n\t\t\t<div class=\"form-group\">\n\t\t\t\t<label for=\"inputPassword3\" class=\" control-label\">Location</label>\n\t\t\t\t<select name=\"location\" class=\"form-control\">\n\t\t\t\t\t\t<option value=\"\">Select a Location</option>\n\t\t\t\t\t\t<option value=\"900\">900. Office</option>\n\t\t\t\t\t\t<option value=\"807\">807. Main Street</option>\n\t\t\t\t</select>\n\t\t\t</div>\n\t\t\t<div class=\"form-group\">\n\t\t\t\t<label for=\"inputPassword3\" class=\" control-label\">Timezone</label>\n\t\t\t\t<select name=\"timezone\" class=\"form-control\">\n\t\t\t\t\t\t<option value=\"America/New_York\">EST</option>\n\t\t\t\t\t\t<option value=\"America/Chicago\">CDT</option>\n\t\t\t\t</select>\n\t\t\t</div>\n\t\t\t</br></br>\n\t\t</div>\n\t");
+});
+$('#savingMassUsers').on('click', function () {
+  var formData = $('#user-form').serialize().split('&'),
+      users = [],
+      counter = 0;
+  formData.forEach(function (e) {
+    var values = e.split('=');
+
+    if (counter % 4 == 0) {
+      users.push(_defineProperty({}, values[0], values[1]));
+    } else {
+      users[users.length - 1][values[0]] = values[1].replace(/%2F/ig, '/');
+    }
+
+    counter++;
+  });
+  users.forEach(function (u) {
+    var data = {
+      module: 'admin',
+      action: 'addUser',
+      employeeID: u.empid,
+      employeeName: u.name,
+      deltasonic: 1,
+      companyCode: 'DSCW',
+      job: '',
+      supervisor: '',
+      timezone: u.timezone,
+      holidays: 0,
+      weekends: 0,
+      nights: 0,
+      alerts: 0,
+      canCallIn: 0,
+      field: 1,
+      location: u.location
+    };
+    $.ajax({
+      url: "./php/main.php",
+      method: 'post',
+      data: data
+    }).done(function (data) {
+      iziToast.success({
+        title: 'Success',
+        message: "User Added"
+      });
+    });
+  });
+  console.log(users);
 });
 $('#removeUser').on('click', function () {
   var data = {
@@ -271,51 +321,6 @@ $('#removeUser').on('click', function () {
     });
   });
 });
-$('#savingUsers').on('click', function () {
-  var data = {
-    module: 'admin',
-    action: 'saveUser',
-    employeeID: $('#employeeid').val().split('.')[0],
-    employeeName: $('#uName').val(),
-    deltasonic: $('#uDeltasonic').val(),
-    companyCode: $('#uCode').val(),
-    job: $('#uJob').val(),
-    supervisor: $('#uSupervisor').val().split('.')[0],
-    timezone: $('#uTimezone').val(),
-    holidays: $('#uHoliday').val(),
-    weekends: $('#weekends').is(':checked') == true ? 1 : 0,
-    nights: $('#nights').is(':checked') == true ? 1 : 0,
-    alerts: $('#alerts').is(':checked') == true ? 1 : 0,
-    canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
-    field: $('#field').is(':checked') == true ? 1 : 0
-  };
-
-  if (!$('#employeeid').val().split('.')[1]) {
-    data['action'] = 'addUser';
-    $.ajax({
-      url: "./php/main.php",
-      method: 'post',
-      data: data
-    }).done(function (data) {
-      iziToast.success({
-        title: 'Success',
-        message: "User Added"
-      });
-    });
-  } else {
-    data['action'] = 'saveUser';
-    $.ajax({
-      url: "./php/main.php",
-      method: 'post',
-      data: data
-    }).done(function (data) {
-      iziToast.success({
-        title: 'Success',
-        message: "User saved"
-      });
-    });
-  }
-});
 $('#saveUser').on('click', function () {
   var data = {
     module: 'admin',
@@ -332,7 +337,8 @@ $('#saveUser').on('click', function () {
     nights: $('#nights').is(':checked') == true ? 1 : 0,
     alerts: $('#alerts').is(':checked') == true ? 1 : 0,
     canCallIn: $('#canCallIn').is(':checked') == true ? 1 : 0,
-    field: $('#field').is(':checked') == true ? 1 : 0
+    field: $('#field').is(':checked') == true ? 1 : 0,
+    location: $('#uLocation').val()
   };
 
   if (!$('#employeeid').val().split('.')[1]) {
@@ -570,6 +576,7 @@ $(document).ready(function () {
           $('#alerts').prop('checked', employee.alerts == 1 ? true : false);
           $('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false);
           $('#field').prop('checked', employee.field == 1 ? true : false);
+          $('#uLocation').val(employee.location);
         }
       }
     };
@@ -670,11 +677,11 @@ $(document).ready(function () {
 
           if (!e.workingNow) {
             active++;
-            $('#workedTable').append("\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>".concat(active, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(breakTime, "</td>\n\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t"));
+            $('#workedTable').append("\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>".concat(active, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t<td>").concat(breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t"));
           } else {
-            if (r.match(/manager|supervisor/g)) {
+            if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
               managers++;
-              $('#managementTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.hasBreak ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
+              $('#managementTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
             } else if (r.match(/power|program/g)) {
               power++;
               addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime);
@@ -684,7 +691,7 @@ $(document).ready(function () {
             } else if (r.match(/wash t/g)) {
               wash++;
               addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/detail|quality/g)) {
+            } else if (r.match(/detail|quality|paint/g)) {
               detail++;
               addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime);
             } else if (r.match(/c-store/g)) {
@@ -707,7 +714,7 @@ $(document).ready(function () {
           var _breakTime = (e.breakTime / 60).toFixed(2);
 
           nonActive++;
-          $('#totalTable').append("\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t<td>").concat(_totalHours, "</td>\n\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t<td>").concat(_breakTime, "</td>\n\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t"));
+          $('#totalTable').append("\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t<td>").concat(_totalHours, "</td>\n\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t<td>").concat(_breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t"));
         }
       });
       $('#boothCount').text(booth);
@@ -819,7 +826,7 @@ $(document).ready(function () {
 
   function addDashboardRow(e, ele, todayHours, totalHours, hoursWorked, breakTime) {
     // <td>${40-totalHours > 0 ? 40-totalHours : 0}</td>
-    $(ele).append("\n\t\t\t<tr>\n\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t<td class=\"").concat(hoursWorked > 6 ? 'red' : '', "\">").concat(hoursWorked, "</td>\n\t\t\t\t<td>").concat(breakTime, "</td>\n\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t<td class=\"").concat(totalHours > 40 ? 'red' : '', "\">").concat(40 - totalHours, "</td>\n\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t</tr>\n\t\t"));
+    $(ele).append("\n\t\t\t<tr>\n\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t<td class=\"").concat(hoursWorked > 6 ? 'red' : '', "\">").concat(hoursWorked, "</td>\n\t\t\t\t<td>").concat(breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t<td>").concat(e.isMinor ? '<i class="fas fa-child"></i>' : '', "</td>\n\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t<td class=\"").concat(totalHours > 40 ? 'red' : '', "\">").concat(totalHours, "</td>\n\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t</tr>\n\t\t"));
   }
 
   function setPopover(id) {

@@ -53,6 +53,7 @@ $('.adminsBtn').hide()
 $('.tipsBtn').hide()
 $('.payrollBtn').hide()
 $('.hrBtn').hide()
+$('.trainerBtn').hide()
 
 if (isPayroll || isLocation) $('.adminsBtn').show()
 if (isLocation) $('.tipsBtn').show()
@@ -865,19 +866,19 @@ $(document).ready(function(){
 								<td>${active}</td>
 								<td>${todayHours}</td>
 								<td>${e.name}</td>
-								<td>${breakTime}</td>
+								<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
 								<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 							</tr>
 						`)
 					} else {
-						if (r.match(/manager|supervisor/g)) {
+						if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
 							managers++
 							$('#managementTable').append(`
 								<tr>
 									<td>${moment.unix(e.startTime).format('h:mm a')}</td>
 									<td>${todayHours}</td>
 									<td>${e.name}</td>
-									<td>${e.hasBreak ? '<i class="fas fa-check"></i>' : ''}</td>
+									<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
 									<td>${e.role}</td>
 									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 								</tr>
@@ -891,7 +892,7 @@ $(document).ready(function(){
 						} else if (r.match(/wash t/g)) {
 							wash++
 							addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/detail|quality/g)) {
+						} else if (r.match(/detail|quality|paint/g)) {
 							detail++
 							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/c-store/g)) {
@@ -924,7 +925,7 @@ $(document).ready(function(){
 							<td>${nonActive}</td>
 							<td>${totalHours}</td>
 							<td>${e.name}</td>
-							<td>${breakTime}</td>
+							<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
 							<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 						</tr>
 					`)
@@ -1086,10 +1087,10 @@ $(document).ready(function(){
 				<td>${e.name}</td>
 				<td>${todayHours}</td>
 				<td class="${hoursWorked > 6 ? 'red' : '' }">${hoursWorked}</td>
-				<td>${breakTime}</td>
+				<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
 				<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
 				<td>${e.role}</td>
-				<td class="${totalHours > 40 ? 'red' : '' }">${40-totalHours}</td>
+				<td class="${totalHours > 40 ? 'red' : '' }">${totalHours}</td>
 				<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 			</tr>
 		`)
