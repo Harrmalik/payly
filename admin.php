@@ -5,7 +5,7 @@
     USER::authPage();
 
     $isManager   = USER::inGroup(73) ? 'true' : 'false';
-    $isPayroll   = USER::inGroup(74) ? 'true' : 'false';
+    $isPayroll   = !USER::inGroup(74) ? 'true' : 'false';
     $isTrainer   = USER::inGroup(21) ? 'true' : 'false';
     $isHr        = USER::inGroup(57) ? 'true' : 'false';
     $isDm = USER::inGroup(65) ? 'true' : 'false';
@@ -109,6 +109,11 @@
                                     <input type="checkbox" checked onclick="$('#lubeCard').toggle()"> Lube
                                   </label>
                                 </div>
+                                <div class="checkbox" style="padding-right:5px">
+                                  <label>
+                                    <input type="checkbox" checked onclick="$('#workedCard').toggle()"> Worked/Didn't Work
+                                  </label>
+                                </div>
                             </form>
 
                             <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
@@ -126,7 +131,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -149,7 +154,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -172,7 +177,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -195,7 +200,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -218,7 +223,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -241,7 +246,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -264,7 +269,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <!-- <th>Week Hrs</th> -->
-                                              <th>Till O/T</th>
+                                              <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -310,7 +315,7 @@
                                     </table>
                                 </div>
                             </article>
-                            <article style="width:30%;float:left;padding: 1em;height:85vh;overflow:scroll">
+                            <article style="width:30%;float:left;padding: 1em;height:85vh;overflow:scroll"  id="workedCard">
                                 <h2 class="table-name"> Worked Today <span id="activeCount" class="badge"></span></h2>
                                 <table class="table">
                                   <thead>
@@ -395,7 +400,6 @@
                       <label for="inputPassword3" class=" control-label">Location</label>
                       <select name="location" class="form-control">
                           <option value="">Select a Location</option>
-                          <option value="900">900. Office</option>
                           <option value="807">807. Main Street</option>
                       </select>
                     </div>
@@ -432,7 +436,7 @@
                       <input type="text" class="form-control" id="uName">
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="uDeltasonic" class="col-sm-2 control-label">Company</label>
                     <div class="col-sm-4">
                         <select class="form-control" id="uDeltasonic">
@@ -441,7 +445,7 @@
                         </select>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="uCode" class="col-sm-2 control-label">Company Code</label>
                     <div class="col-sm-4">
                         <select class="form-control" id="uCode">
@@ -449,7 +453,7 @@
                         </select>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="inputPassword3" class="col-sm-2 control-label">Job Description</label>
                     <div class="col-sm-4">
                       <input type="text" class="form-control" id="uJob">
@@ -465,7 +469,7 @@
                         </select>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="inputPassword3" class="col-sm-2 control-label">Supervisor</label>
                     <div class="col-sm-4">
                       <input type="text" class="form-control" id="uSupervisor" placeholder="Supervisor ID">
@@ -480,31 +484,31 @@
                         </select>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="inputPassword3" class="col-sm-2 control-label">Holidays</label>
                     <div class="col-sm-4">
                       <input type="number" class="form-control" id="uHoliday" placeholder="How many hours">
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="weekends" class="col-sm-2 control-label">Weekends</label>
                     <div class="col-sm-4">
                         <input id="weekends" type="checkbox"></input>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="nights" class="col-sm-2 control-label">Nights</label>
                     <div class="col-sm-4">
                         <input id="nights" type="checkbox"></input>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="alerts" class="col-sm-2 control-label">Alerts</label>
                     <div class="col-sm-4">
                         <input id="alerts" type="checkbox"></input>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group payrollBtn">
                     <label for="canCallIn" class="col-sm-2 control-label">Can Call In</label>
                     <div class="col-sm-4">
                         <input id="canCallIn" type="checkbox"></input>
@@ -797,4 +801,4 @@
 </body>
 
 
-<script src="./dist/admin.js"></script>
+<script src="./src/admin.js"></script>
