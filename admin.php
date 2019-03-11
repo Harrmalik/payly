@@ -5,7 +5,7 @@
     USER::authPage();
 
     $isManager   = USER::inGroup(73) ? 'true' : 'false';
-    $isPayroll   = !USER::inGroup(74) ? 'true' : 'false';
+    $isPayroll   = USER::inGroup(74) ? 'true' : 'false';
     $isTrainer   = USER::inGroup(21) ? 'true' : 'false';
     $isHr        = USER::inGroup(57) ? 'true' : 'false';
     $isDm = USER::inGroup(65) ? 'true' : 'false';
