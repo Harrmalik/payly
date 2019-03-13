@@ -4,6 +4,7 @@ let empid,
 	userData = $('title').data(),
 	myEmpid = $('body').data('myempid'),
 	isManager = $('body').data('ismanager'),
+	isBasicManager = $('body').data('isbasicmanager'),
 	isPayroll = $('body').data('ispayroll'),
 	isHr = $('body').data('ishr'),
 	isTrainer = $('body').data('istrainer'),
@@ -15,7 +16,8 @@ let empid,
 	deltasonic,
 	timeslot,
 	allUsers,
-	employees;
+	employees,
+	admins = [82934,4010,22068];
 	$('#punchintime').datetimepicker({
 		sideBySide: true
 	});
@@ -58,17 +60,12 @@ $('.trainerBtn').hide()
 if (isPayroll || isLocation) $('.adminsBtn').show()
 if (isLocation) $('.tipsBtn').show()
 if (isPayroll) $('.payrollBtn').show()
+if (isTrainer) $('.trainerBtn').show()
 if (isHr) $('.hrBtn').show()
-
-
-$.ajax({
-	url: `./php/main.php?module=getManager`
-}).done((user) => {
-	myEmpid = user[0].employeeid
-});
 
 console.log({
 	isManager,
+	isBasicManager,
 	isPayroll,
 	isTrainer,
 	isDm,
@@ -82,6 +79,8 @@ let getTimesheet = (userid) => {
 	if (userid)	{
 		$('#userTimesheet').show()
 		$('#employees').hide()
+		$('#loader').addClass('loader')
+		$('#username').html('Getting Employee');
 	}
 
 	$.ajax({
@@ -318,7 +317,7 @@ $('#savingMassUsers').on('click', () => {
 				module: 'admin',
 				action: 'addUser',
 				employeeID: u.empid,
-				employeeName: u.name,
+				employeeName: u.name.replace('+',' '),
 				deltasonic: 1,
 				companyCode: 'DSCW',
 				job: '',
@@ -483,6 +482,7 @@ $('#saveSupervisor').on('click', () => {
 function back() {
 	$('#userTimesheet').hide()
 	$('#employees').show()
+	$('#timesheetPage').hide()
 }
 
 $(document).ready(function(){
@@ -699,7 +699,7 @@ $(document).ready(function(){
 				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
 			];
 		}
-		if (((isManager && isLocation) || isPayroll) && empid != myEmpid){
+		if (((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid)) {
 			//$('#back').hide()
 			$('#addTimeslot').show()
 		} else {
@@ -713,7 +713,7 @@ $(document).ready(function(){
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
         days.forEach((day,index) => {
-			if (((isManager && isLocation) || isPayroll) && empid != myEmpid) {
+			if (((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid)) {
 				$timesheet.append(`
 					<tr class="active headers">
 						<th style="width: 15%;">Date</th>
@@ -790,7 +790,7 @@ $(document).ready(function(){
 			];
 		}
 
-		if (((isManager && isLocation) || isPayroll) && empid != myEmpid) {
+		if (((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid)) {
 			$timesheet.append(`
 				<tr id="totalrow">
 					<th></th>
@@ -829,7 +829,6 @@ $(document).ready(function(){
     }
 
 	let buildDashboard = (dashboard) => {
-		console.log(dashboard);
 		$('#workedTable').empty()
 		$('#powerTable').empty()
 		$('#boothTable').empty()
@@ -843,6 +842,7 @@ $(document).ready(function(){
 				nonActive = 0,
 				booth = 0,
 				power= 0,
+				washExit = 0,
 				wash = 0,
 				detail = 0,
 				store = 0,
@@ -873,6 +873,7 @@ $(document).ready(function(){
 					} else {
 						if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
 							managers++
+							wash++
 							$('#managementTable').append(`
 								<tr>
 									<td>${moment.unix(e.startTime).format('h:mm a')}</td>
@@ -883,25 +884,28 @@ $(document).ready(function(){
 									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 								</tr>
 							`)
-						} else if (r.match(/power|program/g)) {
-							power++
-							addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/bd|advisor/g)) {
-							booth++
-							addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/wash t/g)) {
-							wash++
-							addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/detail|quality|paint/g)) {
-							detail++
-							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/c-store/g)) {
+						} else if (r.match(/c-store/g) || e.profitcenter == 4) {
 							store++
 							addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/coffee|food/g)) {
+						} else if (r.match(/power|program/g)) {
+							power++
+							wash++
+							addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/bd|advisor/g) && e.profitcenter == 1) {
+							booth++
+							wash++
+							addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/wash t/g)) {
+							washExit++
+							wash++
+							addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/detail|quality|paint/g) || e.profitcenter == 2) {
+							detail++
+							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/coffee|food/g) || e.profitcenter == 5) {
 							food++
 							addDashboardRow(e, '#foodTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/lube/g)) {
+						} else if (r.match(/lube/g) || e.profitcenter == 3) {
 							lube++
 							addDashboardRow(e, '#lubeTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else {
@@ -931,16 +935,21 @@ $(document).ready(function(){
 					`)
 				}
 			})
+			$('#washTotalCount').text(wash)
+			$('#detailTotalCount').text(detail)
+			$('#storeTotalCount').text(store)
+			$('#foodTotalCount').text(food)
+			$('#lubeTotalCount').text(lube)
 			$('#boothCount').text(booth)
 			$('#powerCount').text(power)
-			$('#washCount').text(wash)
+			$('#washExitCount').text(washExit)
 			$('#detailCount').text(detail)
 			$('#storeCount').text(store)
 			$('#foodCount').text(food)
 			$('#lubeCount').text(lube)
 			$('#managersCount').text(managers)
 			$('#otherCount').text(other)
-			$('#workingCount').text(booth + power + wash + managers + detail + food + store + lube + other)
+			$('#workingCount').text(booth + power + washExit + managers + detail + food + store + lube + other)
 			$('#activeCount').text(active)
 			$('#nonActiveCount').text(nonActive)
 		} else {
@@ -952,7 +961,6 @@ $(document).ready(function(){
 	}
 
   makeTimesheet = () => {
-		$('#loader').addClass('loader')
 		totalTime = 0;
         $.ajax({
             url: `./php/main.php?module=admin&action=getEmployeeHours`,
@@ -963,9 +971,12 @@ $(document).ready(function(){
             }
         }).done((currentTimeslots) => {
 			timeslots = currentTimeslots.timeslots
-			$('#loader2').hide()
+			$('#loader').removeClass('loader')
+			$('#timesheetPage').show()
+			$("#laborBreakdown").empty();
             let hours = 0,
-				roles = currentTimeslots.roles
+							roles = currentTimeslots.roles,
+							roleHours = {}
 
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
@@ -977,6 +988,11 @@ $(document).ready(function(){
                 if (timeslot.punchouttime) {
                     hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
+										if (roleHours[timeslot.role]) {
+											roleHours[timeslot.role] += hoursSum
+										} else {
+											roleHours[timeslot.role] = hoursSum
+										}
                     days[weekday + 1][2] += hoursSum;
                     if (timeslots[index -1]) {
                         let previousWeekday = moment.unix(timeslots[index -1].created).weekday() === 6 ? -1 : moment.unix(timeslots[index -1].created).weekday();
@@ -984,7 +1000,7 @@ $(document).ready(function(){
                             if (timeslots[index-1].punchouttime) {
                                 days[weekday + 1][3] += moment.unix(timeslot.punchintime).diff(moment.unix(timeslots[index-1].punchouttime), 'minutes');
                                 if (days[previousWeekday + 1][3] < 30) {
-                                    timeslot.overBreak = true;
+                                    timeslot.overBreak = days[previousWeekday + 1][3];
                                 }
                             }
                         }
@@ -1002,7 +1018,12 @@ $(document).ready(function(){
                 $htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
                 $("td#totalHours.info").html(`<b>${totalTime.toFixed(2)}</b>`);
             });
-			$('.roles').on('change', e => {
+
+
+						Object.keys(roleHours).map(r => {
+							$("#laborBreakdown").append(`<p><b>${r}</b> ${roleHours[r].toFixed(2)}</p>`);
+						})
+						$('.roles').on('change', e => {
 				$.ajax({
 					url: './php/main.php',
 					method: 'post',
@@ -1034,7 +1055,7 @@ $(document).ready(function(){
                 <tr class="timeslots">
                     <td>${!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : ''}</td>
 					${
-						((isManager && isLocation) || isPayroll) && empid != myEmpid ?
+						((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid) ?
 							`<td>
 								<select class="form-control roles" data-timeid="${timeslot.timeid}">
 									${roles.map(r => {
@@ -1054,7 +1075,7 @@ $(document).ready(function(){
 						${timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 					</td>
 					${
-						((isManager && isLocation) || isPayroll) && empid != myEmpid ?
+						((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid) ?
 							`<td>
 								<button class="btn btn-danger btn-small" onclick='deleteTimeslot(this)' data-id=${timeslot.timeid}
 								data-toggle="tooltip" data-placement="top" title="Delete timeslot"
@@ -1202,7 +1223,7 @@ $(document).ready(function(){
 
 
 	// STARTING APPLICATION
-	if (isManager)
+	if (isManager || isBasicManager)
 		getInitialState();
 
 	var now =  new Date();

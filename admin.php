@@ -5,7 +5,8 @@
     USER::authPage();
 
     $isManager   = USER::inGroup(73) ? 'true' : 'false';
-    $isPayroll   = USER::inGroup(74) ? 'true' : 'false';
+    $isBasicManager   = USER::inGroup(11) || USER::inGroup(12) || USER::inGroup(13) || USER::inGroup(14) || USER::inGroup(15) ? 'true' : 'false';
+    $isPayroll   = !USER::inGroup(74) ? 'true' : 'false';
     $isTrainer   = USER::inGroup(21) ? 'true' : 'false';
     $isHr        = USER::inGroup(57) ? 'true' : 'false';
     $isDm = USER::inGroup(65) ? 'true' : 'false';
@@ -18,6 +19,7 @@
 <link rel="stylesheet" href="./css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="./css/datetimepicker.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+<link re="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/css/theme.default.min.css">
 
 
 <script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
@@ -27,6 +29,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/js/jquery.tablesorter.min.js"></script>
 
 
 <!--[if lt IE 9]>
@@ -37,7 +40,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
 </head>
 
-<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-isManager="<?php echo $isManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>"
+<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-isManager="<?php echo $isManager; ?>" data-isBasicManager="<?php echo $isBasicManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>"
   data-islocation="<?php echo $isLocation; ?>" data-ishr="<?php echo $isHr; ?>" data-istrainer="<?php echo $isTrainer; ?>" data-isdm="<?php echo $isDm; ?>">
     <div class="panel panel-primary container">
         <nav class="navbar navbar-inverse">
@@ -86,27 +89,27 @@
                             <form class="form-inline">
                                 <div class="checkbox" style="padding-right:5px">
                                   <label>
-                                    <input type="checkbox" checked onclick="$('.wash-cards').toggle()"> Wash
+                                    <input type="checkbox" checked onclick="$('.wash-cards').toggle()"> Wash <span  class="badge badge-primary" id="washTotalCount"></span>
                                   </label>
                                 </div>
                                 <div class="checkbox" style="padding-right:5px">
                                   <label>
-                                    <input type="checkbox" checked onclick="$('#detailCard').toggle()"> Detail
+                                    <input type="checkbox" checked onclick="$('#detailCard').toggle()"> Detail <span  class="badge badge-primary" id="detailTotalCount"></span>
                                   </label>
                                 </div>
                                 <div class="checkbox" style="padding-right:5px">
                                   <label>
-                                    <input type="checkbox" checked onclick="$('#storeCard').toggle()"> Store
+                                    <input type="checkbox" checked onclick="$('#storeCard').toggle()"> Store <span  class="badge badge-primary" id="storeTotalCount"></span>
                                   </label>
                                 </div>
                                 <div class="checkbox" style="padding-right:5px">
                                   <label>
-                                    <input type="checkbox" checked onclick="$('#foodCard').toggle()"> Food
+                                    <input type="checkbox" checked onclick="$('#foodCard').toggle()"> Food <span  class="badge badge-primary" id="foodTotalCount"></span>
                                   </label>
                                 </div>
                                 <div class="checkbox" style="padding-right:5px">
                                   <label>
-                                    <input type="checkbox" checked onclick="$('#lubeCard').toggle()"> Lube
+                                    <input type="checkbox" checked onclick="$('#lubeCard').toggle()"> Lube <span  class="badge badge-primary" id="lubeTotalCount"></span>
                                   </label>
                                 </div>
                                 <div class="checkbox" style="padding-right:5px">
@@ -165,7 +168,7 @@
                                 </div>
 
                                 <div class="table-card wash-cards" id="washCard">
-                                    <h2 class="table-name"> Wash Exit <span id="washCount" class="badge"></span></h2>
+                                    <h2 class="table-name"> Wash Exit <span id="washExitCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
@@ -663,8 +666,8 @@
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsDropdown">
                           <!-- <option value="America/New_York">Daily Hours</option> -->
-                          <option value="America/Chicago">Weekly Hours</option>
-                          <!-- <option value="America/Chicago">Labor Report</option> -->
+                          <!-- <option value="America/Chicago">Weekly Hours</option> -->
+                          <option value="laborReport">Labor Report</option>
                           <option value="minorReport">Minors Report</option>
                           <!-- <option value="dailyNoSignOutReport">Didn't Punch Out</option>
                           <option value="America/Chicago">Tips</option>
@@ -728,11 +731,20 @@
                   </div>
                 </section>
 
-                <table id="timesheet" class="table table-condensed">
-                    <tbody id="timesheetTable">
 
-                    </tbody>
-                </table>
+                <section id="loader">
+                </section>
+
+
+                <section id="timesheetPage">
+                  <table id="timesheet" class="table table-condensed">
+                      <tbody id="timesheetTable">
+
+                      </tbody>
+                  </table>
+                  <div id="laborBreakdown">
+                  </div>
+                </section>
             </section>
 
             <div id="timesheetModal" class="modal fade" tabindex="-1" role="dialog">
@@ -801,4 +813,4 @@
 </body>
 
 
-<script src="./src/admin.js"></script>
+<script src="./dist/admin.js"></script>
