@@ -7,6 +7,7 @@ var empid,
     userData = $('title').data(),
     myEmpid = $('body').data('myempid'),
     isManager = $('body').data('ismanager'),
+    isBasicManager = $('body').data('isbasicmanager'),
     isPayroll = $('body').data('ispayroll'),
     isHr = $('body').data('ishr'),
     isTrainer = $('body').data('istrainer'),
@@ -18,7 +19,8 @@ var empid,
     deltasonic,
     timeslot,
     allUsers,
-    employees;
+    employees,
+    admins = [82934, 4010, 22068];
 $('#punchintime').datetimepicker({
   sideBySide: true
 });
@@ -59,14 +61,11 @@ $('.trainerBtn').hide();
 if (isPayroll || isLocation) $('.adminsBtn').show();
 if (isLocation) $('.tipsBtn').show();
 if (isPayroll) $('.payrollBtn').show();
+if (isTrainer) $('.trainerBtn').show();
 if (isHr) $('.hrBtn').show();
-$.ajax({
-  url: "./php/main.php?module=getManager"
-}).done(function (user) {
-  myEmpid = user[0].employeeid;
-});
 console.log({
   isManager: isManager,
+  isBasicManager: isBasicManager,
   isPayroll: isPayroll,
   isTrainer: isTrainer,
   isDm: isDm,
@@ -80,6 +79,8 @@ var getTimesheet = function getTimesheet(userid) {
   if (userid) {
     $('#userTimesheet').show();
     $('#employees').hide();
+    $('#loader').addClass('loader');
+    $('#username').html('Getting Employee');
   }
 
   $.ajax({
@@ -277,7 +278,7 @@ $('#savingMassUsers').on('click', function () {
       module: 'admin',
       action: 'addUser',
       employeeID: u.empid,
-      employeeName: u.name,
+      employeeName: u.name.replace('+', ' '),
       deltasonic: 1,
       companyCode: 'DSCW',
       job: '',
@@ -424,6 +425,7 @@ $('#saveSupervisor').on('click', function () {
 function back() {
   $('#userTimesheet').hide();
   $('#employees').show();
+  $('#timesheetPage').hide();
 }
 
 $(document).ready(function () {
@@ -611,7 +613,9 @@ $(document).ready(function () {
       days = [[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'], [$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'], [$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'], [$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'], [$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'], [$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'], [$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday']];
     }
 
-    if ((isManager && isLocation || isPayroll) && empid != myEmpid) {
+    if ((isManager && isLocation || isPayroll) && (admins.find(function (a) {
+      return a == myEmpid;
+    }) == myEmpid || empid != myEmpid)) {
       //$('#back').hide()
       $('#addTimeslot').show();
     } else {
@@ -623,7 +627,9 @@ $(document).ready(function () {
     $('#startDate').html(startDate.format('M/D/YYYY'));
     $('#endDate').html(endDate.format('M/D/YYYY'));
     days.forEach(function (day, index) {
-      if ((isManager && isLocation || isPayroll) && empid != myEmpid) {
+      if ((isManager && isLocation || isPayroll) && (admins.find(function (a) {
+        return a == myEmpid;
+      }) == myEmpid || empid != myEmpid)) {
         $timesheet.append("\n\t\t\t\t\t<tr class=\"active headers\">\n\t\t\t\t\t\t<th style=\"width: 15%;\">Date</th>\n\t\t\t\t\t\t<th style=\"width: 15%;\">Role</th>\n\t\t\t\t\t\t<th style=\"width: 20%;\">Check In</th>\n\t\t\t\t\t\t<th style=\"width: 20%;\">Check Out</th>\n\t\t\t\t\t\t<th style=\"width: 10%;\">Hours</th>\n\t\t\t\t\t\t<th style=\"width: 20%;\">Actions</th>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr id=\"".concat(day[4], "\" class=\"timeslots\">\n\t\t\t\t\t\t<td>").concat($('#end').data("DateTimePicker").date().weekday(deltasonic ? index - 1 : index).format('dddd, MMM Do'), "</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>0</td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td id=\"").concat(day[4], "Hours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t</tr>\n\t\t\t\t"));
       } else {
         $timesheet.append("\n\t\t\t\t\t<tr class=\"active headers\">\n\t\t\t\t\t\t<th style=\"width: 25%;\">Date</th>\n\t\t\t\t\t\t<th style=\"width: 25%;\">Check In</th>\n\t\t\t\t\t\t<th style=\"width: 25%;\">Check Out</th>\n\t\t\t\t\t\t<th style=\"width: 25%;\">Hours</th>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr id=\"".concat(day[4], "\" class=\"timeslots\">\n\t\t\t\t\t\t<td>").concat($('#end').data("DateTimePicker").date().weekday(deltasonic ? index - 1 : index).format('dddd, MMM Do'), "</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>- -</td>\n\t\t\t\t\t\t<td>0</td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr class=\"timeslots\">\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td id=\"").concat(day[4], "Hours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t</tr>\n\t\t\t\t"));
@@ -636,7 +642,9 @@ $(document).ready(function () {
       days = [[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'], [$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'], [$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'], [$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'], [$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'], [$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'], [$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday']];
     }
 
-    if ((isManager && isLocation || isPayroll) && empid != myEmpid) {
+    if ((isManager && isLocation || isPayroll) && (admins.find(function (a) {
+      return a == myEmpid;
+    }) == myEmpid || empid != myEmpid)) {
       $timesheet.append("\n\t\t\t\t<tr id=\"totalrow\">\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th>Total Hours</th>\n\t\t\t\t\t<th></th>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td id=\"totalHours\" class=\"info\"><b>0</b></td>\n\t\t\t\t\t<th></th>\n\t\t\t\t</tr>\n\t\t\t");
     } else {
       $timesheet.append("\n\t\t\t\t<tr id=\"totalrow\">\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th></th>\n\t\t\t\t\t<th>Total Hours</th>\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td></td>\n\t\t\t\t\t<td id=\"totalHours\" class=\"info\"><b>0</b></td>\n\t\t\t\t</tr>\n\t\t\t");
@@ -646,7 +654,6 @@ $(document).ready(function () {
   };
 
   var buildDashboard = function buildDashboard(dashboard) {
-    console.log(dashboard);
     $('#workedTable').empty();
     $('#powerTable').empty();
     $('#boothTable').empty();
@@ -660,6 +667,7 @@ $(document).ready(function () {
           nonActive = 0,
           booth = 0,
           power = 0,
+          washExit = 0,
           wash = 0,
           detail = 0,
           store = 0,
@@ -681,26 +689,30 @@ $(document).ready(function () {
           } else {
             if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
               managers++;
-              $('#managementTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
-            } else if (r.match(/power|program/g)) {
-              power++;
-              addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/bd|advisor/g)) {
-              booth++;
-              addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/wash t/g)) {
               wash++;
-              addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/detail|quality|paint/g)) {
-              detail++;
-              addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/c-store/g)) {
+              $('#managementTable').append("\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>".concat(moment.unix(e.startTime).format('h:mm a'), "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(todayHours, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t\t\t<td>").concat(e.role, "</td>\n\t\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t"));
+            } else if (r.match(/c-store/g) || e.profitcenter == 4) {
               store++;
               addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/coffee|food/g)) {
+            } else if (r.match(/power|program/g)) {
+              power++;
+              wash++;
+              addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/bd|advisor/g) && e.profitcenter == 1) {
+              booth++;
+              wash++;
+              addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/wash t/g)) {
+              washExit++;
+              wash++;
+              addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/detail|quality|paint/g) || e.profitcenter == 2) {
+              detail++;
+              addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime);
+            } else if (r.match(/coffee|food/g) || e.profitcenter == 5) {
               food++;
               addDashboardRow(e, '#foodTable', todayHours, totalHours, hoursWorked, breakTime);
-            } else if (r.match(/lube/g)) {
+            } else if (r.match(/lube/g) || e.profitcenter == 3) {
               lube++;
               addDashboardRow(e, '#lubeTable', todayHours, totalHours, hoursWorked, breakTime);
             } else {
@@ -717,16 +729,21 @@ $(document).ready(function () {
           $('#totalTable').append("\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td>".concat(nonActive, "</td>\n\t\t\t\t\t\t\t<td>").concat(_totalHours, "</td>\n\t\t\t\t\t\t\t<td>").concat(e.name, "</td>\n\t\t\t\t\t\t\t<td>").concat(_breakTime > 0 ? '<i class="fas fa-check"></i>' : '', "</td>\n\t\t\t\t\t\t\t<td><a class=\"btn btn-default\" onclick=\"getTimesheet(").concat(e.id, ")\">Timesheet</a></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t"));
         }
       });
+      $('#washTotalCount').text(wash);
+      $('#detailTotalCount').text(detail);
+      $('#storeTotalCount').text(store);
+      $('#foodTotalCount').text(food);
+      $('#lubeTotalCount').text(lube);
       $('#boothCount').text(booth);
       $('#powerCount').text(power);
-      $('#washCount').text(wash);
+      $('#washExitCount').text(washExit);
       $('#detailCount').text(detail);
       $('#storeCount').text(store);
       $('#foodCount').text(food);
       $('#lubeCount').text(lube);
       $('#managersCount').text(managers);
       $('#otherCount').text(other);
-      $('#workingCount').text(booth + power + wash + managers + detail + food + store + lube + other);
+      $('#workingCount').text(booth + power + washExit + managers + detail + food + store + lube + other);
       $('#activeCount').text(active);
       $('#nonActiveCount').text(nonActive);
     } else {
@@ -738,7 +755,6 @@ $(document).ready(function () {
   };
 
   makeTimesheet = function makeTimesheet() {
-    $('#loader').addClass('loader');
     totalTime = 0;
     $.ajax({
       url: "./php/main.php?module=admin&action=getEmployeeHours",
@@ -749,9 +765,12 @@ $(document).ready(function () {
       }
     }).done(function (currentTimeslots) {
       timeslots = currentTimeslots.timeslots;
-      $('#loader2').hide();
+      $('#loader').removeClass('loader');
+      $('#timesheetPage').show();
+      $("#laborBreakdown").empty();
       var hours = 0,
-          roles = currentTimeslots.roles;
+          roles = currentTimeslots.roles,
+          roleHours = {};
       timeslots.forEach(function (timeslot, index) {
         var hoursSum = 0,
             weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
@@ -762,6 +781,13 @@ $(document).ready(function () {
         if (timeslot.punchouttime) {
           hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
           totalTime += hoursSum;
+
+          if (roleHours[timeslot.role]) {
+            roleHours[timeslot.role] += hoursSum;
+          } else {
+            roleHours[timeslot.role] = hoursSum;
+          }
+
           days[weekday + 1][2] += hoursSum;
 
           if (timeslots[index - 1]) {
@@ -772,7 +798,7 @@ $(document).ready(function () {
                 days[weekday + 1][3] += moment.unix(timeslot.punchintime).diff(moment.unix(timeslots[index - 1].punchouttime), 'minutes');
 
                 if (days[previousWeekday + 1][3] < 30) {
-                  timeslot.overBreak = true;
+                  timeslot.overBreak = days[previousWeekday + 1][3];
                 }
               }
             }
@@ -789,6 +815,9 @@ $(document).ready(function () {
 
         $htmlhours.html("<b>".concat(days[weekday + 1][2].toFixed(2), "</b>"));
         $("td#totalHours.info").html("<b>".concat(totalTime.toFixed(2), "</b>"));
+      });
+      Object.keys(roleHours).map(function (r) {
+        $("#laborBreakdown").append("<p><b>".concat(r, "</b> ").concat(roleHours[r].toFixed(2), "</p>"));
       });
       $('.roles').on('change', function (e) {
         $.ajax({
@@ -817,9 +846,13 @@ $(document).ready(function () {
   };
 
   function addRow($element, timeslot, sum, roles) {
-    $("\n                <tr class=\"timeslots\">\n                    <td>".concat(!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : '', "</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && empid != myEmpid ? "<td>\n\t\t\t\t\t\t\t\t<select class=\"form-control roles\" data-timeid=\"".concat(timeslot.timeid, "\">\n\t\t\t\t\t\t\t\t\t").concat(roles.map(function (r) {
+    $("\n                <tr class=\"timeslots\">\n                    <td>".concat(!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : '', "</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && (admins.find(function (a) {
+      return a == myEmpid;
+    }) == myEmpid || empid != myEmpid) ? "<td>\n\t\t\t\t\t\t\t\t<select class=\"form-control roles\" data-timeid=\"".concat(timeslot.timeid, "\">\n\t\t\t\t\t\t\t\t\t").concat(roles.map(function (r) {
       return "<option value=".concat(r.job_code, " ").concat(timeslot.roleId == r.job_code ? 'selected' : '', ">").concat(r.job_desc, "</option>");
-    }), "\n\t\t\t\t\t\t\t\t  </select>\n\t\t\t\t\t\t\t</td>") : '', "\n                    <td class=\"").concat(timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "\n\t\t\t\t\t</td>\n                    <td class=\"").concat(timeslot.outsource == 2 ? 'warning' : '', "  ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).tz(timeslot.punchouttimezone).format('h:mm a') : '- -', "\n\t\t\t\t\t</td>\n                    <td class=").concat(sum.toFixed(2) > 6 ? 'red' : '', ">\n\t\t\t\t\t\t").concat(sum.toFixed(2), "\n\t\t\t\t\t\t").concat(timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t\t\t\t</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && empid != myEmpid ? "<td>\n\t\t\t\t\t\t\t\t<button class=\"btn btn-danger btn-small\" onclick='deleteTimeslot(this)' data-id=".concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete timeslot\"\n\t\t\t\t\t\t\t\t><i class=\"glyphicon glyphicon-remove\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='makeEdit(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Edit timeslot\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "\n\t\t\t\t\t\t\t\t\tdata-timezone=").concat(timeslot.punchintimezone, "><i class=\"glyphicon glyphicon-pencil\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='addLunchslot(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Create Lunchpunch\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "><i class=\"glyphicon glyphicon-apple\"></i></button>\n\t\t\t\t\t\t\t</td>") : '', "\n                </tr>\n            ")).insertBefore($element);
+    }), "\n\t\t\t\t\t\t\t\t  </select>\n\t\t\t\t\t\t\t</td>") : '', "\n                    <td class=\"").concat(timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "\n\t\t\t\t\t</td>\n                    <td class=\"").concat(timeslot.outsource == 2 ? 'warning' : '', "  ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).tz(timeslot.punchouttimezone).format('h:mm a') : '- -', "\n\t\t\t\t\t</td>\n                    <td class=").concat(sum.toFixed(2) > 6 ? 'red' : '', ">\n\t\t\t\t\t\t").concat(sum.toFixed(2), "\n\t\t\t\t\t\t").concat(timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t\t\t\t</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && (admins.find(function (a) {
+      return a == myEmpid;
+    }) == myEmpid || empid != myEmpid) ? "<td>\n\t\t\t\t\t\t\t\t<button class=\"btn btn-danger btn-small\" onclick='deleteTimeslot(this)' data-id=".concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete timeslot\"\n\t\t\t\t\t\t\t\t><i class=\"glyphicon glyphicon-remove\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='makeEdit(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Edit timeslot\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "\n\t\t\t\t\t\t\t\t\tdata-timezone=").concat(timeslot.punchintimezone, "><i class=\"glyphicon glyphicon-pencil\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='addLunchslot(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Create Lunchpunch\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "><i class=\"glyphicon glyphicon-apple\"></i></button>\n\t\t\t\t\t\t\t</td>") : '', "\n                </tr>\n            ")).insertBefore($element);
     setPopover(timeslot.timeid);
     $('.datetime').datetimepicker();
   }
@@ -954,7 +987,7 @@ $(document).ready(function () {
     buildDashboard(e.currentTarget.id);
   }); // STARTING APPLICATION
 
-  if (isManager) getInitialState();
+  if (isManager || isBasicManager) getInitialState();
   var now = new Date();
   var nowStr = parseInt(now.getMonth()) + 1 + "/" + now.getDate() + "/" + now.getFullYear();
   getDateRange(nowStr, false);
