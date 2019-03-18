@@ -10,7 +10,7 @@
     $isTrainer      = USER::inGroup(21) ? 'true' : 'false';
     $isHr           = USER::inGroup(57) ? 'true' : 'false';
     $isDm           = USER::inGroup(65) ? 'true' : 'false';
-    $isLocation     = !$_SESSION['location'] != 900 ? 'true' : 'false';
+    $isLocation     = $_SESSION['location'] != 900 ? 'true' : 'false';
 ?>
 
 <!--
@@ -66,8 +66,8 @@
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <li role="presentation"><a href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Auditing</a></li>
-                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
+                  <!-- <li role="presentation"><a href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Auditing</a></li> -->
+                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
