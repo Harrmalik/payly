@@ -87,6 +87,10 @@ tr, th {
 	/* width: 25%; */
 }
 
+#dashboard table th {
+	cursor: pointer;
+}
+
 #userTimesheet th {
 	/* width: 20%; */
 }

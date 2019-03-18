@@ -20,29 +20,42 @@ var empid,
     timeslot,
     allUsers,
     employees,
-    admins = [82934, 4010, 22068];
+    admins = [82934, 4010, 22068],
+    locations = [{
+  id: 900,
+  name: 'Office'
+}, {
+  id: 807,
+  name: 'Main Street'
+}],
+    currentLocation = $('body').data('location');
 $('#punchintime').datetimepicker({
   sideBySide: true
 });
 $('#punchouttime').datetimepicker({
   sideBySide: true
 });
+$('#dDate').datetimepicker({
+  defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
+  format: 'MMMM Do YYYY',
+  daysOfWeekDisabled: [1, 2, 3, 4, 6]
+});
 $('#end').datetimepicker({
-  defaultDate: moment().weekday(5),
+  defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
   format: 'MMMM Do YYYY',
   daysOfWeekDisabled: [1, 2, 3, 4, 6]
 });
 $('#dateFilter').datetimepicker({
-  defaultDate: moment().weekday(5),
+  defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
   format: 'MMMM Do YYYY',
   daysOfWeekDisabled: [1, 2, 3, 4, 6]
 });
 $('#startDate').datetimepicker({
-  defaultDate: moment().weekday(-1),
+  defaultDate: moment().day() == 6 ? moment().day() : moment().weekday(-1),
   format: 'MMMM Do YYYY'
 });
 $('#endDate').datetimepicker({
-  defaultDate: moment().weekday(5),
+  defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
   format: 'MMMM Do YYYY'
 });
 var glbDataTable = '';
@@ -122,17 +135,20 @@ var halfday = function halfday() {
 };
 
 var addTimeslot = function addTimeslot() {
-  var minutes = $('#selectHours').val().split('.')[1] > 0 ? 60 / (100 / $('#selectHours').val().split('.')[1]) : 0;
+  var minutes = $('#selectHours').val().split('.')[1] > 0 ? 60 / (100 / $('#selectHours').val().split('.')[1]) : 0,
+      punchouttime = minutes > 0 ? moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix() : null;
+  if (isLocation) punchouttime = $('#punchouttime').data("DateTimePicker").date() ? moment($('#punchouttime').data("DateTimePicker").date()).utc().unix() : null;
   $.ajax({
     url: "./php/main.php",
     method: 'post',
     data: {
       userid: empid,
       punchintime: moment($('#punchintime').data("DateTimePicker").date()).utc().unix(),
-      punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix(),
+      punchouttime: punchouttime,
       timezone: timezone,
       empSite: empSite,
-      type: $('#type').val(),
+      role: $('#punchRole').val() ? $('#punchRole').val() : null,
+      type: isLocation ? 0 : $('#type').val(),
       action: 'addTimeslot',
       module: 'admin'
     }
@@ -458,12 +474,15 @@ $(document).ready(function () {
     url: "./php/main.php?module=admin&action=".concat(isLocation ? 'getEmployeesByLocation' : 'getEmployees')
   }).done(function (users) {
     var options = {
-      data: users,
+      url: function url(query) {
+        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query, "&location=").concat(currentLocation);
+      },
       getValue: function getValue(user) {
         return user.employeeid + '. ' + user.employeename;
       },
       theme: "blue-light",
       list: {
+        maxNumberOfElements: 20,
         match: {
           enabled: true
         },
@@ -472,12 +491,73 @@ $(document).ready(function () {
           getTimesheet(employee.employeeid);
         }
       }
+    },
+        options2 = {
+      url: function url(query) {
+        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query, "&location=").concat(currentLocation);
+      },
+      getValue: function getValue(user) {
+        return user.employeeid + '. ' + user.employeename;
+      },
+      theme: "blue-light",
+      list: {
+        maxNumberOfElements: 20,
+        match: {
+          enabled: true
+        },
+        onChooseEvent: function onChooseEvent() {
+          var employee = $("#employeeid").getSelectedItemData();
+          populateCodeDropdown({
+            target: {
+              value: employee.deltasonic
+            }
+          });
+          $('#uEmployeeid').val(employee.employeeid);
+          $('#uName').val(employee.employeename);
+          $('#uDeltasonic').val(employee.deltasonic);
+          $('#uCode').val(employee.companycode);
+          $('#uJob').val(employee.job);
+          $('#uSupervisor').val("".concat(employee.supervisor, ". ").concat(employee.name));
+          $('#uTimezone').val(employee.timezone), $('#uHoliday').val(employee.holidays);
+          $('#weekends').prop('checked', employee.weekends == 1 ? true : false);
+          $('#nights').prop('checked', employee.nights == 1 ? true : false);
+          $('#alerts').prop('checked', employee.alerts == 1 ? true : false);
+          $('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false);
+          $('#field').prop('checked', employee.field == 1 ? true : false);
+          $('#uLocation').val(employee.location);
+        }
+      }
+    },
+        options3 = {
+      url: function url(query) {
+        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query, "&location=").concat(currentLocation);
+      },
+      getValue: function getValue(user) {
+        return user.employeeid + '. ' + user.employeename;
+      },
+      theme: "blue-light",
+      list: {
+        maxNumberOfElements: 20,
+        match: {
+          enabled: true
+        },
+        onChooseEvent: function onChooseEvent() {
+          var employee = $("#auditUsers").getSelectedItemData();
+          $.ajax({
+            url: "./php/main.php?module=admin&action=getLastWorkedDay&empid=".concat(employee.employeeid)
+          }).done(function (result) {
+            $('#auditUser').append("\n\t\t\t\t\t\t\t<p>".concat(employee.employeename, ": ").concat(moment(result[0].punchintime).weekday(5).format('l'), "</p>\n\t\t\t\t\t\t"));
+          });
+        }
+      }
     };
     allUsers = users;
     allUsers.forEach(function (user) {
       $('#supervisorEmployees').append("\n\t\t\t\t<option id=\"".concat(user.employeeid, "\" value=").concat(user.employeeid, ">").concat(user.employeename, "</option>\n\t\t\t"));
     });
     $("#employeeID").easyAutocomplete(options);
+    $("#employeeid").easyAutocomplete(options2);
+    $("#auditUsers").easyAutocomplete(options3);
     $('.easy-autocomplete-container').css('z-index', 3);
     $.ajax({
       url: "./php/main.php?module=admin&action=getSupervisors"
@@ -545,44 +625,6 @@ $(document).ready(function () {
         }
       });
     });
-  });
-  $.ajax({
-    url: "./php/main.php?module=admin&action=".concat(isLocation ? 'getEmployeesByLocation' : 'getEmployees')
-  }).done(function (users) {
-    var options = {
-      data: users,
-      getValue: function getValue(user) {
-        return user.employeeid + '. ' + user.employeename;
-      },
-      theme: "blue-light",
-      list: {
-        match: {
-          enabled: true
-        },
-        onChooseEvent: function onChooseEvent() {
-          var employee = $("#employeeid").getSelectedItemData();
-          populateCodeDropdown({
-            target: {
-              value: employee.deltasonic
-            }
-          });
-          $('#uEmployeeid').val(employee.employeeid);
-          $('#uName').val(employee.employeename);
-          $('#uDeltasonic').val(employee.deltasonic);
-          $('#uCode').val(employee.companycode);
-          $('#uJob').val(employee.job);
-          $('#uSupervisor').val("".concat(employee.supervisor, ". ").concat(employee.name));
-          $('#uTimezone').val(employee.timezone), $('#uHoliday').val(employee.holidays);
-          $('#weekends').prop('checked', employee.weekends == 1 ? true : false);
-          $('#nights').prop('checked', employee.nights == 1 ? true : false);
-          $('#alerts').prop('checked', employee.alerts == 1 ? true : false);
-          $('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false);
-          $('#field').prop('checked', employee.field == 1 ? true : false);
-          $('#uLocation').val(employee.location);
-        }
-      }
-    };
-    $("#employeeid").easyAutocomplete(options);
   });
   $('#uDeltasonic').on('change', function (e) {
     populateCodeDropdown(e);
@@ -657,7 +699,11 @@ $(document).ready(function () {
     $('#workedTable').empty();
     $('#powerTable').empty();
     $('#boothTable').empty();
+    $('#detailTable').empty();
+    $('#foodTable').empty();
+    $('#storeTable').empty();
     $('#washTable').empty();
+    $('#lubeTable').empty();
     $('#managementTable').empty();
     $('#otherTable').empty();
     $('#totalTable').empty();
@@ -750,12 +796,14 @@ $(document).ready(function () {
       $('#employees').html('No Employees found for you');
     }
 
-    $('#employees').show();
+    if ($("a[href*='\#dashboard'").parent().hasClass('active') && $("#timesheetPage").is(":hidden")) $('#employees').show();
     $('#employeesLoader').hide();
+    $("#dashboard table").tablesorter();
   };
 
   makeTimesheet = function makeTimesheet() {
     totalTime = 0;
+    $('#punchRole').empty();
     $.ajax({
       url: "./php/main.php?module=admin&action=getEmployeeHours",
       data: {
@@ -771,6 +819,10 @@ $(document).ready(function () {
       var hours = 0,
           roles = currentTimeslots.roles,
           roleHours = {};
+      $('#punchRole').append('<option value="">N/A</option>');
+      roles.forEach(function (r) {
+        $('#punchRole').append("<option value=".concat(r.job_code, " ").concat(r.primaryjob == 'Y' ? 'selected' : '', ">").concat(r.job_desc, "</option>"));
+      });
       timeslots.forEach(function (timeslot, index) {
         var hoursSum = 0,
             weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
@@ -848,7 +900,7 @@ $(document).ready(function () {
   function addRow($element, timeslot, sum, roles) {
     $("\n                <tr class=\"timeslots\">\n                    <td>".concat(!$element.attr('clocked') || $element.attr('clocked') === 'false' ? moment.unix(timeslot.created).format('dddd, MMM Do') : '', "</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && (admins.find(function (a) {
       return a == myEmpid;
-    }) == myEmpid || empid != myEmpid) ? "<td>\n\t\t\t\t\t\t\t\t<select class=\"form-control roles\" data-timeid=\"".concat(timeslot.timeid, "\">\n\t\t\t\t\t\t\t\t\t").concat(roles.map(function (r) {
+    }) == myEmpid || empid != myEmpid) ? "<td>\n\t\t\t\t\t\t\t\t<select class=\"form-control roles\" data-timeid=\"".concat(timeslot.timeid, "\">\n\t\t\t\t\t\t\t\t\t<option>N/A</option>\n\t\t\t\t\t\t\t\t\t").concat(roles.map(function (r) {
       return "<option value=".concat(r.job_code, " ").concat(timeslot.roleId == r.job_code ? 'selected' : '', ">").concat(r.job_desc, "</option>");
     }), "\n\t\t\t\t\t\t\t\t  </select>\n\t\t\t\t\t\t\t</td>") : '', "\n                    <td class=\"").concat(timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "\n\t\t\t\t\t</td>\n                    <td class=\"").concat(timeslot.outsource == 2 ? 'warning' : '', "  ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).tz(timeslot.punchouttimezone).format('h:mm a') : '- -', "\n\t\t\t\t\t</td>\n                    <td class=").concat(sum.toFixed(2) > 6 ? 'red' : '', ">\n\t\t\t\t\t\t").concat(sum.toFixed(2), "\n\t\t\t\t\t\t").concat(timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t\t\t\t</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && (admins.find(function (a) {
       return a == myEmpid;
@@ -912,10 +964,11 @@ $(document).ready(function () {
       $('#employees').hide();
       $('#employeesLoader').show();
       $.ajax({
-        url: "./php/main.php?module=admin&action=getLocationEmployees"
+        url: "./php/main.php?module=admin&action=getLocationEmployees&location=".concat(currentLocation, "&offset=").concat(moment(moment().weekday(5)).diff($('#dDate').data("DateTimePicker").date(), 'weeks'))
       }).done(function (data) {
         employees = data;
         buildDashboard();
+        $('#lastUpdate').text(moment().format('h:mm a'));
       });
     } else {
       var dashboard;
@@ -972,6 +1025,17 @@ $(document).ready(function () {
   }; // EVENT LISTENERS
 
 
+  $('#dDate').on('dp.change', function () {
+    getInitialState();
+  });
+  locations.forEach(function (l) {
+    $('#locations').append("\n\t\t\t<li><a id=\"".concat(l.id, "\">").concat(l.name, "</a></li>\n\t\t"));
+  });
+  $('#locations a').on('click', function (e) {
+    $('#homeLocation').html("".concat(e.target.text, " <span class=\"caret\"></span>"));
+    currentLocation = e.target.id;
+    getInitialState();
+  });
   $('#end').on('dp.change', function () {
     if (empid) {
       buildTable();
@@ -987,7 +1051,11 @@ $(document).ready(function () {
     buildDashboard(e.currentTarget.id);
   }); // STARTING APPLICATION
 
-  if (isManager || isBasicManager) getInitialState();
+  if (isManager || isBasicManager) {
+    setInterval(getInitialState, 60000);
+    getInitialState();
+  }
+
   var now = new Date();
   var nowStr = parseInt(now.getMonth()) + 1 + "/" + now.getDate() + "/" + now.getFullYear();
   getDateRange(nowStr, false);
