@@ -1,0 +1,10 @@
+version: "3"
+services:
+
+    kissklock:
+        image: 172.30.160.12:5043/kissklock
+        ports:
+          - "7002:80"
+        deploy:
+            restart_policy:
+                condition: on-failure

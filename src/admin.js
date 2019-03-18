@@ -17,29 +17,42 @@ let empid,
 	timeslot,
 	allUsers,
 	employees,
-	admins = [82934,4010,22068];
+	admins = [82934,4010,22068],
+	locations = [{
+		id: 900,
+		name: 'Office',
+	}, {
+		id: 807,
+		name: 'Main Street'
+	}],
+	currentLocation = $('body').data('location');
 	$('#punchintime').datetimepicker({
 		sideBySide: true
 	});
 	$('#punchouttime').datetimepicker({
 		sideBySide: true
 	});
+	$('#dDate').datetimepicker({
+		defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
+		format: 'MMMM Do YYYY',
+		daysOfWeekDisabled: [1,2,3,4,6]
+	});
 	$('#end').datetimepicker({
-		defaultDate: moment().weekday(5),
+		defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
 		format: 'MMMM Do YYYY',
 		daysOfWeekDisabled: [1,2,3,4,6]
 	});
 	$('#dateFilter').datetimepicker({
-		defaultDate: moment().weekday(5),
+		defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
 		format: 'MMMM Do YYYY',
 		daysOfWeekDisabled: [1,2,3,4,6]
 	});
 	$('#startDate').datetimepicker({
-		defaultDate: moment().weekday(-1),
+		defaultDate: moment().day() == 6 ? moment().day() : moment().weekday(-1),
 		format: 'MMMM Do YYYY',
 	});
 	$('#endDate').datetimepicker({
-		defaultDate: moment().weekday(5),
+		defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
 		format: 'MMMM Do YYYY',
 	});
 
@@ -125,7 +138,10 @@ let halfday = () => {
 }
 
 let addTimeslot = () => {
-	let minutes = $('#selectHours').val().split('.')[1] > 0 ? (60 / (100/$('#selectHours').val().split('.')[1])) : 0
+	let minutes = $('#selectHours').val().split('.')[1] > 0 ? (60 / (100/$('#selectHours').val().split('.')[1])) : 0,
+		punchouttime = minutes > 0 ? moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix() : null;
+
+	if (isLocation) punchouttime = $('#punchouttime').data("DateTimePicker").date() ? moment($('#punchouttime').data("DateTimePicker").date()).utc().unix() : null
 
 	$.ajax({
 		url: `./php/main.php`,
@@ -133,10 +149,11 @@ let addTimeslot = () => {
 		data: {
 			userid: empid,
 			punchintime: moment($('#punchintime').data("DateTimePicker").date()).utc().unix(),
-			punchouttime: moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix(),
+			punchouttime,
 			timezone,
 			empSite,
-			type: $('#type').val(),
+			role: $('#punchRole').val() ? $('#punchRole').val() : null,
+			type: isLocation ? 0 : $('#type').val(),
 			action: 'addTimeslot',
 			module: 'admin'
 		}
@@ -512,12 +529,15 @@ $(document).ready(function(){
 		url: `./php/main.php?module=admin&action=${isLocation ? 'getEmployeesByLocation' : 'getEmployees'}`
 	}).done((users) => {
 		let options = {
-			data: users,
+			url: function(query) {
+				return `./php/main.php?module=admin&action=searchEmployees&query=${query}&location=${currentLocation}`
+			},
 			getValue: (user) => {
 				return user.employeeid + '. '  + user.employeename
 			},
 			theme: "blue-light",
 			list: {
+				maxNumberOfElements: 20,
 				match: {
 					enabled: true
 				},
@@ -526,16 +546,76 @@ $(document).ready(function(){
 					getTimesheet(employee.employeeid)
 				}
 			}
+		},
+		options2 = {
+			url: function(query) {
+				return `./php/main.php?module=admin&action=searchEmployees&query=${query}&location=${currentLocation}`
+			},
+			getValue: (user) => {
+				return user.employeeid + '. '  + user.employeename
+			},
+			theme: "blue-light",
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onChooseEvent: () => {
+					let employee = $("#employeeid").getSelectedItemData()
+					populateCodeDropdown({target: {value: employee.deltasonic}})
+					$('#uEmployeeid').val(employee.employeeid)
+					$('#uName').val(employee.employeename)
+					$('#uDeltasonic').val(employee.deltasonic)
+					$('#uCode').val(employee.companycode)
+					$('#uJob').val(employee.job)
+					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
+					$('#uTimezone').val(employee.timezone),
+					$('#uHoliday').val(employee.holidays)
+					$('#weekends').prop('checked', employee.weekends == 1 ? true : false)
+					$('#nights').prop('checked', employee.nights == 1 ? true : false)
+					$('#alerts').prop('checked', employee.alerts == 1 ? true : false)
+					$('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false)
+					$('#field').prop('checked', employee.field == 1 ? true : false)
+					$('#uLocation').val(employee.location)
+				}
+			}
+		},
+		options3 = {
+			url: function(query) {
+				return `./php/main.php?module=admin&action=searchEmployees&query=${query}&location=${currentLocation}`
+			},
+			getValue: (user) => {
+				return user.employeeid + '. '  + user.employeename
+			},
+			theme: "blue-light",
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onChooseEvent: () => {
+					let employee = $("#auditUsers").getSelectedItemData()
+					$.ajax({
+						url: `./php/main.php?module=admin&action=getLastWorkedDay&empid=${employee.employeeid}`
+					}).done((result) => {
+						$('#auditUser').append(`
+							<p>${employee.employeename}: ${moment(result[0].punchintime).weekday(5).format('l')}</p>
+						`)
+					})
+
+				}
+			}
 		}
 
 		allUsers = users
-
 		allUsers.forEach((user) => {
 			$('#supervisorEmployees').append(`
 				<option id="${user.employeeid}" value=${user.employeeid}>${user.employeename}</option>
 			`)
 		});
 		$("#employeeID").easyAutocomplete(options)
+		$("#employeeid").easyAutocomplete(options2)
+		$("#auditUsers").easyAutocomplete(options3)
 		$('.easy-autocomplete-container').css('z-index', 3)
 		$.ajax({
 			url: `./php/main.php?module=admin&action=getSupervisors`
@@ -610,45 +690,6 @@ $(document).ready(function(){
 			})
 		})
 	})
-
-	$.ajax({
-		url: `./php/main.php?module=admin&action=${isLocation ? 'getEmployeesByLocation' : 'getEmployees'}`
-	}).done((users) => {
-		let options = {
-			data: users,
-			getValue: (user) => {
-				return user.employeeid + '. '  + user.employeename
-			},
-			theme: "blue-light",
-			list: {
-				match: {
-					enabled: true
-				},
-				onChooseEvent: () => {
-					let employee = $("#employeeid").getSelectedItemData()
-					populateCodeDropdown({target: {value: employee.deltasonic}})
-					$('#uEmployeeid').val(employee.employeeid)
-					$('#uName').val(employee.employeename)
-					$('#uDeltasonic').val(employee.deltasonic)
-					$('#uCode').val(employee.companycode)
-					$('#uJob').val(employee.job)
-					$('#uSupervisor').val(`${employee.supervisor}. ${employee.name}`)
-					$('#uTimezone').val(employee.timezone),
-					$('#uHoliday').val(employee.holidays)
-					$('#weekends').prop('checked', employee.weekends == 1 ? true : false)
-					$('#nights').prop('checked', employee.nights == 1 ? true : false)
-					$('#alerts').prop('checked', employee.alerts == 1 ? true : false)
-					$('#canCallIn').prop('checked', employee.canCallIn == 1 ? true : false)
-					$('#field').prop('checked', employee.field == 1 ? true : false)
-					$('#uLocation').val(employee.location)
-				}
-			}
-		}
-
-		$("#employeeid").easyAutocomplete(options)
-	})
-
-
 
 	$('#uDeltasonic').on('change', (e) => {
 		populateCodeDropdown(e)
@@ -832,7 +873,11 @@ $(document).ready(function(){
 		$('#workedTable').empty()
 		$('#powerTable').empty()
 		$('#boothTable').empty()
+		$('#detailTable').empty()
+		$('#foodTable').empty()
+		$('#storeTable').empty()
 		$('#washTable').empty()
+		$('#lubeTable').empty()
 		$('#managementTable').empty()
 		$('#otherTable').empty()
 		$('#totalTable').empty()
@@ -956,12 +1001,14 @@ $(document).ready(function(){
 			$('#employees').html('No Employees found for you')
 		}
 
-		$('#employees').show()
+		if ($( "a[href*='\#dashboard'" ).parent().hasClass('active') && $( "#timesheetPage" ).is(":hidden")) $('#employees').show()
 		$('#employeesLoader').hide()
+		$("#dashboard table").tablesorter();
 	}
 
   makeTimesheet = () => {
 		totalTime = 0;
+		$('#punchRole').empty()
         $.ajax({
             url: `./php/main.php?module=admin&action=getEmployeeHours`,
             data: {
@@ -975,8 +1022,13 @@ $(document).ready(function(){
 			$('#timesheetPage').show()
 			$("#laborBreakdown").empty();
             let hours = 0,
-							roles = currentTimeslots.roles,
-							roleHours = {}
+				roles = currentTimeslots.roles,
+				roleHours = {}
+
+			$('#punchRole').append('<option value="">N/A</option>')
+			roles.forEach(r => {
+				$('#punchRole').append(`<option value=${r.job_code} ${r.primaryjob == 'Y' ? 'selected' : ''}>${r.job_desc}</option>`)
+			})
 
             timeslots.forEach((timeslot, index) => {
                 let hoursSum = 0,
@@ -1020,10 +1072,11 @@ $(document).ready(function(){
             });
 
 
-						Object.keys(roleHours).map(r => {
-							$("#laborBreakdown").append(`<p><b>${r}</b> ${roleHours[r].toFixed(2)}</p>`);
-						})
-						$('.roles').on('change', e => {
+			Object.keys(roleHours).map(r => {
+				$("#laborBreakdown").append(`<p><b>${r}</b> ${roleHours[r].toFixed(2)}</p>`);
+			})
+
+			$('.roles').on('change', e => {
 				$.ajax({
 					url: './php/main.php',
 					method: 'post',
@@ -1058,6 +1111,7 @@ $(document).ready(function(){
 						((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid) ?
 							`<td>
 								<select class="form-control roles" data-timeid="${timeslot.timeid}">
+									<option>N/A</option>
 									${roles.map(r => {
 										return `<option value=${r.job_code} ${timeslot.roleId == r.job_code ? 'selected' : ''}>${r.job_desc}</option>`
 									})}
@@ -1175,10 +1229,11 @@ $(document).ready(function(){
 			$('#employees').hide()
 			$('#employeesLoader').show()
 			$.ajax({
-				url: `./php/main.php?module=admin&action=getLocationEmployees`
+				url: `./php/main.php?module=admin&action=getLocationEmployees&location=${currentLocation}&offset=${moment(moment().weekday(5)).diff($('#dDate').data("DateTimePicker").date(), 'weeks')}`
 			}).done((data) => {
 				employees = data
 				buildDashboard()
+				$('#lastUpdate').text(moment().format('h:mm a'))
 			})
 		} else {
 			let dashboard;
@@ -1204,6 +1259,21 @@ $(document).ready(function(){
 	};
 
 	// EVENT LISTENERS
+	$('#dDate').on('dp.change', () => {
+		getInitialState();
+	});
+
+	locations.forEach((l) => {
+		$('#locations').append(`
+			<li><a id="${l.id}">${l.name}</a></li>
+		`)
+	})
+	$('#locations a').on('click', (e) => {
+		$('#homeLocation').html(`${e.target.text} <span class="caret"></span>`)
+		currentLocation = e.target.id
+		getInitialState()
+	})
+
 	$('#end').on('dp.change', () => {
 		if (empid) {
 			buildTable()
@@ -1223,8 +1293,10 @@ $(document).ready(function(){
 
 
 	// STARTING APPLICATION
-	if (isManager || isBasicManager)
+	if (isManager || isBasicManager) {
+		setInterval(getInitialState, 60000);
 		getInitialState();
+	}
 
 	var now =  new Date();
 	var nowStr = ( (parseInt(now.getMonth())+1) + "/" + now.getDate() + "/" + now.getFullYear() );

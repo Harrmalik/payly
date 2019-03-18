@@ -4,13 +4,13 @@
     $core->inc('users');
     USER::authPage();
 
-    $isManager   = USER::inGroup(73) ? 'true' : 'false';
-    $isBasicManager   = USER::inGroup(11) || USER::inGroup(12) || USER::inGroup(13) || USER::inGroup(14) || USER::inGroup(15) ? 'true' : 'false';
-    $isPayroll   = !USER::inGroup(74) ? 'true' : 'false';
-    $isTrainer   = USER::inGroup(21) ? 'true' : 'false';
-    $isHr        = USER::inGroup(57) ? 'true' : 'false';
-    $isDm = USER::inGroup(65) ? 'true' : 'false';
-    $isLocation  = $_SESSION['location'] != 900 ? 'true' : 'false';
+    $isManager      = USER::inGroup(73) ? 'true' : 'false';
+    $isBasicManager = USER::inGroup(11) || USER::inGroup(12) || USER::inGroup(13) || USER::inGroup(14) || USER::inGroup(15) ? 'true' : 'false';
+    $isPayroll      = USER::inGroup(74) ? 'true' : 'false';
+    $isTrainer      = USER::inGroup(21) ? 'true' : 'false';
+    $isHr           = USER::inGroup(57) ? 'true' : 'false';
+    $isDm           = USER::inGroup(65) ? 'true' : 'false';
+    $isLocation     = !$_SESSION['location'] != 900 ? 'true' : 'false';
 ?>
 
 <!--
@@ -40,7 +40,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js"></script>
 </head>
 
-<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-isManager="<?php echo $isManager; ?>" data-isBasicManager="<?php echo $isBasicManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>"
+<body data-myempid="<?php echo $_SESSION['employeeid']; ?>" data-location="<?php echo $_SESSION['location']; ?>" data-isManager="<?php echo $isManager; ?>" data-isBasicManager="<?php echo $isBasicManager; ?>" data-isPayroll="<?php echo $isPayroll; ?>"
   data-islocation="<?php echo $isLocation; ?>" data-ishr="<?php echo $isHr; ?>" data-istrainer="<?php echo $isTrainer; ?>" data-isdm="<?php echo $isDm; ?>">
     <div class="panel panel-primary container">
         <nav class="navbar navbar-inverse">
@@ -66,10 +66,16 @@
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <li role="presentation"><a href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Auditing</a></li>
+                  <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
+                  <li class="dropdown">
+                   <a id="homeLocation" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Site:  <?php echo $_SESSION['location']; ?> <span class="caret"></span></a>
+                   <ul class="dropdown-menu" id="locations">
+                   </ul>
+                 </li>
                   <li><a href="../ApplicationPortal/logout.php" role="button">Sign Out</a></li>
                 <li><a href="../ApplicationPortal/dashboard.php" role="button">Application Portal</a></li>
               </ul>
@@ -87,6 +93,15 @@
                     <section id="employees">
                         <?php if($isLocation == 'true') { ?>
                             <form class="form-inline">
+                                <div class="form-group">
+                                    <label for="punchouttime" style="text-align: left;" class=" control-label">Week Ending</label>
+                                    <div class='input-group date' id='dDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div class="checkbox" style="padding-right:5px">
                                   <label>
                                     <input type="checkbox" checked onclick="$('.wash-cards').toggle()"> Wash <span  class="badge badge-primary" id="washTotalCount"></span>
@@ -120,7 +135,7 @@
                             </form>
 
                             <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
-                                <h2 class="table-name"> Working Now <span id="workingCount" class="badge"></span></h2>
+                                <h2 class="table-name"> Working Now <span id="workingCount" class="badge"></span> <small>Last Updated: <span id="lastUpdate"></span></small></h2>
                                 <div class="table-card wash-cards" id="boothCard">
                                     <h2 class="table-name"> Booth <span id="boothCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
@@ -133,7 +148,6 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -156,7 +170,6 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -179,7 +192,6 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -202,7 +214,6 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -225,7 +236,6 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -248,7 +258,6 @@
                                               <th>Break</th>
                                               <th>Minor</th>
                                               <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -270,8 +279,7 @@
                                               <th>Role Hrs</th>
                                               <th>Break</th>
                                               <th>Minor</th>
-                                              <th>Role</th>
-                                              <!-- <th>Week Hrs</th> -->
+                                              <th>Role</th
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -636,6 +644,20 @@
                   </div>
                 </div>
 
+              <div role="tabpanel" class="tab-pane" id="auditing">
+                  <h2>Get Last Worked Day</h2>
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="employeeID" class="col-sm-2 control-label">User</label>
+                      <div class="col-sm-4">
+                        <input id="auditUsers" type='text' class="form-control" />
+                      </div>
+                    </div>
+                </form>
+
+                 <div id="auditUser"></div>
+              </div>
+
               <div role="tabpanel" class="tab-pane" id="reports">
                 <div class="form-group" style="clear:both; margin:1em 0;">
                     <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">Start Date</label>
@@ -679,7 +701,7 @@
 
                 <div class="btn btn-primary" id="runReport">Run Report</div>
 
-              <div role="tabpanel" class="tab-pane" id="reports">
+              <div role="tabpanel" class="tab-pane" id="news">
 
               </div>
 
@@ -758,7 +780,7 @@
                   <div class="modal-body">
                       <form class="form-horizontal" onsubmit="return getTimesheet();">
                           <div class="form-group" id="typefield">
-                              <select class="form-control" id="type">
+                              <select class="form-control payrollBtn" id="type">
                                   <option value="1">Vacation</option>
                                   <option value="2">Sick</option>
                                   <option value="0">Regular</option>
@@ -780,7 +802,7 @@
                                   </div>
                               </div>
                           </div>
-                          <div class="form-group" id="punchingout">
+                          <div class="form-group">
                               <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Punch Out</label>
                               <div class="col-sm-9">
                                   <div class='input-group date' id='punchouttime'>
@@ -791,13 +813,24 @@
                                   </div>
                               </div>
                           </div>
-                          <div class="form-group adding">
-                              <h4>Hours</h4>
-                              <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
-                              <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
+                          <div class="form-group">
+                              <label for="punchouttime" style="text-align: left;" class="col-sm-3 control-label">Role</label>
+                              <div class="col-sm-9">
+                                  <select class="form-control roles" id="punchRole">
+
+                                    </select>
+                              </div>
                           </div>
-                          <div class="form-group adding">
-                              <input type="number" class="form-control" id="selectHours">
+
+                          <div class="payrollBtn">
+                              <div class="form-group adding">
+                                  <h4>Hours</h4>
+                                  <button type="button" class="btn btn-default" onClick="fullday()">Full Day</button>
+                                  <button type="button" class="btn btn-default" onClick="halfday()">Half Day</button>
+                              </div>
+                              <div class="form-group adding">
+                                  <input type="number" class="form-control" id="selectHours">
+                              </div>
                           </div>
                       </form>
                   </div>
@@ -813,4 +846,4 @@
 </body>
 
 
-<script src="./dist/admin.js"></script>
+<script src="./src/admin.js"></script>
