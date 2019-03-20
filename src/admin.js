@@ -69,7 +69,9 @@ $('.tipsBtn').hide()
 $('.payrollBtn').hide()
 $('.hrBtn').hide()
 $('.trainerBtn').hide()
+$('.multiSite').hide()
 
+if (isPayroll || isTrainer || isDm) $('.multiSite').show()
 if (isPayroll || isLocation) $('.adminsBtn').show()
 if (isLocation) $('.tipsBtn').show()
 if (isPayroll) $('.payrollBtn').show()
@@ -177,6 +179,7 @@ let makeEdit = (row) => {
 	$('#punchintime').data("DateTimePicker").date(moment.unix(timeslot.in).tz(timeslot.timezone));
 	$('#punchouttime').data("DateTimePicker").date(timeslot.out ? moment.unix(timeslot.out).tz(timeslot.timezone) : null);
 	$('#punchingout').show();
+	$('#punchRole').val(timeslot.role);
 	$('.adding').hide();
 	$('#timesheetModal').modal('show');
 };
@@ -231,6 +234,7 @@ let addLunchslot = (row) => {
 			punchouttime: moment.unix(timeslot.out).subtract(timezone == 'America/New_York' ? 0 : 1, 'hours').unix(),
 			timezone,
 			empSite,
+			role: timeslot.role,
 			type: 0,
 			action: 'addTimeslot',
 			module: 'admin'
@@ -530,7 +534,7 @@ $(document).ready(function(){
 	}).done((users) => {
 		let options = {
 			url: function(query) {
-				return `./php/main.php?module=admin&action=searchEmployees&query=${query}&location=${currentLocation}`
+				return `./php/main.php?module=admin&action=searchEmployees&query=${query.split('.')[0]}&location=${currentLocation}`
 			},
 			getValue: (user) => {
 				return user.employeeid + '. '  + user.employeename
@@ -549,7 +553,7 @@ $(document).ready(function(){
 		},
 		options2 = {
 			url: function(query) {
-				return `./php/main.php?module=admin&action=searchEmployees&query=${query}&location=${currentLocation}`
+				return `./php/main.php?module=admin&action=searchEmployees&query=${query.split('.')[0]}&location=${currentLocation}`
 			},
 			getValue: (user) => {
 				return user.employeeid + '. '  + user.employeename
@@ -582,7 +586,7 @@ $(document).ready(function(){
 		},
 		options3 = {
 			url: function(query) {
-				return `./php/main.php?module=admin&action=searchEmployees&query=${query}&location=${currentLocation}`
+				return `./php/main.php?module=admin&action=searchEmployees&query=${query.split('.')[0]}&location=${currentLocation}`
 			},
 			getValue: (user) => {
 				return user.employeeid + '. '  + user.employeename
@@ -1021,7 +1025,7 @@ $(document).ready(function(){
 			$('#loader').removeClass('loader')
 			$('#timesheetPage').show()
 			$("#laborBreakdown").empty();
-            let hours = 0,
+      let hours = 0,
 				roles = currentTimeslots.roles,
 				roleHours = {}
 
@@ -1139,10 +1143,12 @@ $(document).ready(function(){
 									data-id=${timeslot.timeid}
 									data-in=${timeslot.punchintime}
 									data-out=${timeslot.punchouttime}
+									data-role=${timeslot.roleId}
 									data-timezone=${timeslot.punchintimezone}><i class="glyphicon glyphicon-pencil"></i></button>
 								<button type="button" class="btn btn-default btn-small" onclick='addLunchslot(this)'
 									data-toggle="tooltip" data-placement="top" title="Create Lunchpunch"
 									data-id=${timeslot.timeid}
+									data-role=${timeslot.roleId}
 									data-in=${timeslot.punchintime}
 									data-out=${timeslot.punchouttime}><i class="glyphicon glyphicon-apple"></i></button>
 							</td>` : ''

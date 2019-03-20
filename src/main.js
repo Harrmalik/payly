@@ -90,6 +90,8 @@ let login = (e) => {
 						$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
 						role = e.target.id
 						if (counter % 2 == 1) {
+							console.log('yeerrrrr');
+							$('.dropdown-toggle').prop('disabled', true);
 							checkOut()
 							checkIn()
 						}
@@ -283,6 +285,7 @@ $(document).ready(function () {
 		}).always((result) => {
 			$lunchBreakBtn.attr('disabled', false)
 			$lunchBreakBtn.text('Punch Out')
+			$('.dropdown-toggle').prop('disabled', false);
 		});
 	});
 
@@ -812,6 +815,7 @@ $(document).ready(function () {
 		}).always((result) => {
 			$('#checkIn').attr('disabled', false)
 			$('#checkIn').text('Punch In')
+			$('.dropdown-toggle').prop('disabled', false);
 		});
 	}
 
