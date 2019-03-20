@@ -94,6 +94,7 @@ var login = function login(e) {
             role = e.target.id;
 
             if (counter % 2 == 1) {
+              $('.dropdown-toggle').prop('disabled', true);
               checkOut();
               checkIn();
             }
@@ -270,6 +271,7 @@ $(document).ready(function () {
     }).always(function (result) {
       $lunchBreakBtn.attr('disabled', false);
       $lunchBreakBtn.text('Punch Out');
+      $('.dropdown-toggle').prop('disabled', false);
     });
   });
   $overtimeBtn.on('click', function () {
@@ -651,6 +653,7 @@ $(document).ready(function () {
     }).always(function (result) {
       $('#checkIn').attr('disabled', false);
       $('#checkIn').text('Punch In');
+      $('.dropdown-toggle').prop('disabled', false);
     });
   };
 

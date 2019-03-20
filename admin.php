@@ -68,7 +68,7 @@
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">User Management</a></li>
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Tips Management</a></li>
-                  <!-- <li role="presentation"><a href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Auditing</a></li> -->
+                  <li role="presentation"><a class="hrBtn" href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Auditing</a></li>
                   <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
@@ -647,10 +647,9 @@
                 </div>
 
               <div role="tabpanel" class="tab-pane" id="auditing">
-                  <h2>Get Last Worked Day</h2>
                   <form class="form-horizontal">
                     <div class="form-group">
-                      <label for="employeeID" class="col-sm-2 control-label">User</label>
+                      <label for="employeeID" class="col-sm-2 control-label">Get Last Worked Day</label>
                       <div class="col-sm-4">
                         <input id="auditUsers" type='text' class="form-control" />
                       </div>

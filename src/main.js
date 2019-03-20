@@ -90,7 +90,6 @@ let login = (e) => {
 						$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
 						role = e.target.id
 						if (counter % 2 == 1) {
-							console.log('yeerrrrr');
 							$('.dropdown-toggle').prop('disabled', true);
 							checkOut()
 							checkIn()

@@ -89,13 +89,17 @@ console.log({
 });
 
 // Edit Timesheets tab
-let getTimesheet = (userid) => {
-	empid = $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : userid ? userid : empid;
+let getTimesheet = (userid, endDate = null) => {
+	empid = userid ? userid : $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : empid;
 	if (userid)	{
 		$('#userTimesheet').show()
 		$('#employees').hide()
 		$('#loader').addClass('loader')
 		$('#username').html('Getting Employee');
+	}
+
+	if (endDate) {
+		$('#end').data("DateTimePicker").date(endDate)
 	}
 
 	$.ajax({
@@ -603,7 +607,7 @@ $(document).ready(function(){
 						url: `./php/main.php?module=admin&action=getLastWorkedDay&empid=${employee.employeeid}`
 					}).done((result) => {
 						$('#auditUser').append(`
-							<p>${employee.employeename}: ${moment(result[0].punchintime).weekday(5).format('l')}</p>
+							<p>${employee.employeename}: ${moment(result[0].punchintime).weekday(5).format('l')} <a class="btn btn-default" onclick="getTimesheet(${employee.employeeid}, '${moment(result[0].punchintime).format('MMMM Do YYYY')}')">View Timesheet</a></p>
 						`)
 					})
 

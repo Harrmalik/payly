@@ -71,6 +71,8 @@ $('.tipsBtn').hide();
 $('.payrollBtn').hide();
 $('.hrBtn').hide();
 $('.trainerBtn').hide();
+$('.multiSite').hide();
+if (isPayroll || isTrainer || isDm) $('.multiSite').show();
 if (isPayroll || isLocation) $('.adminsBtn').show();
 if (isLocation) $('.tipsBtn').show();
 if (isPayroll) $('.payrollBtn').show();
@@ -170,6 +172,7 @@ var makeEdit = function makeEdit(row) {
   $('#punchintime').data("DateTimePicker").date(moment.unix(timeslot.in).tz(timeslot.timezone));
   $('#punchouttime').data("DateTimePicker").date(timeslot.out ? moment.unix(timeslot.out).tz(timeslot.timezone) : null);
   $('#punchingout').show();
+  $('#punchRole').val(timeslot.role);
   $('.adding').hide();
   $('#timesheetModal').modal('show');
 };
@@ -221,6 +224,7 @@ var addLunchslot = function addLunchslot(row) {
       punchouttime: moment.unix(timeslot.out).subtract(timezone == 'America/New_York' ? 0 : 1, 'hours').unix(),
       timezone: timezone,
       empSite: empSite,
+      role: timeslot.role,
       type: 0,
       action: 'addTimeslot',
       module: 'admin'
@@ -475,7 +479,7 @@ $(document).ready(function () {
   }).done(function (users) {
     var options = {
       url: function url(query) {
-        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query, "&location=").concat(currentLocation);
+        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query.split('.')[0], "&location=").concat(currentLocation);
       },
       getValue: function getValue(user) {
         return user.employeeid + '. ' + user.employeename;
@@ -494,7 +498,7 @@ $(document).ready(function () {
     },
         options2 = {
       url: function url(query) {
-        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query, "&location=").concat(currentLocation);
+        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query.split('.')[0], "&location=").concat(currentLocation);
       },
       getValue: function getValue(user) {
         return user.employeeid + '. ' + user.employeename;
@@ -530,7 +534,7 @@ $(document).ready(function () {
     },
         options3 = {
       url: function url(query) {
-        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query, "&location=").concat(currentLocation);
+        return "./php/main.php?module=admin&action=searchEmployees&query=".concat(query.split('.')[0], "&location=").concat(currentLocation);
       },
       getValue: function getValue(user) {
         return user.employeeid + '. ' + user.employeename;
@@ -904,7 +908,7 @@ $(document).ready(function () {
       return "<option value=".concat(r.job_code, " ").concat(timeslot.roleId == r.job_code ? 'selected' : '', ">").concat(r.job_desc, "</option>");
     }), "\n\t\t\t\t\t\t\t\t  </select>\n\t\t\t\t\t\t\t</td>") : '', "\n                    <td class=\"").concat(timeslot.insource == 2 ? 'warning' : '', " ").concat(timeslot.overBreak ? 'red' : '', " ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM', " ").concat(timeslot.insource == 2 ? '*' : '', "\n\t\t\t\t\t</td>\n                    <td class=\"").concat(timeslot.outsource == 2 ? 'warning' : '', "  ").concat(timeslot.typeid == 1 ? 'vacation' : '', " ").concat(timeslot.typeid == 2 ? 'pto' : '', "\">\n\t\t\t\t\t\t").concat(timeslot.punchouttime ? moment.unix(timeslot.punchouttime).tz(timeslot.punchouttimezone).format('h:mm a') : '- -', "\n\t\t\t\t\t</td>\n                    <td class=").concat(sum.toFixed(2) > 6 ? 'red' : '', ">\n\t\t\t\t\t\t").concat(sum.toFixed(2), "\n\t\t\t\t\t\t").concat(timeslot.userid == timeslot.lasteditedby && timeslot.typeid == 0 ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>', "\n\t\t\t\t\t</td>\n\t\t\t\t\t").concat((isManager && isLocation || isPayroll) && (admins.find(function (a) {
       return a == myEmpid;
-    }) == myEmpid || empid != myEmpid) ? "<td>\n\t\t\t\t\t\t\t\t<button class=\"btn btn-danger btn-small\" onclick='deleteTimeslot(this)' data-id=".concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete timeslot\"\n\t\t\t\t\t\t\t\t><i class=\"glyphicon glyphicon-remove\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='makeEdit(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Edit timeslot\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "\n\t\t\t\t\t\t\t\t\tdata-timezone=").concat(timeslot.punchintimezone, "><i class=\"glyphicon glyphicon-pencil\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='addLunchslot(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Create Lunchpunch\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "><i class=\"glyphicon glyphicon-apple\"></i></button>\n\t\t\t\t\t\t\t</td>") : '', "\n                </tr>\n            ")).insertBefore($element);
+    }) == myEmpid || empid != myEmpid) ? "<td>\n\t\t\t\t\t\t\t\t<button class=\"btn btn-danger btn-small\" onclick='deleteTimeslot(this)' data-id=".concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete timeslot\"\n\t\t\t\t\t\t\t\t><i class=\"glyphicon glyphicon-remove\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='makeEdit(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Edit timeslot\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "\n\t\t\t\t\t\t\t\t\tdata-role=").concat(timeslot.roleId, "\n\t\t\t\t\t\t\t\t\tdata-timezone=").concat(timeslot.punchintimezone, "><i class=\"glyphicon glyphicon-pencil\"></i></button>\n\t\t\t\t\t\t\t\t<button type=\"button\" class=\"btn btn-default btn-small\" onclick='addLunchslot(this)'\n\t\t\t\t\t\t\t\t\tdata-toggle=\"tooltip\" data-placement=\"top\" title=\"Create Lunchpunch\"\n\t\t\t\t\t\t\t\t\tdata-id=").concat(timeslot.timeid, "\n\t\t\t\t\t\t\t\t\tdata-role=").concat(timeslot.roleId, "\n\t\t\t\t\t\t\t\t\tdata-in=").concat(timeslot.punchintime, "\n\t\t\t\t\t\t\t\t\tdata-out=").concat(timeslot.punchouttime, "><i class=\"glyphicon glyphicon-apple\"></i></button>\n\t\t\t\t\t\t\t</td>") : '', "\n                </tr>\n            ")).insertBefore($element);
     setPopover(timeslot.timeid);
     $('.datetime').datetimepicker();
   }
