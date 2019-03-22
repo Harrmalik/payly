@@ -148,6 +148,12 @@ tr, th {
 	padding: 0;
 }
 
+#laborBreakdown {
+	position: absolute;
+left: 40px;
+top: 400px;
+}
+
 #weather {
 	position: absolute;
 	top: 0;
