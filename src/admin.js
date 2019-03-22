@@ -71,7 +71,7 @@ $('.hrBtn').hide()
 $('.trainerBtn').hide()
 $('.multiSite').hide()
 
-if (isPayroll || isTrainer || isDm) $('.multiSite').show()
+if (isPayroll || isTrainer || isDm || isHr) $('.multiSite').show()
 if (isPayroll || isLocation) $('.adminsBtn').show()
 if (isLocation) $('.tipsBtn').show()
 if (isPayroll) $('.payrollBtn').show()
@@ -89,13 +89,18 @@ console.log({
 });
 
 // Edit Timesheets tab
-let getTimesheet = (userid) => {
-	empid = $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : userid ? userid : empid;
+let getTimesheet = (userid, endDate = null) => {
+	empid = userid ? userid : $('#employeeID').val() ? $('#employeeID').val().split('.')[0] : empid;
 	if (userid)	{
 		$('#userTimesheet').show()
+		$('#laborBreakdown').show()
 		$('#employees').hide()
 		$('#loader').addClass('loader')
 		$('#username').html('Getting Employee');
+	}
+
+	if (endDate) {
+		$('#end').data("DateTimePicker").date(endDate)
 	}
 
 	$.ajax({
@@ -141,7 +146,7 @@ let halfday = () => {
 
 let addTimeslot = () => {
 	let minutes = $('#selectHours').val().split('.')[1] > 0 ? (60 / (100/$('#selectHours').val().split('.')[1])) : 0,
-		punchouttime = minutes > 0 ? moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix() : null;
+		punchouttime = $('#selectHours').val() != "" ? moment($('#punchintime').data("DateTimePicker").date()).add($('#selectHours').val().split('.')[0], 'hours').minutes(Math.round(minutes)).utc().unix() : null;
 
 	if (isLocation) punchouttime = $('#punchouttime').data("DateTimePicker").date() ? moment($('#punchouttime').data("DateTimePicker").date()).utc().unix() : null
 
@@ -603,7 +608,7 @@ $(document).ready(function(){
 						url: `./php/main.php?module=admin&action=getLastWorkedDay&empid=${employee.employeeid}`
 					}).done((result) => {
 						$('#auditUser').append(`
-							<p>${employee.employeename}: ${moment(result[0].punchintime).weekday(5).format('l')}</p>
+							<p>${employee.employeename}: ${moment(result[0].punchintime).weekday(5).format('l')} <a class="btn btn-default" onclick="getTimesheet(${employee.employeeid}, '${moment(result[0].punchintime).format('MMMM Do YYYY')}')">View Timesheet</a></p>
 						`)
 					})
 
@@ -757,7 +762,7 @@ $(document).ready(function(){
 		$('#startDate').html(startDate.format('M/D/YYYY'));
 		$('#endDate').html(endDate.format('M/D/YYYY'));
 
-        days.forEach((day,index) => {
+    days.forEach((day,index) => {
 			if (((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid)) {
 				$timesheet.append(`
 					<tr class="active headers">
@@ -815,23 +820,23 @@ $(document).ready(function(){
 
 		if (deltasonic) {
 			days = [
-				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
-				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
-				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
-				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
-				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
-				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
-				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
+				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday',$('#saturdayBreakdown')],
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday',$('#sundayBreakdown')],
+				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday',$('#mondayBreakdown')],
+				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday',$('#tuesdayBreakdown')],
+				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday',$('#wednesdayBreakdown')],
+				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday',$('#thursdayBreakdown')],
+				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday',$('#fridayBreakdown')],
 			];
 		} else {
 			days = [
-				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday'],
-				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday'],
-				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday'],
-				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday'],
-				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday'],
-				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday'],
-				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday'],
+				[$('#sunday'), $('#sundayHours'), sundayHours, sundayBreaks, 'sunday',$('#sundayBreakdown')],
+				[$('#monday'), $('#mondayHours'), mondayHours, mondayBreaks, 'monday',$('#mondayBreakdown')],
+				[$('#tuesday'), $('#tuesdayHours'), tuesdayHours, tuesdayBreaks, 'tuesday',$('#tuesdayBreakdown')],
+				[$('#wednesday'), $('#wednesdayHours'), wednesdayHours, wednesdayBreaks, 'wednesday',$('#wednesdayBreakdown')],
+				[$('#thursday'), $('#thursdayHours'), thursdayHours, thursdayBreaks, 'thursday',$('#thursdayBreakdown')],
+				[$('#friday'), $('#fridayHours'), fridayHours, fridayBreaks, 'friday',$('#fridayBreakdown')],
+				[$('#saturday'), $('#saturdayHours'), saturdayHours, saturdayBreaks, 'saturday',$('#saturdayBreakdown')],
 			];
 		}
 
@@ -871,6 +876,7 @@ $(document).ready(function(){
 			`)
 		}
 		$('#userTimesheet').show();
+		$('#laborBreakdown').show()
     }
 
 	let buildDashboard = (dashboard) => {
@@ -1025,9 +1031,44 @@ $(document).ready(function(){
 			$('#loader').removeClass('loader')
 			$('#timesheetPage').show()
 			$("#laborBreakdown").empty();
+			$("#laborBreakdown").append(`
+				<div id="saturdayBreakdown">
+					<h3><small>saturday breakdown</small></h3>
+				</div>
+				<div id="sundayBreakdown">
+					<h3><small>sunday breakdown</small></h3>
+				</div>
+				<div id="mondayBreakdown">
+					<h3><small>monday breakdown</small></h3>
+				</div>
+				<div id="tuesdayBreakdown">
+					<h3><small>tuesday breakdown</small></h3>
+				</div>
+				<div id="wednesdayBreakdown">
+					<h3><small>wednesday breakdown</small></h3>
+				</div>
+				<div id="thursdayBreakdown">
+					<h3><small>thursday breakdown</small></h3>
+				</div>
+				<div id="fridayBreakdown">
+					<h3><small>friday breakdown</small></h3>
+				</div>
+				<div id="totalBreakdown">
+					<h3><small>total breakdown</small></h3>
+				</div>
+			`)
       let hours = 0,
 				roles = currentTimeslots.roles,
-				roleHours = {}
+				roleHours = {
+					saturday: {},
+					sunday: {},
+					monday: {},
+					tuesday: {},
+					wednesday: {},
+					thursday: {},
+					friday: {},
+					total: {}
+				}
 
 			$('#punchRole').append('<option value="">N/A</option>')
 			roles.forEach(r => {
@@ -1044,10 +1085,16 @@ $(document).ready(function(){
                 if (timeslot.punchouttime) {
                     hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
-										if (roleHours[timeslot.role]) {
-											roleHours[timeslot.role] += hoursSum
+										if (roleHours.total[timeslot.role]) {
+											roleHours.total[timeslot.role] += hoursSum
 										} else {
-											roleHours[timeslot.role] = hoursSum
+											roleHours.total[timeslot.role] = hoursSum
+										}
+
+										if (roleHours[days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][4]][timeslot.role]) {
+											roleHours[days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][4]][timeslot.role] += hoursSum
+										} else {
+											roleHours[days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][4]][timeslot.role] = hoursSum
 										}
                     days[weekday + 1][2] += hoursSum;
                     if (timeslots[index -1]) {
@@ -1076,8 +1123,11 @@ $(document).ready(function(){
             });
 
 
-			Object.keys(roleHours).map(r => {
-				$("#laborBreakdown").append(`<p><b>${r}</b> ${roleHours[r].toFixed(2)}</p>`);
+						console.log(roleHours);
+			Object.keys(roleHours).forEach(d => {
+				Object.keys(roleHours[d]).forEach(r => {
+					$(`#${d}Breakdown`).append(`<p>${r} ${roleHours[d][r].toFixed(2)}</p>`);
+				})
 			})
 
 			$('.roles').on('change', e => {
@@ -1310,6 +1360,9 @@ $(document).ready(function(){
 	getDateRange(nowStr, false);
 	displayDateRange();
 	getTips();
+	$("form").submit((e) => {
+		e.preventDefault();
+	});
 });
 
 function getTips(){
