@@ -69,7 +69,7 @@
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Tips Management</a></li>
                   <li role="presentation"><a class="hrBtn" href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Auditing</a></li>
-                  <!-- <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <li role="presentation"><a class="adminsBtn" href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
@@ -688,14 +688,15 @@
                   <label for="phone" class="col-sm-2 control-label">Reports</label>
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsDropdown">
-                          <!-- <option value="America/New_York">Daily Hours</option> -->
-                          <!-- <option value="America/Chicago">Weekly Hours</option> -->
+                          <option value="dailyAutosignOutReport">Forgot to sign out</option>
+                          <option value="dailyUnderEightHoursReport">Under 8 Hours</option>
+                          <option value="dailyNoLunchBreakReport">No Lunch Break</option>
+                          <option value="dailyNoSignOutReport">Autosigned out</option>
+                          <option value="totalHours">Weekly Hours</option>
                           <option value="laborReport">Labor Report</option>
+                          <option value="nightHours">Night Hours</option>
+                          <option value="supportHours">Support Hours</option>
                           <option value="minorReport">Minors Report</option>
-                          <!-- <option value="dailyNoSignOutReport">Didn't Punch Out</option>
-                          <option value="America/Chicago">Tips</option>
-                          <option value="America/Chicago">Night Hours</option>
-                          <option value="America/Chicago">Weekend Hours</option> -->
                       </select>
                   </div>
                 </div>
