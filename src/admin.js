@@ -168,9 +168,7 @@ let addTimeslot = () => {
 		ga('send', 'event', 'addTimeslot', empid, 'type', $('#type').val())
 		iziToast.success({
 			title: 'Success',
-			message: `Timeslot successfully created.`,
-
-
+			message: `Timeslot successfully created.`
 		});
 		getTimesheet();
 	});
@@ -516,8 +514,8 @@ $(document).ready(function(){
     let startDate;
     let endDate;
     let timeslots,
-	days,
-	totalTime = 0,
+		days,
+		totalTime = 0,
     breaks = 0,
     saturdayHours = 0, saturdayBreaks = 0,
     sundayHours = 0, sundayBreaks = 0,
@@ -718,12 +716,13 @@ $(document).ready(function(){
 
 	$('#runReport').on('click', () => {
 		$.ajax({
-			url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
-		}).done((user) => {
-			console.log(user);
-		});
+	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
+	  }).done((result) => {
+	    iziToast.success({
+	      message: result.message,
+	    });
+	  });
 	})
-
 
     // Functions
     buildTable = () => {
