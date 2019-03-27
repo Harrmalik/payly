@@ -848,4 +848,4 @@
 </body>
 
 
-<script src="./src/admin.js"></script>
+<script src="./dist/admin.js"></script>
