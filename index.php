@@ -113,13 +113,14 @@
             </section>
 
             <section id="app">
+              <div id="roleButtons">
+                <i class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#roleButtons').hide()"></i>
+                <h2>Select a Role</h2>
+
+              </div>
                 <section id="main-content">
                     <section class="mainBtns">
-                        <div id="roleButtons">
-                          <i class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#roleButtons').hide()"></i>
-                          <h2>Select a Role</h2>
 
-                        </div>
 
                         <button type="button" class="btn btn-primary btn-lg isField" onclick="$('#roleButtons').show()"><h3>Switch Roles</h3></button>
                         <button type="button" class="btn btn-primary btn-lg" id="checkIn"><h3>Punch In</h3></button>
