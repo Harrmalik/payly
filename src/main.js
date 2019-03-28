@@ -56,6 +56,8 @@ let empty = () => {
 
 
 let login = (e) => {
+	$('#login').attr('disabled', true)
+	$('#login').text('Loading...')
 	if (e)
 		e.preventDefault();
 	empid = empid ? empid : $('#inputID').val().replace(/[&<>]/g, '');
@@ -80,21 +82,24 @@ let login = (e) => {
 					// TODO: Log person into their last role
 					role = user.roles[0].job_code
 					tippedRole = user.roles[0].istipped == 1 ? true : false
-					$('#primaryJob').html(`${user.roles[0].job_desc} <span class="caret"></span>`)
+					$('#primaryJob').html(`${user.roles[0].job_desc}`)
 					user.roles.forEach((role) => {
-						$('#jobList').append(`
-							<li><a id="${role.job_code}">${role.job_desc}</a></li>
+						$('#roleButtons').append(`
+							<div class="role-button" id="${role.job_code}">${role.job_desc}</div>
 						`)
 					})
-					$('#jobList a').on('click', (e) => {
-						$('#primaryJob').html(`${e.target.text} <span class="caret"></span>`)
+					$('#roleButtons .role-button').on('click', (e) => {
+						$('#primaryJob').html(`${$(e.target).text()}`)
 						role = e.target.id
+
 						if (counter % 2 == 1) {
 							$('.dropdown-toggle').prop('disabled', true);
 							checkOut()
 							checkIn()
+						} else {
+							checkIn()
 						}
-
+						$('#roleButtons').hide()
 					})
 				}
 				employeename = user.empname
@@ -151,6 +156,8 @@ let login = (e) => {
 				$('#unknownusermodal').modal('toggle')
 			}
 
+			$('#login').attr('disabled', false)
+			$('#login').text('Log In')
 			window.scrollTo(0,0);
 			$('body').css("overflow", "auto")
 		});
@@ -694,12 +701,16 @@ $(document).ready(function () {
 				if (!lastCheckOut) {
 					role = lastPunchIn.roleId
 					tippedRole = lastPunchIn.istipped == 1 ? true : false
-					$('#primaryJob').html(`${lastPunchIn.role} <span class="caret"></span>`)
+					$('#primaryJob').html(`${lastPunchIn.role}`)
 				}
 
 				toggleButtons();
 			} else {
 				toggleButtons();
+			}
+
+			if (counter % 2 == 0 && isField) {
+				$('#roleButtons').show()
 			}
 		});
 	};

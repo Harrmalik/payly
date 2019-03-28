@@ -41,9 +41,7 @@
               <ul class="nav navbar-nav navbar-right">
                   <p class="navbar-text" id="name"></p>
                   <li class="dropdown">
-                   <a id="primaryJob" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></a>
-                   <ul class="dropdown-menu" id="jobList">
-                   </ul>
+                   <a id="primaryJob"></a>
                  </li>
                   <li><a href="./" role="button" onclick="localStorage.setItem('empid', '');">Sign Out</a></li>
               </ul>
@@ -117,12 +115,21 @@
             <section id="app">
                 <section id="main-content">
                     <section class="mainBtns">
+                        <div id="roleButtons">
+                          <i class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#roleButtons').hide()"></i>
+                          <h2>Select a Role</h2>
+
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-lg isField" onclick="$('#roleButtons').show()"><h3>Switch Roles</h3></button>
                         <button type="button" class="btn btn-primary btn-lg" id="checkIn"><h3>Punch In</h3></button>
                         <button type="button" class="btn btn-primary btn-lg isField" id="lunchBreak"><h3>Lunch Break</h3></button>
                         <button type="button" class="btn btn-primary btn-lg" id="checkOut">
                             <h3>Punch out</h3>
                             <p>Total Hours will be: <span id="overallHours"></span></p>
                         </button>
+
+
                         <!-- <button type="button" class="btn btn-default btn-lg" id="timesheet">View Timesheet</button> -->
                         <?php if ($_SERVER['SERVER_ADDR'] != '172.18.100.7') { ?>
                             <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
