@@ -533,7 +533,7 @@ $(document).ready(function(){
 
 	// Autocomplete Searchboxes
 	$.ajax({
-		url: `./php/main.php?module=admin&action=${isLocation ? 'getEmployeesByLocation' : 'getEmployees'}`
+		url: `./php/main.php?module=admin&action=getEmployeesByLocation`
 	}).done((users) => {
 		let options = {
 			url: function(query) {
