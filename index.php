@@ -237,6 +237,7 @@
                     <form id="frmtips">
                     <div id="todaystips">
                         <div>
+                            <input type="hidden" name="tipid" value=""/>
                             <input type="hidden" name="employeeid" id="employeeid"/>
                             <input type="hidden" id="site" value="<?php echo $site;?>"/>
                             <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>
@@ -253,7 +254,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label for="tippedHours" class="col-sm-3"><b>Tipped hours</b></label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" disabled name="tippedHours" style="width:100px;"/>
+                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="tippedHours" style="width:100px;"/>
                                         </div>
                                     </div>
                                     <br/><br/>
@@ -261,7 +262,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label for="nonTippedHours" class="col-sm-3"><b>Non Tipped hours</b></label>
-                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" disabled name="nonTippedHours" style="width:100px;"/>
+                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="nonTippedHours" style="width:100px;"/>
                                         </div>
                                     </div>
                                     <br/><br/>
@@ -269,7 +270,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label for="nonTippedHours" class="col-sm-3"><b>Total Hours</b></label>
-                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" disabled name="totalDayHours" style="width:100px;"/>
+                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="totalDayHours" style="width:100px;"/>
                                         </div>
                                     </div>
                                     <br/><br/>

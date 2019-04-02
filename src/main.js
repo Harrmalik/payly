@@ -1002,6 +1002,7 @@ function setQ1(val){
 
 function saveTips(){
 	if(!$("#btnCommand").hasClass("disabled")){
+		$('.disabled').attr('disabled', false);
 		var formData = $("#frmtips").serialize() + "&command=savetip";
 		formData += "&date=" + $('#tipDate').data("DateTimePicker").date().format("M/D/Y");
 
@@ -1013,7 +1014,7 @@ function saveTips(){
 		var signatureData = encodeURIComponent(glbSignaturePad.toDataURL('image/png'));
 		formData += "&signatureData=" + signatureData;
 
-		if(!glbSignaturePad.isEmpty()){
+		if(!glbSignaturePad.isEmpty() || $('[name=tipid]').val()){
 			$("#btnCommand").addClass("disabled");
 			$.ajax({
 				url: "./php/call.php",
@@ -1036,7 +1037,6 @@ function saveTips(){
 					//$("#msg-status").html("Saved");
 					showMsg("bg-success", "Saved");
 
-
 					setTimeout(function(){
 		    			//resetPage();
 		    			window.close();
@@ -1051,6 +1051,8 @@ function saveTips(){
 					//$("#msg-status").html("An error has occurred while saving the tips' data.");
 					$("#btnCommand").removeClass("disabled");
 				}
+
+				$('.disabled').attr('disabled', true);
 			});
 		} else {
 			//$("#msg-status").removeClass("bg-success");
@@ -1128,7 +1130,7 @@ function lookupHours(){
 			detail = false,
 			wash = false;
 
-		response.forEach((timeslot) => {
+		response.timeslots.forEach((timeslot) => {
 			if (timeslot.istipped) {
 				tippedHours += timeslot.totalHours
 			} else {
@@ -1159,6 +1161,13 @@ function lookupHours(){
 
 		$("#tippedHours_display").html(tippedHours.toFixed(2));
 		$("#nonTippedHours_display").html(nonTippedHours.toFixed(2));
+
+
+		if (response.tips[0]) {
+			$('[name=washTTips]').val(response.tips[0].washTTips)
+			$('[name=detailTTips]').val(response.tips[0].detailTTips)
+			$('[name=tipid]').val(response.tips[0].tipid)
+		}
 	});
 }
 
