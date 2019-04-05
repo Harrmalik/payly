@@ -69,7 +69,7 @@
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Tips Management</a></li>
                   <li role="presentation"><a class="hrBtn" href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Auditing</a></li>
-                  <li role="presentation"><a class="adminsBtn" href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
+                  <!-- <li role="presentation"><a class="adminsBtn" href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
@@ -138,11 +138,79 @@
 
                             <article style="width:70%;float:left;padding: 1em;height:85vh;overflow:scroll">
                                 <h2 class="table-name"> Working Now <span id="workingCount" class="badge"></span> <small>Last Updated: <span id="lastUpdate"></span></small></h2>
-                                <div class="table-card wash-cards" id="boothCard">
-                                    <h2 class="table-name"> Booth <span id="boothCount" class="badge"></span></h2>
-                                    <table class="table table-condensed table-hover table-striped">
-                                      <thead>
-                                          <tr>
+
+                                <div class="table-card wash-cards">
+                                  <div class="table-card wash-cards" id="boothCard">
+                                      <h2 class="table-name"> Booth <span id="boothCount" class="badge"></span></h2>
+                                      <table class="table table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Start Time</th>
+                                                <th>Name</th>
+                                                <th>Day Hrs</th>
+                                                <th>Role Hrs</th>
+                                                <th>Break</th>
+                                                <th>Minor</th>
+                                                <th>Role</th>
+                                                <th>Wk Hrs</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="boothTable">
+
+                                        </tbody>
+                                      </table>
+                                  </div>
+
+                                  <div class="table-card wash-cards" id="powerCard">
+                                      <h2 class="table-name"> Power Wash <span id="powerCount" class="badge"></span></h2>
+                                      <table class="table table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Start Time</th>
+                                                <th>Name</th>
+                                                <th>Day Hrs</th>
+                                                <th>Role Hrs</th>
+                                                <th>Break</th>
+                                                <th>Minor</th>
+                                                <th>Role</th>
+                                                <th>Wk Hrs</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="powerTable">
+
+                                        </tbody>
+                                      </table>
+                                  </div>
+
+                                  <div class="table-card wash-cards" id="washCard">
+                                      <h2 class="table-name"> Wash Exit <span id="washExitCount" class="badge"></span></h2>
+                                      <table class="table table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Start Time</th>
+                                                <th>Name</th>
+                                                <th>Day Hrs</th>
+                                                <th>Role Hrs</th>
+                                                <th>Break</th>
+                                                <th>Minor</th>
+                                                <th>Role</th>
+                                                <th>Wk Hrs</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="washTable">
+
+                                        </tbody>
+                                      </table>
+                                  </div>
+
+                                  <div class="table-card" id="managementCard">
+                                      <h2 class="table-name"> Management <span id="managersCount" class="badge"></span></h2>
+                                      <table class="table table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
                                               <th>Start Time</th>
                                               <th>Name</th>
                                               <th>Day Hrs</th>
@@ -152,56 +220,13 @@
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
                                               <th></th>
-                                          </tr>
-                                      </thead>
-                                      <tbody id="boothTable">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="managementTable">
 
-                                      </tbody>
-                                    </table>
-                                </div>
-
-                                <div class="table-card wash-cards" id="powerCard">
-                                    <h2 class="table-name"> Power Wash <span id="powerCount" class="badge"></span></h2>
-                                    <table class="table table-condensed table-hover table-striped">
-                                      <thead>
-                                          <tr>
-                                              <th>Start Time</th>
-                                              <th>Name</th>
-                                              <th>Day Hrs</th>
-                                              <th>Role Hrs</th>
-                                              <th>Break</th>
-                                              <th>Minor</th>
-                                              <th>Role</th>
-                                              <th>Wk Hrs</th>
-                                              <th></th>
-                                          </tr>
-                                      </thead>
-                                      <tbody id="powerTable">
-
-                                      </tbody>
-                                    </table>
-                                </div>
-
-                                <div class="table-card wash-cards" id="washCard">
-                                    <h2 class="table-name"> Wash Exit <span id="washExitCount" class="badge"></span></h2>
-                                    <table class="table table-condensed table-hover table-striped">
-                                      <thead>
-                                          <tr>
-                                              <th>Start Time</th>
-                                              <th>Name</th>
-                                              <th>Day Hrs</th>
-                                              <th>Role Hrs</th>
-                                              <th>Break</th>
-                                              <th>Minor</th>
-                                              <th>Role</th>
-                                              <th>Wk Hrs</th>
-                                              <th></th>
-                                          </tr>
-                                      </thead>
-                                      <tbody id="washTable">
-
-                                      </tbody>
-                                    </table>
+                                        </tbody>
+                                      </table>
+                                  </div>
                                 </div>
 
                                 <div class="table-card" id="detailCard">
@@ -281,7 +306,7 @@
                                               <th>Role Hrs</th>
                                               <th>Break</th>
                                               <th>Minor</th>
-                                              <th>Role</th
+                                              <th>Role</th>
                                               <th>Wk Hrs</th>
                                               <th></th>
                                           </tr>
@@ -292,34 +317,20 @@
                                     </table>
                                 </div>
 
-                                <div class="table-card" id="managementCard">
-                                    <h2 class="table-name"> Management <span id="managersCount" class="badge"></span></h2>
-                                    <table class="table table-condensed table-hover table-striped">
-                                      <thead>
-                                          <tr>
-                                              <th>Start Time</th>
-                                              <th>Today Hrs</th>
-                                              <th>Name</th>
-                                              <th>Break</th>
-                                              <th>Role</th>
-                                              <th></th>
-                                          </tr>
-                                      </thead>
-                                      <tbody id="managementTable">
-
-                                      </tbody>
-                                    </table>
-                                </div>
-
                                 <div class="table-card" id="otherCard">
                                     <h2 class="table-name"> Other <span id="otherCount" class="badge"></span></h2>
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
-                                              <th>Hrs</th>
-                                              <th>Name</th>
-                                              <th>Break</th>
-                                              <th></th>
+                                            <th>Start Time</th>
+                                            <th>Name</th>
+                                            <th>Day Hrs</th>
+                                            <th>Role Hrs</th>
+                                            <th>Break</th>
+                                            <th>Minor</th>
+                                            <th>Role</th>
+                                            <th>Wk Hrs</th>
+                                            <th></th>
                                           </tr>
                                       </thead>
                                       <tbody id="otherTable">
@@ -703,11 +714,16 @@
 
                 <div class="btn btn-primary" id="runReport">Run Report</div>
 
+                <div id="reportData">
+
+                </div>
+              </div>
+
               <div role="tabpanel" class="tab-pane" id="news">
 
               </div>
-
             </div> <!-- /tab content -->
+
           </div><!-- /panel body -->
 
 

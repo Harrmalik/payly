@@ -150,8 +150,8 @@ tr, th {
 
 #laborBreakdown {
 	position: absolute;
-left: 40px;
-top: 400px;
+	left: 40px;
+	top: 400px;
 }
 
 #weather {
@@ -464,4 +464,19 @@ div#tipContainer_wrapper div.dt-buttons{
 
 .modal-backdrop {
 	display: none !important
+}
+
+
+@media print
+{
+
+}
+@media print{
+	* {
+		font-size:xx-small;
+	}
+
+	.no-print, .no-print * {
+			display: none !important;
+	}
 }
