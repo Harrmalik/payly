@@ -510,6 +510,34 @@ $(document).ready(function () {
 				`)
 			}
 
+			$("#laborBreakdown").empty();
+			$("#laborBreakdown").append(`
+				<div id="saturdayBreakdown">
+					<h3><small>saturday breakdown</small></h3>
+				</div>
+				<div id="sundayBreakdown">
+					<h3><small>sunday breakdown</small></h3>
+				</div>
+				<div id="mondayBreakdown">
+					<h3><small>monday breakdown</small></h3>
+				</div>
+				<div id="tuesdayBreakdown">
+					<h3><small>tuesday breakdown</small></h3>
+				</div>
+				<div id="wednesdayBreakdown">
+					<h3><small>wednesday breakdown</small></h3>
+				</div>
+				<div id="thursdayBreakdown">
+					<h3><small>thursday breakdown</small></h3>
+				</div>
+				<div id="fridayBreakdown">
+					<h3><small>friday breakdown</small></h3>
+				</div>
+				<div id="totalBreakdown">
+					<h3><small>total breakdown</small></h3>
+				</div>
+			`)
+
 		}
 
 		function makeTimesheet() {
@@ -520,10 +548,10 @@ $(document).ready(function () {
 					startDate : $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : 0).hour(0).minute(0).format('YYYY-MM-DD'),
 					endDate : $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD')
 				}
-			}).done((clockedHours) => {
-				timeslots = clockedHours;
+			}).done((timeslots) => {
 				let hours = 0;
 				let totalTime = 0;
+
 				timeslots.forEach((timeslot, index) => {
 					let hoursSum     = 0,
 					punchintimezone  = timeslot.punchintimezone ? timeslot.punchintimezone : moment.tz.guess(),
@@ -536,6 +564,7 @@ $(document).ready(function () {
 					if (timeslot.punchouttime) {
 						hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
 						totalTime += hoursSum;
+
 						days[weekday + 1][2] += hoursSum;
 						if (timeslots[index - 1]) {
 							let previousWeekday = moment.unix(timeslots[index - 1].created).weekday() === 6 ? -1 : moment.unix(timeslots[index - 1].created).weekday();
@@ -558,9 +587,51 @@ $(document).ready(function () {
 						addRow($htmlDay, timeslot, hoursSum)
 					}
 
+
 					$htmlhours.html(`<b>${days[weekday + 1][2].toFixed(2)}</b>`);
 
 				});
+
+				$.ajax({
+					url : `./php/main.php?module=kissklock&action=getTips`,
+					data : {
+						id: empid,
+						startDate : $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : 0).hour(0).minute(0).format('YYYY-MM-DD'),
+						endDate : $('#end').data("DateTimePicker").date().hour(23).minute(59).format('YYYY-MM-DD')
+					}
+				}).done((tips) => {
+					tips.forEach((tip, index) => {
+						let washTips         = tip.washTTips ? tip.washTTips : 0,
+								detailTips       = tip.detailTips ? tip.detailTips : 0,
+								weekday          = moment(tip.timestamp).weekday() === 6 ? -1 : moment(tip.timestamp).weekday(),
+								$htmlDay         = days[deltasonic ? weekday + 1 : moment(tip.timestamp).weekday()][0]
+
+
+						if (washTips) {
+							$(`
+									<tr class="timeslots">
+											<td></td>
+											<td>Wash tips $${washTips}</td>
+											<td></td>
+											<td></td>
+											<td></td>
+									</tr>
+							`).insertBefore($htmlDay);
+						}
+
+						if (detailTips) {
+							$(`
+									<tr class="timeslots">
+											<td></td>
+											<td>Detail tips $${detailTips}</td>
+											<td></td>
+											<td></td>
+											<td></td>
+									</tr>
+							`).insertBefore($htmlDay);
+						}
+					})
+				})
 				$("td#totalHours.info").html('<b>' + totalTime.toFixed(2) + '</b>');
 			});
 

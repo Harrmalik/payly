@@ -368,22 +368,24 @@
                     </div>
                 </div>
             </form>
-            <h2 id="username"></h2>
+            <h3 id="username"></h3>
             <!-- <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3> -->
 
-            <table class="table">
+            <table class="table table-condensed">
                 <tbody id="timesheetTable">
 
                 </tbody>
             </table>
 
-        <hr>
-        <p>Yellow Background: Used phone system</p>
-        <p>Pink Background: Vacation Time</p>
-        <p>Green Background: Paid time off</p>
-        <p>Red Time: Break under 30 minutes</p>
-        <p>Red Hours: Work period over 6 Hours</p>
-        <p>*: Called using personal phone</p>
+        <div class="no-print">
+          <hr>
+          <p>Yellow Background: Used phone system</p>
+          <p>Pink Background: Vacation Time</p>
+          <p>Green Background: Paid time off</p>
+          <p>Red Time: Break under 30 minutes</p>
+          <p>Red Hours: Work period over 6 Hours</p>
+          <p>*: Called using personal phone</p>
+        </div>
 
         </section>
         </div>

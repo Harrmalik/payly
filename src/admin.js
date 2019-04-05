@@ -108,12 +108,12 @@ let getTimesheet = (userid, endDate = null) => {
 	}).done((user) => {
 		if (user.empname) {
 			// TODO: show application
-			$('#username').html(user.empname);
-			empSite = user.site
-			timezone = user.timezone,
-			deltasonic = user.deltasonic
-			buildTable();
-			makeTimesheet();
+			// $('#username').html(user.empname);
+			// empSite = user.site
+			// timezone = user.timezone,
+			// deltasonic = user.deltasonic
+			// buildTable();
+			// makeTimesheet();
 		} else {
 			iziToast.warning({
 				title: 'Couldn\'t find user',
@@ -718,9 +718,36 @@ $(document).ready(function(){
 		$.ajax({
 	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
 	  }).done((result) => {
-	    iziToast.success({
-	      message: result.message,
-	    });
+			$('#reportData').empty()
+			console.log(result);
+			switch ($('#reportsDropdown').val()) {
+		    case "totalHours":
+		    case "supportHours":
+		    case "nightHours":
+		      result.forEach(e => {
+				    $('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.totalhours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+					})
+		      break;
+		    case "dailyUnderEightHoursReport":
+		    case "dailyNoLunchBreakReport":
+		    case "dailyNoSignOutReport":
+		    case "dailyAutosignOutReport":
+					result.forEach(e => {
+						$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+					})
+		      break;
+		    case "minorReport":
+					result.forEach(e => {
+						$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+					})
+		      break;
+		      case "laborReport":
+						result.forEach(e => {
+							$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+						})
+		        break;
+		      default:
+		  }
 	  });
 	})
 
@@ -795,6 +822,7 @@ $(document).ready(function(){
 				$timesheet.append(`
 					<tr class="active headers">
 						<th style="width: 25%;">Date</th>
+						<th style="width: 15%;">Role</th>
 						<th style="width: 25%;">Check In</th>
 						<th style="width: 25%;">Check Out</th>
 						<th style="width: 25%;">Hours</th>
@@ -802,12 +830,14 @@ $(document).ready(function(){
 
 					<tr id="${day[4]}" class="timeslots">
 						<td>${$('#end').data("DateTimePicker").date().weekday(deltasonic ? index-1 : index).format('dddd, MMM Do')}</td>
+						<td></td>
 						<td>- -</td>
 						<td>- -</td>
 						<td>0</td>
 					</tr>
 
 					<tr class="timeslots">
+						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
@@ -864,9 +894,11 @@ $(document).ready(function(){
 					<th></th>
 					<th></th>
 					<th></th>
+					<th></th>
 					<th>Total Hours</th>
 				</tr>
 				<tr>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -928,19 +960,13 @@ $(document).ready(function(){
 						if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
 							managers++
 							wash++
-							$('#managementTable').append(`
-								<tr>
-									<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-									<td>${todayHours}</td>
-									<td>${e.name}</td>
-									<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
-									<td>${e.role}</td>
-									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
-								</tr>
-							`)
+							addDashboardRow(e, '#managementTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/c-store/g) || e.profitcenter == 4) {
 							store++
 							addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime)
+						} else if (r.match(/detail|quality|paint/g) || e.profitcenter == 2) {
+							detail++
+							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/power|program/g)) {
 							power++
 							wash++
@@ -953,9 +979,6 @@ $(document).ready(function(){
 							washExit++
 							wash++
 							addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/detail|quality|paint/g) || e.profitcenter == 2) {
-							detail++
-							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/coffee|food/g) || e.profitcenter == 5) {
 							food++
 							addDashboardRow(e, '#foodTable', todayHours, totalHours, hoursWorked, breakTime)
@@ -964,14 +987,7 @@ $(document).ready(function(){
 							addDashboardRow(e, '#lubeTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else {
 							other++
-							$('#otherTable').append(`
-								<tr>
-									<td>${todayHours}</td>
-									<td>${e.name}</td>
-									<td>${e.role}</td>
-									<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
-								</tr>
-							`)
+							addDashboardRow(e, '#otherTable', todayHours, totalHours, hoursWorked, breakTime)
 						}
 					}
 				} else {
@@ -1081,7 +1097,9 @@ $(document).ready(function(){
                     $htmlhours = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][1],
                     breakSum = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][3];
 
-                if (timeslot.punchouttime) {
+								timeslot.punchouttime = timeslot.punchouttime ? timeslot.punchouttime : moment.unix(1553981280).format('l') == moment().format('l') ? moment().tz(timeslot.punchintimezone).unix() : null
+
+								if (timeslot.punchouttime) {
                     hoursSum = moment.unix(timeslot.punchouttime).diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
                     totalTime += hoursSum;
 										if (roleHours.total[timeslot.role]) {
@@ -1122,7 +1140,6 @@ $(document).ready(function(){
             });
 
 
-						console.log(roleHours);
 			Object.keys(roleHours).forEach(d => {
 				Object.keys(roleHours[d]).forEach(r => {
 					$(`#${d}Breakdown`).append(`<p>${r} ${roleHours[d][r].toFixed(2)}</p>`);
@@ -1169,7 +1186,9 @@ $(document).ready(function(){
 										return `<option value=${r.job_code} ${timeslot.roleId == r.job_code ? 'selected' : ''}>${r.job_desc}</option>`
 									})}
 								  </select>
-							</td>` : ''
+							</td>` : `
+							<td>${timeslot.role}</td>
+							`
 					}
                     <td class="${timeslot.insource == 2 ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">
 						${timeslot.punchintime ? moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}
