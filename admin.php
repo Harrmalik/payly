@@ -4,9 +4,9 @@
     $core->inc('users');
     USER::authPage();
 
-    $isManager      = !USER::inGroup(73) ? 'true' : 'false';
-    $isBasicManager = !USER::inGroup(11) || USER::inGroup(12) || USER::inGroup(13) || USER::inGroup(14) || USER::inGroup(15) ? 'true' : 'false';
-    $isPayroll      = !USER::inGroup(74) ? 'true' : 'false';
+    $isManager      = USER::inGroup(73) ? 'true' : 'false';
+    $isBasicManager = USER::inGroup(11) || USER::inGroup(12) || USER::inGroup(13) || USER::inGroup(14) || USER::inGroup(15) ? 'true' : 'false';
+    $isPayroll      = USER::inGroup(74) ? 'true' : 'false';
     $isTrainer      = USER::inGroup(21) ? 'true' : 'false';
     $isHr           = USER::inGroup(57) ? 'true' : 'false';
     $isDm           = USER::inGroup(65) ? 'true' : 'false';
