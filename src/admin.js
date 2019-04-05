@@ -108,12 +108,12 @@ let getTimesheet = (userid, endDate = null) => {
 	}).done((user) => {
 		if (user.empname) {
 			// TODO: show application
-			// $('#username').html(user.empname);
-			// empSite = user.site
-			// timezone = user.timezone,
-			// deltasonic = user.deltasonic
-			// buildTable();
-			// makeTimesheet();
+			$('#username').html(user.empname);
+			empSite = user.site
+			timezone = user.timezone,
+			deltasonic = user.deltasonic
+			buildTable();
+			makeTimesheet();
 		} else {
 			iziToast.warning({
 				title: 'Couldn\'t find user',
