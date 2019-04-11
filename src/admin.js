@@ -114,12 +114,13 @@ let getTimesheet = (userid, endDate = null) => {
 			deltasonic = user.deltasonic
 			buildTable();
 			makeTimesheet();
+			if ($( "#reports" ).is(":visible")) {
+				$( "#reportData" ).hide()
+			}
 		} else {
 			iziToast.warning({
 				title: 'Couldn\'t find user',
 				message: `${empid} is not a valid employee id, Please try again!.`,
-
-
 			});
 		}
 	});
@@ -505,8 +506,13 @@ $('#saveSupervisor').on('click', () => {
 
 function back() {
 	$('#userTimesheet').hide()
+	$('#laborBreakdown').hide()
 	$('#employees').show()
 	$('#timesheetPage').hide()
+
+	if ($( "#reports" ).is(":visible")) {
+		$( "#reportData" ).show()
+	}
 }
 
 $(document).ready(function(){
@@ -724,26 +730,26 @@ $(document).ready(function(){
 		    case "totalHours":
 		    case "supportHours":
 		    case "nightHours":
+				case "dailyUnderEightHoursReport":
+				case "dailyNoLunchBreakReport":
 		      result.forEach(e => {
-				    $('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.totalhours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+				    $('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
 					})
 		      break;
-		    case "dailyUnderEightHoursReport":
-		    case "dailyNoLunchBreakReport":
 		    case "dailyNoSignOutReport":
 		    case "dailyAutosignOutReport":
 					result.forEach(e => {
-						$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+						$('#reportData').append(`<p>${e.userid}, ${e.name} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
 					})
 		      break;
 		    case "minorReport":
 					result.forEach(e => {
-						$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+						$('#reportData').append(`<p>${e.employeename} - ${moment(e.punchintime).format('h:mm a')} - ${moment(e.punchouttime).format('h:mm a')} :<b>TOTAL HOURS</b> -> ${e.totalhours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
 					})
 		      break;
 		      case "laborReport":
 						result.forEach(e => {
-							$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="btn btn-default" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+							$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
 						})
 		        break;
 		      default:
@@ -785,8 +791,8 @@ $(document).ready(function(){
 
 		endDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? 5 : 6).hour(23).minute(59);
 		startDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : 0).hour(0).minute(0);
-		$('#startDate').html(startDate.format('M/D/YYYY'));
-		$('#endDate').html(endDate.format('M/D/YYYY'));
+		$('#weekBeginning').html(startDate.format('M/D/YYYY'));
+		$('#weekEnding').html(endDate.format('M/D/YYYY'));
 
     days.forEach((day,index) => {
 			if (((isManager && isLocation) || isPayroll) && (admins.find(a => a == myEmpid) == myEmpid || empid != myEmpid)) {
@@ -964,7 +970,7 @@ $(document).ready(function(){
 						} else if (r.match(/c-store/g) || e.profitcenter == 4) {
 							store++
 							addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime)
-						} else if (r.match(/detail|quality|paint/g) || e.profitcenter == 2) {
+						} else if (!r.match(/detail u/g) && (r.match(/detail|quality|paint/g) || e.profitcenter == 2)) {
 							detail++
 							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/power|program/g)) {
