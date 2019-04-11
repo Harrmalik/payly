@@ -69,7 +69,7 @@
                   <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Supervisor Management</a></li>
                   <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Tips Management</a></li>
                   <li role="presentation"><a class="hrBtn" href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Auditing</a></li>
-                  <!-- <li role="presentation"><a class="adminsBtn" href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li> -->
+                  <li role="presentation"><a class="adminsBtn" href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
@@ -703,10 +703,10 @@
                           <option value="dailyUnderEightHoursReport">Under 8 Hours</option>
                           <option value="dailyNoLunchBreakReport">No Lunch Break</option>
                           <option value="dailyNoSignOutReport">Autosigned out</option>
-                          <option value="totalHours">Weekly Hours</option>
+                          <!-- <option value="totalHours">Weekly Hours</option> -->
                           <option value="laborReport">Labor Report</option>
-                          <option value="nightHours">Night Hours</option>
-                          <option value="supportHours">Support Hours</option>
+                          <!-- <option value="nightHours">Night Hours</option> -->
+                          <!-- <option value="supportHours">Support Hours</option> -->
                           <option value="minorReport">Minors Report</option>
                       </select>
                   </div>
@@ -714,7 +714,7 @@
 
                 <div class="btn btn-primary" id="runReport">Run Report</div>
 
-                <div id="reportData">
+                <div id="reportData" style="margin: 2em 0">
 
                 </div>
               </div>
@@ -764,7 +764,7 @@
                           </div>
                       </form>
                       <h2 id="username"></h2>
-                      <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3>
+                      <h3>Timesheet for Week of <span id="weekBeginning"></span> - <span id="weekEnding"></span></h3>
                       <div class="btn-group" role="group">
                           <button type="button" class="btn btn-primary" id="addTimeslot">Add Time</button>
                       </div>
