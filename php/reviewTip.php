@@ -7,7 +7,7 @@ $password = USER::getPassword();
 
 $_REQUEST['userid'] = USER::getUserId();
 
-$url = CHECKINCLOCK_SERVER . "/TipsServer/reviewTip";
+$url = CHECKINCLOCK_SERVER . "/reviewTip";
 $response = doPostRequestWithData($url, $_REQUEST, $username, $password);
 
 header('content-type: application/json');

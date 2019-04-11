@@ -80,7 +80,7 @@ while($dayCounter <= 6){
 
 // get Document list
 $data = array("dateFrom" => $dateStartDB, "dateTo" => $dateEndDB, "siteFilter" => (int)$GLOBALS['siteFilter']);
-$url = CHECKINCLOCK_SERVER . "/TipsServer/getDailyReport";
+$url = CHECKINCLOCK_SERVER . "/getDailyReport";
 $response = doPostRequestWithData($url, $data, EUSER, EUSERPASSWORD);
 $response = json_decode($response->raw_body, true);
 
