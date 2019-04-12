@@ -407,6 +407,18 @@
               </div>
 
               <div role="tabpanel" class="tab-pane" id="addusers">
+                <div class="form-group" style="clear:both; margin:1em 0;">
+                    <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">Start Time</label>
+                    <div class="col-sm-4">
+                        <div class='input-group date' id='startTime'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <br/><br/><br/>
                 <div id='addinguser' class="btn btn-primary">Add Another User</div>
 
                 <br><br>
