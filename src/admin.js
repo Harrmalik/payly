@@ -47,6 +47,10 @@ let empid,
 		format: 'MMMM Do YYYY',
 		daysOfWeekDisabled: [1,2,3,4,6]
 	});
+	$('#startTime').datetimepicker({
+		defaultDate: moment().hour(8).startOf('hour'),
+		format: 'MMMM Do h:mm a',
+	});
 	$('#startDate').datetimepicker({
 		defaultDate: moment().day() == 6 ? moment().day() : moment().weekday(-1),
 		format: 'MMMM Do YYYY',
@@ -362,6 +366,21 @@ $('#savingMassUsers').on('click', () => {
 				method: 'post',
 				data
 			}).done((data) => {
+				$.ajax({
+					url: `./php/main.php`,
+					method: 'post',
+					data: {
+						userid: u.empid,
+						punchintime: moment($('#startTime').data("DateTimePicker").date()).utc().unix(),
+						punchouttime: null,
+						timezone: u.timezone,
+						empSite: u.location,
+						role: 9991,
+						type: 1,
+						action: 'addTimeslot',
+						module: 'admin'
+					}
+				})
 				iziToast.success({
 					title: 'Success',
 					message: `User Added`,
