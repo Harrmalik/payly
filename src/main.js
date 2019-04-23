@@ -75,7 +75,7 @@ let login = (e) => {
 				$('#nav').show();
 				$('#appname').text(user.deltasonic ? 'Kiss Klock' : 'Benderson Timeclock')
 				$('#app').show();
-				$('#name').html(`Signed in as ${user.empname} <i class="glyphicon glyphicon-user"></i>`);
+				$('#name').html(`${user.empname} <i class="glyphicon glyphicon-user"></i>`);
 				ga('send', 'event', 'Login', empid)
 				userData.emp ? ga('set', 'userId', $('title').data('emp')) : ga('set', 'userId', empid)
 				if (user.roles[0]) {
@@ -84,8 +84,19 @@ let login = (e) => {
 					tippedRole = user.roles[0].istipped == 1 ? true : false
 					$('#primaryJob').html(`${user.roles[0].job_desc}`)
 					user.roles.forEach((role) => {
+						let color = 'bluebg'
+
+						switch (role.profitcenter) {
+							case 1: color = 'bluebg'; break;
+							case 2: color = 'greenbg'; break;
+							case 3: color = 'purplebg'; break;
+							case 4: color = 'pinkbg'; break;
+							case 5: color = 'orangebg'; break;
+							case 7: color = 'redbg'; break;
+						}
+
 						$('#roleButtons').append(`
-							<div class="role-button" id="${role.job_code}">${role.job_desc}</div>
+							<div class="role-button ${color}" id="${role.job_code}">${role.job_desc}</div>
 						`)
 					})
 					$('#roleButtons .role-button').on('click', (e) => {
@@ -577,6 +588,11 @@ $(document).ready(function () {
 								}
 							}
 						}
+					} else {
+						hoursSum = moment().diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
+						totalTime += hoursSum;
+
+						days[weekday + 1][2] += hoursSum;
 					}
 
 					if (!$htmlDay.attr('clocked') || $htmlDay.attr('clocked') === 'false') {
@@ -602,7 +618,7 @@ $(document).ready(function () {
 				}).done((tips) => {
 					tips.forEach((tip, index) => {
 						let washTips         = tip.washTTips ? tip.washTTips : 0,
-								detailTips       = tip.detailTips ? tip.detailTips : 0,
+								detailTips       = tip.detailTTips ? tip.detailTTips : 0,
 								weekday          = moment(tip.timestamp).weekday() === 6 ? -1 : moment(tip.timestamp).weekday(),
 								$htmlDay         = days[deltasonic ? weekday + 1 : moment(tip.timestamp).weekday()][0]
 
@@ -660,7 +676,7 @@ $(document).ready(function () {
 							<td class="${(timeslot.insource == 1 || timeslot.insource == 2) ? 'warning' : ''} ${timeslot.overBreak ? 'red' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchintime ? moment.unix(timeslot.punchintime).format('h:mm a') : '00:00 AM'} ${timeslot.insource == 2 ? '*' : ''}</td>
 							<td class="${(timeslot.outsource == 1 || timeslot.outsource == 2) ? 'warning' : ''} ${timeslot.typeid == 1 ? 'vacation' : ''} ${timeslot.typeid == 2 ? 'pto' : ''}">${timeslot.punchouttime ? moment.unix(timeslot.punchouttime).format('h:mm a') : '- -'}</td>
 							<td class=
-								${sum.toFixed(2) > 6 ? 'red' : ''}>${sum.toFixed(2)}
+								${sum.toFixed(2) > 6 ? 'red' : !timeslot.punchouttime ? 'green' : ''}>${sum.toFixed(2)}
 								${timeslot.userid == timeslot.lasteditedby ? '' : '<button class="btn btn-defaults btn-xs" id=' + timeslot.timeid + 'info><i class="glyphicon glyphicon-info-sign"></i></button>'}
 							</td>
 						</tr>
@@ -758,8 +774,10 @@ $(document).ready(function () {
 							populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
 							counter++;
 						} else {
-							let timeNow = moment.duration(moment().diff(moment(checkInTime))).asHours()
-							populateElement(`${(totalTime + timeNow).toFixed(2)}`, $overallHours);
+							hoursSum = calculateHours(checkInTime, moment())
+							// let timeNow = moment.duration(moment().diff(moment(checkInTime))).asHours()
+							populateElement(totalTime.toFixed(2), $totalHours);
+							populateElement(`${(totalTime).toFixed(2)}`, $overallHours);
 						}
 
 						addRow(checkInTime, checkOutTime, hoursSum, timeslot.role);
@@ -1238,6 +1256,10 @@ function lookupHours(){
 			$('[name=washTTips]').val(response.tips[0].washTTips)
 			$('[name=detailTTips]').val(response.tips[0].detailTTips)
 			$('[name=tipid]').val(response.tips[0].tipid)
+		} else {
+			$('[name=washTTips]').val(0)
+			$('[name=detailTTips]').val(0)
+			$('[name=tipid]').val(0)
 		}
 	});
 }

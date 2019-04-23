@@ -198,17 +198,40 @@ tr, th {
 }
 
 .role-button {
-	background: #039FF1;
-	width: 20%;
+	width: 30%;
 	height: 80px;
-	padding: 2em;
-	margin: 1em 2.5%;
+	padding: 1em;
+	margin: 1em 1.5%;
 	color: white;
 	border-radius: 10px;
 	box-shadow: 0 0 5px black;
 	float: left;
 	text-align: center;
 	cursor: pointer;
+}
+
+.bluebg {
+		background: #039FF1;
+}
+
+.purplebg {
+		background: purple;
+}
+
+.greenbg {
+		background: #46d446;
+}
+
+.pinkbg {
+		background: #ea758a;
+}
+
+.orangebg {
+	background: #e67549;
+}
+
+.redbg {
+	background: #e64949;
 }
 
 .table-card {
