@@ -175,7 +175,7 @@ let addTimeslot = () => {
 			title: 'Success',
 			message: `Timeslot successfully created.`
 		});
-		getTimesheet();
+		getTimesheet(empid);
 	});
 }
 
@@ -225,7 +225,7 @@ let saveChange = () => {
 			title: 'Success',
 			message: `${data.result}`,
 		});
-		getTimesheet();
+		getTimesheet(empid);
 	});
 }
 
@@ -267,7 +267,7 @@ let addLunchslot = (row) => {
 				title: 'Success',
 				message: `Lunch punch slot successfully created.`,
 			});
-			getTimesheet();
+			getTimesheet(empid);
 		});
 	});
 }
@@ -290,7 +290,7 @@ let deleteTimeslot = (row) => {
 
 
 		});
-		getTimesheet();
+		getTimesheet(empid);
 	});
 }
 
