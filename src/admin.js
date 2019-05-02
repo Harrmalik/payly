@@ -965,7 +965,7 @@ $(document).ready(function(){
 				booth = [],
 				power= [],
 				washExit = [],
-				wash = [],
+				wash = 0,
 				detail = [],
 				store = [],
 				food = [],
@@ -1000,20 +1000,20 @@ $(document).ready(function(){
 					} else {
 						if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
 							managers.push(e)
-							wash.push(e)
+							wash++
 						} else if (r.match(/c-store/g) || e.profitcenter == 4) {
 							store.push(e)
 						} else if (!r.match(/detail u/g) && (r.match(/detail|quality|paint/g) || e.profitcenter == 2)) {
 							detail.push(e)
 						} else if (r.match(/power|program/g)) {
 							power.push(e)
-							wash.push(e)
+							wash++
 						} else if (r.match(/bd|advisor/g) && e.profitcenter == 1) {
 							booth.push(e)
-							wash.push(e)
+							wash++
 						} else if (r.match(/wash t/g)) {
 							washExit.push(e)
-							wash.push(e)
+							wash++
 						} else if (r.match(/coffee|food/g) || e.profitcenter == 5) {
 							food.push(e)
 						} else if (r.match(/lube/g) || e.profitcenter == 3) {
@@ -1060,12 +1060,6 @@ $(document).ready(function(){
 					order: [[ 1, "desc" ]],
 					columns
 			} );
-			$('#washCard table').DataTable( {
-					data: wash,
-					destroy: true,
-					order: [[ 1, "desc" ]],
-					columns
-			} );
 			$('#powerCard table').DataTable( {
 					data: power,
 					destroy: true,
@@ -1074,6 +1068,12 @@ $(document).ready(function(){
 			} );
 			$('#boothCard table').DataTable( {
 					data: booth,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#washCard table').DataTable( {
+					data: washExit,
 					destroy: true,
 					order: [[ 1, "desc" ]],
 					columns
@@ -1102,7 +1102,7 @@ $(document).ready(function(){
 					order: [[ 1, "desc" ]],
 					columns
 			} );
-			$('#washTotalCount').text(wash.length)
+			$('#washTotalCount').text(wash)
 			$('#detailTotalCount').text(detail.length)
 			$('#storeTotalCount').text(store.length)
 			$('#foodTotalCount').text(food.length)
@@ -1116,7 +1116,7 @@ $(document).ready(function(){
 			$('#lubeCount').text(lube.length)
 			$('#managersCount').text(managers.length)
 			$('#otherCount').text(other.length)
-			$('#workingCount').text(booth.length + power.length + washExit.length + managers.length + detail.length + food.length + store.length + lube.length + other.length)
+			$('#workingCount').text(wash.length + detail.length + food.length + store.length + lube.length + other.length)
 			$('#activeCount').text(active.length)
 			$('#nonActiveCount').text(nonActive.length)
 		} else {
