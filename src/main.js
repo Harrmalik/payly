@@ -817,8 +817,8 @@ $(document).ready(function () {
 		if (checkOut) {
 			hoursSum = calculateHours(checkInTime, checkOutTime);
 
-			populateElement(totalTime.toFixed(2), $totalHours);
-			populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
+			// populateElement(totalTime.toFixed(2), $totalHours);
+			// populateElement(`${totalTime.toFixed(2)}/${maxHours}`, $overallHours);
 			$(`#${checkInIds[checkInIds.length - 1]}timeout`).html(checkOutTime.format('h:mm a'));
 			$(`#${checkInIds[checkInIds.length - 1]}hours`).html(hoursSum.toFixed(2));
 		} else {

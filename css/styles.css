@@ -489,6 +489,9 @@ div#tipContainer_wrapper div.dt-buttons{
 	display: none !important
 }
 
+.col-sm-12 {
+	padding: .5em;
+}
 
 @media print
 {

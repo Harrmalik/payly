@@ -294,6 +294,26 @@ let deleteTimeslot = (row) => {
 	});
 }
 
+let saveNotes = (empid,noteid) => {
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data: {
+			module: 'admin',
+			action: 'saveNote',
+			noteid,
+			empid,
+			notes: $(`#${empid}-notes`).val()
+		}
+	}).done((data) => {
+		iziToast.success({
+			title: 'Success',
+			message: `Note saved.`,
+		});
+	});
+}
+
+
 // Edit Users Tab
 $('#addinguser').on('click', () => {
 	$('#user-form').append(`
@@ -937,30 +957,21 @@ $(document).ready(function(){
 
 	let buildDashboard = (dashboard) => {
 		$('#workedTable').empty()
-		$('#powerTable').empty()
-		$('#boothTable').empty()
-		$('#detailTable').empty()
-		$('#foodTable').empty()
-		$('#storeTable').empty()
-		$('#washTable').empty()
-		$('#lubeTable').empty()
-		$('#managementTable').empty()
-		$('#otherTable').empty()
 		$('#totalTable').empty()
 
 		if (employees && employees.length > 0) {
-			let active = 0,
-				nonActive = 0,
-				booth = 0,
-				power= 0,
-				washExit = 0,
+			let active = [],
+				nonActive = [],
+				booth = [],
+				power= [],
+				washExit = [],
 				wash = 0,
-				detail = 0,
-				store = 0,
-				food = 0,
-				lube = 0,
-				managers = 0,
-				other = 0;
+				detail = [],
+				store = [],
+				food = [],
+				lube = [],
+				managers = [],
+				other = [];
 
 			employees.forEach(e => {
 				if (e.todayHours) {
@@ -969,6 +980,11 @@ $(document).ready(function(){
 						todayHours = (e.todayHours/60).toFixed(2),
 						totalHours = (e.totalHours/60).toFixed(2),
 						breakTime = (e.breakTime/60).toFixed(2)
+
+					e.hoursWorked = (e.hoursWorked/60).toFixed(2)
+					e.todayHours = (e.todayHours/60).toFixed(2)
+					e.totalHours = (e.totalHours/60).toFixed(2)
+					e.breakTime = (e.breakTime/60).toFixed(2)
 
 					if (!e.workingNow) {
 						active++
@@ -983,77 +999,132 @@ $(document).ready(function(){
 						`)
 					} else {
 						if (r.match(/manager|supervisor/g) && e.profitcenter == 1) {
-							managers++
+							managers.push(e)
 							wash++
-							addDashboardRow(e, '#managementTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/c-store/g) || e.profitcenter == 4) {
-							store++
-							addDashboardRow(e, '#storeTable', todayHours, totalHours, hoursWorked, breakTime)
+							store.push(e)
 						} else if (!r.match(/detail u/g) && (r.match(/detail|quality|paint/g) || e.profitcenter == 2)) {
-							detail++
-							addDashboardRow(e, '#detailTable', todayHours, totalHours, hoursWorked, breakTime)
+							detail.push(e)
 						} else if (r.match(/power|program/g)) {
-							power++
+							power.push(e)
 							wash++
-							addDashboardRow(e, '#powerTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/bd|advisor/g) && e.profitcenter == 1) {
-							booth++
+							booth.push(e)
 							wash++
-							addDashboardRow(e, '#boothTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/wash t/g)) {
-							washExit++
+							washExit.push(e)
 							wash++
-							addDashboardRow(e, '#washTable', todayHours, totalHours, hoursWorked, breakTime)
 						} else if (r.match(/coffee|food/g) || e.profitcenter == 5) {
-							food++
-							addDashboardRow(e, '#foodTable', todayHours, totalHours, hoursWorked, breakTime)
+							food.push(e)
 						} else if (r.match(/lube/g) || e.profitcenter == 3) {
-							lube++
-							addDashboardRow(e, '#lubeTable', todayHours, totalHours, hoursWorked, breakTime)
+							lube.push(e)
 						} else {
-							other++
-							addDashboardRow(e, '#otherTable', todayHours, totalHours, hoursWorked, breakTime)
+							other.push(e)
 						}
 					}
 				} else {
 					let totalHours = (e.totalHours/60).toFixed(2)
 					let breakTime = (e.breakTime/60).toFixed(2)
-					nonActive++
+					nonActive.push(e)
 					$('#totalTable').append(`
 						<tr>
-							<td>${nonActive}</td>
 							<td>${totalHours}</td>
-							<td>${e.name}</td>
-							<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
+							<td>${e.name} ${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
+							<td><td><input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/></td></td>
 							<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 						</tr>
 					`)
 				}
 			})
+			let columns = [
+					{ data: 'startTime', render: data => { return moment.unix(data).format('h:mm a') }  },
+					{ data: 'name' },
+					{ data: 'todayHours' },
+					{ data: 'hoursWorked', render: data => { return `<span class="${data > 6 ? 'red' : '' }">${data}</span>`} },
+					{ data: 'breakTime', render: data => { return data ? '<i class="fas fa-check"></i>' : '' } },
+					{ data: 'isMinor', render: data => { return data ? '<i class="fas fa-child"></i>' : '' } },
+					{ data: 'role' },
+					{ data: 'totalHours', render: data => { return `<span class="${data > 40 ? 'red' : '' }">${data}</span>`} },
+					{ data: 'id', render: (data, type, e) => { return `<input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/>` } },
+					{ data: 'id', render: data => { return `<a class="btn btn-default" onclick="getTimesheet(${data})">Timesheet</a>`} },
+			]
+			$('#managementCard table').DataTable( {
+					data: managers,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#detailCard table').DataTable( {
+					data: detail,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#powerCard table').DataTable( {
+					data: power,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#boothCard table').DataTable( {
+					data: booth,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#washCard table').DataTable( {
+					data: washExit,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#foodCard table').DataTable( {
+					data: food,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#storeCard table').DataTable( {
+					data: store,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#lubeCard table').DataTable( {
+					data: lube,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
+			$('#otherCard table').DataTable( {
+					data: other,
+					destroy: true,
+					order: [[ 1, "desc" ]],
+					columns
+			} );
 			$('#washTotalCount').text(wash)
-			$('#detailTotalCount').text(detail)
-			$('#storeTotalCount').text(store)
-			$('#foodTotalCount').text(food)
-			$('#lubeTotalCount').text(lube)
-			$('#boothCount').text(booth)
-			$('#powerCount').text(power)
-			$('#washExitCount').text(washExit)
-			$('#detailCount').text(detail)
-			$('#storeCount').text(store)
-			$('#foodCount').text(food)
-			$('#lubeCount').text(lube)
-			$('#managersCount').text(managers)
-			$('#otherCount').text(other)
-			$('#workingCount').text(booth + power + washExit + managers + detail + food + store + lube + other)
-			$('#activeCount').text(active)
-			$('#nonActiveCount').text(nonActive)
+			$('#detailTotalCount').text(detail.length)
+			$('#storeTotalCount').text(store.length)
+			$('#foodTotalCount').text(food.length)
+			$('#lubeTotalCount').text(lube.length)
+			$('#boothCount').text(booth.length)
+			$('#powerCount').text(power.length)
+			$('#washExitCount').text(washExit.length)
+			$('#detailCount').text(detail.length)
+			$('#storeCount').text(store.length)
+			$('#foodCount').text(food.length)
+			$('#lubeCount').text(lube.length)
+			$('#managersCount').text(managers.length)
+			$('#otherCount').text(other.length)
+			$('#workingCount').text(wash.length + detail.length + food.length + store.length + lube.length + other.length)
+			$('#activeCount').text(active.length)
+			$('#nonActiveCount').text(nonActive.length)
 		} else {
 			$('#employees').html('No Employees found for you')
 		}
 
 		if ($( "a[href*='\#dashboard'" ).parent().hasClass('active') && $( "#timesheetPage" ).is(":hidden")) $('#employees').show()
 		$('#employeesLoader').hide()
-		$("#dashboard table").tablesorter();
 	}
 
   makeTimesheet = () => {
@@ -1254,20 +1325,28 @@ $(document).ready(function(){
     }
 
 	function addDashboardRow (e, ele, todayHours, totalHours, hoursWorked, breakTime) {
-		// <td>${40-totalHours > 0 ? 40-totalHours : 0}</td>
-		$(ele).append(`
-			<tr>
-				<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-				<td>${e.name}</td>
-				<td>${todayHours}</td>
-				<td class="${hoursWorked > 6 ? 'red' : '' }">${hoursWorked}</td>
-				<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
-				<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-				<td>${e.role}</td>
-				<td class="${totalHours > 40 ? 'red' : '' }">${totalHours}</td>
-				<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
-			</tr>
-		`)
+		if ($(`#${e.id}-row`).length > 0) {
+			$(`#${e.id}-todayHours`).text(todayHours)
+			$(`#${e.id}-hoursWorked`).text(hoursWorked)
+			$(`#${e.id}-breakTime`).text(breakTime)
+			$(`#${e.id}-role`).text(e.role)
+			$(`#${e.id}-totalHours`).text(totalHours)
+		} else {
+			$(ele).append(`
+				<tr id="${e.id}-row">
+					<td>${moment.unix(e.startTime).format('h:mm a')}</td>
+					<td>${e.name}</td>
+					<td id="${e.id}-todayHours">${todayHours}</td>
+					<td id="${e.id}-hoursWorked" class="${hoursWorked > 6 ? 'red' : '' }">${hoursWorked}</td>
+					<td id="${e.id}-breakTime">${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
+					<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
+					<td id="${e.id}-role">${e.role}</td>
+					<td id="${e.id}-totalHours" class="${totalHours > 40 ? 'red' : '' }">${totalHours}</td>
+					<td><input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/></td>
+					<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
+				</tr>
+			`)
+		}
 	}
 
 	function setPopover(id) {
@@ -1325,8 +1404,8 @@ $(document).ready(function(){
 
 	let getInitialState = () => {
 		if (isLocation) {
-			$('#employees').hide()
-			$('#employeesLoader').show()
+			// $('#employees').hide()
+			// $('#employeesLoader').show()
 			$.ajax({
 				url: `./php/main.php?module=admin&action=getLocationEmployees&location=${currentLocation}&offset=${moment(moment().weekday(5)).diff($('#dDate').data("DateTimePicker").date(), 'weeks')}`
 			}).done((data) => {
@@ -1370,6 +1449,7 @@ $(document).ready(function(){
 	$('#locations a').on('click', (e) => {
 		$('#homeLocation').html(`${e.target.text} <span class="caret"></span>`)
 		currentLocation = e.target.id
+		$('#employeeid').val('')
 		getInitialState()
 	})
 

@@ -154,6 +154,7 @@
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
                                                 <th></th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody id="boothTable">
@@ -175,6 +176,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
+                                                <th></th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -198,6 +200,7 @@
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
                                                 <th></th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody id="washTable">
@@ -219,6 +222,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
+                                              <th></th>
                                               <th></th>
                                             </tr>
                                         </thead>
@@ -243,6 +247,7 @@
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
                                               <th></th>
+                                              <th></th>
                                           </tr>
                                       </thead>
                                       <tbody id="detailTable">
@@ -264,6 +269,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
+                                              <th></th>
                                               <th></th>
                                           </tr>
                                       </thead>
@@ -287,6 +293,7 @@
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
                                               <th></th>
+                                              <th></th>
                                           </tr>
                                       </thead>
                                       <tbody id="foodTable">
@@ -309,6 +316,7 @@
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
                                               <th></th>
+                                              <th></th>
                                           </tr>
                                       </thead>
                                       <tbody id="lubeTable">
@@ -330,6 +338,7 @@
                                             <th>Minor</th>
                                             <th>Role</th>
                                             <th>Wk Hrs</th>
+                                            <th></th>
                                             <th></th>
                                           </tr>
                                       </thead>
@@ -360,10 +369,9 @@
                                 <table class="table">
                                   <thead>
                                       <tr>
-                                          <th></th>
                                           <th>Hrs</th>
                                           <th>Name</th>
-                                          <th>Break</th>
+                                          <th>Note</th>
                                           <th></th>
                                       </tr>
                                   </thead>
