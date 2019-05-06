@@ -1041,7 +1041,7 @@ $(document).ready(function(){
 					{ data: 'name' },
 					{ data: 'todayHours' },
 					{ data: 'hoursWorked', render: data => { return `<span class="${data > 6 ? 'red' : '' }">${data}</span>`} },
-					{ data: 'breakTime', render: data => { return data ? '<i class="fas fa-check"></i>' : '' } },
+					{ data: 'breakTime', render: data => { return data > 0 ? '<i class="fas fa-check"></i>' : '' } },
 					{ data: 'isMinor', render: data => { return data ? '<i class="fas fa-child"></i>' : '' } },
 					{ data: 'role' },
 					{ data: 'totalHours', render: data => { return `<span class="${data > 40 ? 'red' : '' }">${data}</span>`} },
@@ -1116,7 +1116,7 @@ $(document).ready(function(){
 			$('#lubeCount').text(lube.length)
 			$('#managersCount').text(managers.length)
 			$('#otherCount').text(other.length)
-			$('#workingCount').text(wash.length + detail.length + food.length + store.length + lube.length + other.length)
+			$('#workingCount').text(wash + detail.length + food.length + store.length + lube.length + other.length)
 			$('#activeCount').text(active.length)
 			$('#nonActiveCount').text(nonActive.length)
 		} else {
@@ -1323,31 +1323,6 @@ $(document).ready(function(){
 		setPopover(timeslot.timeid);
 		$('.datetime').datetimepicker();
     }
-
-	function addDashboardRow (e, ele, todayHours, totalHours, hoursWorked, breakTime) {
-		if ($(`#${e.id}-row`).length > 0) {
-			$(`#${e.id}-todayHours`).text(todayHours)
-			$(`#${e.id}-hoursWorked`).text(hoursWorked)
-			$(`#${e.id}-breakTime`).text(breakTime)
-			$(`#${e.id}-role`).text(e.role)
-			$(`#${e.id}-totalHours`).text(totalHours)
-		} else {
-			$(ele).append(`
-				<tr id="${e.id}-row">
-					<td>${moment.unix(e.startTime).format('h:mm a')}</td>
-					<td>${e.name}</td>
-					<td id="${e.id}-todayHours">${todayHours}</td>
-					<td id="${e.id}-hoursWorked" class="${hoursWorked > 6 ? 'red' : '' }">${hoursWorked}</td>
-					<td id="${e.id}-breakTime">${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
-					<td>${e.isMinor ? '<i class="fas fa-child"></i>' : ''}</td>
-					<td id="${e.id}-role">${e.role}</td>
-					<td id="${e.id}-totalHours" class="${totalHours > 40 ? 'red' : '' }">${totalHours}</td>
-					<td><input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/></td>
-					<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
-				</tr>
-			`)
-		}
-	}
 
 	function setPopover(id) {
 		$.ajax({
