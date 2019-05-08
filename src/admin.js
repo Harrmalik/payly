@@ -295,22 +295,24 @@ let deleteTimeslot = (row) => {
 }
 
 let saveNotes = (empid,noteid) => {
-	$.ajax({
-		url: `./php/main.php`,
-		method: 'post',
-		data: {
-			module: 'admin',
-			action: 'saveNote',
-			noteid,
-			empid,
-			notes: $(`#${empid}-notes`).val()
-		}
-	}).done((data) => {
-		iziToast.success({
-			title: 'Success',
-			message: `Note saved.`,
+	if ($(`#${empid}-notes`).val()) {
+		$.ajax({
+			url: `./php/main.php`,
+			method: 'post',
+			data: {
+				module: 'admin',
+				action: 'saveNote',
+				noteid,
+				empid,
+				notes: $(`#${empid}-notes`).val()
+			}
+		}).done((data) => {
+			iziToast.success({
+				title: 'Success',
+				message: `Note saved.`,
+			});
 		});
-	});
+	}
 }
 
 
@@ -1037,17 +1039,18 @@ $(document).ready(function(){
 				}
 			})
 			let columns = [
-					{ data: 'startTime', render: data => { return moment.unix(data).format('h:mm a') }  },
-					{ data: 'name' },
-					{ data: 'todayHours' },
-					{ data: 'hoursWorked', render: data => { return `<span class="${data > 6 ? 'red' : '' }">${data}</span>`} },
-					{ data: 'breakTime', render: data => { return data > 0 ? '<i class="fas fa-check"></i>' : '' } },
-					{ data: 'isMinor', render: data => { return data ? '<i class="fas fa-child"></i>' : '' } },
-					{ data: 'role' },
-					{ data: 'totalHours', render: data => { return `<span class="${data > 40 ? 'red' : '' }">${data}</span>`} },
-					{ data: 'id', render: (data, type, e) => { return `<input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/>` } },
-					{ data: 'id', render: data => { return `<a class="btn btn-default" onclick="getTimesheet(${data})">Timesheet</a>`} },
+					{ data: 'startTime', render: data => { return moment.unix(data).format('h:mm a') }, width: '12%'  },
+					{ data: 'name', width: '24%' },
+					{ data: 'todayHours', width: '10%' },
+					{ data: 'hoursWorked', render: data => { return `<span class="${data > 6 ? 'red' : '' }">${data}</span>`}, width: '10%' },
+					{ data: 'breakTime', render: data => { return data > 0 ? '<i class="fas fa-check"></i>' : '' }, width: '6%' },
+					{ data: 'isMinor', render: data => { return data ? '<i class="fas fa-child"></i>' : '' }, width: '6%' },
+					{ data: 'role', width: '18%' },
+					{ data: 'totalHours', render: data => { return `<span class="${data > 40 ? 'red' : '' }">${data}</span>`}, width: '10%' },
+					{ data: 'id', render: (data, type, e) => { return `<input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/>` }, width: '8%' },
+					{ data: 'id', render: data => { return `<a class="btn btn-default" onclick="getTimesheet(${data})">Timesheet</a>`}, width: '12%' },
 			]
+
 			$('#managementCard table').DataTable( {
 					data: managers,
 					destroy: true,
