@@ -63,11 +63,11 @@
               <ul class="nav navbar-nav">
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show();$('#laborBreakdown').hide();">Dashboard</a></li>
-                  <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheet Management</a></li>
+                  <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheets</a></li>
                   <li role="presentation"><a class="trainerBtn" href="#addusers" aria-controls="addusers" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Add users</a></li>
-                  <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">User Management</a></li>
-                  <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Supervisor Management</a></li>
-                  <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Tips Management</a></li>
+                  <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Users</a></li>
+                  <li role="presentation"><a class="payrollBtn" href="#supervisors" aria-controls="supervisors" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Supervisors</a></li>
+                  <li role="presentation"><a class="tipsBtn" href="#tips" aria-controls="tips" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Tips</a></li>
                   <li role="presentation"><a class="hrBtn" href="#auditing" aria-controls="auditing" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Auditing</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#reports" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">Reports</a></li>
                   <!-- <li role="presentation"><a class="hrBtn" href="#news" aria-controls="reports" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide()">News</a></li> -->
