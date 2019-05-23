@@ -154,6 +154,11 @@ tr, th {
 	top: 400px;
 }
 
+#laborBreakdowns p {
+	margin: 0;
+	padding: 0;
+}
+
 #weather {
 	position: absolute;
 	top: 0;

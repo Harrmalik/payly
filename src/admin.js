@@ -556,6 +556,10 @@ function back() {
 	}
 }
 
+function printTimesheet() {
+	location.href = "./print.php?empid=" + empid
+}
+
 $(document).ready(function(){
 	// Javascript letiables
     let startDate;
@@ -762,39 +766,44 @@ $(document).ready(function(){
 	}
 
 	$('#runReport').on('click', () => {
+		$('#reportData').empty().append('Running report.....');
 		$.ajax({
 	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
 	  }).done((result) => {
 			$('#reportData').empty()
 			console.log(result);
-			switch ($('#reportsDropdown').val()) {
-		    case "totalHours":
-		    case "supportHours":
-		    case "nightHours":
-				case "dailyUnderEightHoursReport":
-				case "dailyNoLunchBreakReport":
-		      result.forEach(e => {
-				    $('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
-					})
-		      break;
-		    case "dailyNoSignOutReport":
-		    case "dailyAutosignOutReport":
-					result.forEach(e => {
-						$('#reportData').append(`<p>${e.userid}, ${e.name} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
-					})
-		      break;
-		    case "minorReport":
-					result.forEach(e => {
-						$('#reportData').append(`<p>${e.employeename} - ${moment(e.punchintime).format('h:mm a')} - ${moment(e.punchouttime).format('h:mm a')} :<b>TOTAL HOURS</b> -> ${e.totalhours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
-					})
-		      break;
-		      case "laborReport":
+			if (result.length == 0 ){
+				$('#reportData').append('No Employees');
+			} else {
+				switch ($('#reportsDropdown').val()) {
+					case "totalHours":
+					case "supportHours":
+					case "nightHours":
+					case "dailyUnderEightHoursReport":
+					case "dailyNoLunchBreakReport":
 						result.forEach(e => {
 							$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
 						})
-		        break;
-		      default:
-		  }
+						break;
+					case "dailyNoSignOutReport":
+					case "dailyAutosignOutReport":
+						result.forEach(e => {
+							$('#reportData').append(`<p>${e.userid}, ${e.name} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+						})
+						break;
+					case "minorReport":
+						result.forEach(e => {
+							$('#reportData').append(`<p>${e.employeename} - ${moment(e.punchintime).format('h:mm a')} - ${moment(e.punchouttime).format('h:mm a')} :<b>TOTAL HOURS</b> -> ${e.totalhours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+						})
+						break;
+						case "laborReport":
+							result.forEach(e => {
+								$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+							})
+							break;
+						default:
+				}
+			}
 	  });
 	})
 
@@ -1451,8 +1460,8 @@ $(document).ready(function(){
 
 	// STARTING APPLICATION
 	if (isManager || isBasicManager) {
-		setInterval(getInitialState, 60000);
-		getInitialState();
+		// setInterval(getInitialState, 60000);
+		// getInitialState();
 	}
 
 	var now =  new Date();
