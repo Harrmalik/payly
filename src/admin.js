@@ -1433,6 +1433,7 @@ $(document).ready(function(){
 			<li><a id="${l.id}">${l.name}</a></li>
 		`)
 	})
+
 	$('#locations a').on('click', (e) => {
 		$('#homeLocation').html(`${e.target.text} <span class="caret"></span>`)
 		currentLocation = e.target.id
@@ -1460,8 +1461,8 @@ $(document).ready(function(){
 
 	// STARTING APPLICATION
 	if (isManager || isBasicManager) {
-		// setInterval(getInitialState, 60000);
-		// getInitialState();
+		setInterval(getInitialState, 60000);
+		getInitialState();
 	}
 
 	var now =  new Date();
