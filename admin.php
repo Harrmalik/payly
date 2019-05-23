@@ -716,7 +716,7 @@
                 </div>
                 <br/>
                 <div class="form-group" style="clear:both; margin:1em 0;">
-                  <label for="phone" class="col-sm-2 control-label">Reports</label>
+                  <label for="reportsDropdown" class="col-sm-2 control-label">Reports</label>
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsDropdown">
                           <option value="dailyAutosignOutReport">Forgot to sign out</option>
@@ -731,9 +731,29 @@
                       </select>
                   </div>
                 </div>
+                <div class="form-group" style="clear:both; margin:1em 0;">
+                  <label for="reportsCompany" class="col-sm-2 control-label">Company</label>
+                  <div class="col-sm-4">
+                      <select class="form-control" id="reportsCompany">
+                          <option value="dailyAutosignOutReport">Deltasonic</option>
+                          <option value="dailyUnderEightHoursReport">Benderson</option>\
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group" style="clear:both; margin:1em 0;">
+                  <label for="reportsLocation" class="col-sm-2 control-label">Location</label>
+                  <div class="col-sm-4">
+                      <select class="form-control" id="reportsLocation">
+                          <option value="dailyAutosignOutReport">Office</option>
+                          <option value="dailyUnderEightHoursReport">Main Street</option>
+                      </select>
+                  </div>
+                </div>
 
+                <br/><br/>
                 <div class="btn btn-primary" id="runReport">Run Report</div>
 
+                <hr/>
                 <div id="reportData" style="margin: 2em 0">
 
                 </div>
@@ -770,6 +790,7 @@
                 <section className="hero hero-page gray-bg padding-small" style={{margin: "-2em",padding: "50px 0",background:"#f5f5f5"}}>
                   <div className="container">
                       <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
+                      <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print</button>
                       <form class="form-horizontal">
                           <div class="form-group">
                             <label for="end" class="col-sm-2 control-label">Week Ending</label>
@@ -804,7 +825,7 @@
                   </table>
                 </section>
             </section>
-            <div id="laborBreakdown">
+            <div id="laborBreakdown" class="no-print">
 
             </div>
             <div id="timesheetModal" class="modal fade" tabindex="-1" role="dialog">

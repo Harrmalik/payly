@@ -215,6 +215,10 @@ function IdleTimeout() {
 	window.location = logoutUrl;
 }
 
+function printTimesheet() {
+	location.href = "./print.php?empid=" + empid
+}
+
 $(document).ready(function () {
 	$('#inputID').val('');
 	$('#inputID').focus();
