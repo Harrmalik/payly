@@ -788,7 +788,7 @@
                 <section className="hero hero-page gray-bg padding-small" style={{margin: "-2em",padding: "50px 0",background:"#f5f5f5"}}>
                   <div className="container">
                       <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
-                      <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print</button>
+                      <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print Timesheet</button>
                       <form class="form-horizontal">
                           <div class="form-group">
                             <label for="end" class="col-sm-2 control-label">Week Ending</label>
@@ -903,4 +903,4 @@
 </body>
 
 
-<script src="./src/admin.js"></script>
+<script src="./dist/admin.js"></script>

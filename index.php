@@ -368,7 +368,7 @@
                     </div>
                 </div>
             </form>
-            <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print</button>
+            <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print Timesheet</button>
             <h3 id="username"></h3>
             <!-- <h3>Timesheet for Week of <span id="startDate"></span> - <span id="endDate"></span></h3> -->
 

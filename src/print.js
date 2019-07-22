@@ -3,6 +3,7 @@ let empid = location.search.split('=')[1],
     timezone = '',
     endDate = '',
     startDate = '',
+    deltasonic = '',
     timeslots,
 		days,
 		totalTime = 0,
@@ -51,7 +52,7 @@ let getTimesheet = (userid, endDate = null) => {
 		if (user.empname) {
 			$('#username').html(user.empname);
 			empSite = user.site
-			timezone = user.timezone,
+			timezone = user.timezone
 			deltasonic = user.deltasonic
       endDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? 5 : 6).hour(23).minute(59).format('YYYY-MM-DD');
       startDate = $('#end').data("DateTimePicker").date().weekday(deltasonic ? -1 : 0).hour(0).minute(0).format('YYYY-MM-DD');
@@ -91,7 +92,7 @@ let getTimesheet = (userid, endDate = null) => {
 	return false;
 }
 
-makeTimesheet = (endDate, startDate, days) => {
+let makeTimesheet = (endDate, startDate, days) => {
   totalTime = 0;
   $('#punchRole').empty()
       $.ajax({

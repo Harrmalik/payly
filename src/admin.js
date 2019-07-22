@@ -114,7 +114,7 @@ let getTimesheet = (userid, endDate = null) => {
 			// TODO: show application
 			$('#username').html(user.empname);
 			empSite = user.site
-			timezone = user.timezone,
+			timezone = user.timezone ? user.timezone : 'America/New_York',
 			deltasonic = user.deltasonic
 			buildTable();
 			makeTimesheet();
@@ -1147,7 +1147,8 @@ $(document).ready(function(){
 
 
 			$('.dataTable tr').on('click', e => {
-				if ($(e.target).parents("input").attr('id').split('-')[1] != 'notes')
+				console.log($(e.target).parents("input"));
+				if (($(e.target).parents("input").attr('id') && $(e.target).parents("input").attr('id').split('-')[1] != 'notes') || !$(e.target).parents("input").attr('id'))
 					getTimesheet($(e.target).parents("tr").children().last().children().attr('id').split('-')[0])
 			})
 		} else {
@@ -1216,8 +1217,11 @@ $(document).ready(function(){
 			roles.forEach(r => {
 				$('#punchRole').append(`<option value=${r.job_code} ${r.primaryjob == 'Y' ? 'selected' : ''}>${r.job_desc}</option>`)
 			})
-
+				console.log(timezone);
             timeslots.forEach((timeslot, index) => {
+								timeslot.punchintimezone = timeslot.punchintimezone ? timeslot.punchintimezone : timezone
+								timeslot.punchouttimezone = timeslot.punchouttimezone ? timeslot.punchouttimezone : timezone
+								console.log(timeslot.punchintimezone);
                 let hoursSum = 0,
                     weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
                     $htmlDay = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][0],
