@@ -114,7 +114,7 @@ let getTimesheet = (userid, endDate = null) => {
 			// TODO: show application
 			$('#username').html(user.empname);
 			empSite = user.site
-			timezone = user.timezone,
+			timezone = user.timezone ? user.timezone : 'America/New_York',
 			deltasonic = user.deltasonic
 			buildTable();
 			makeTimesheet();
@@ -752,6 +752,7 @@ $(document).ready(function(){
 	$('#uDeltasonic').on('change', (e) => {
 		populateCodeDropdown(e)
 	})
+
 	let populateCodeDropdown = (e) => {
 		if (e.target.value == 1) {
 			$('#uCode').html(`
@@ -962,8 +963,8 @@ $(document).ready(function(){
 				</tr>
 			`)
 		}
-		$('#userTimesheet').show();
-		$('#laborBreakdown').show()
+			$('#userTimesheet').show();
+			$('#laborBreakdown').show();
     }
 
 	let buildDashboard = (dashboard) => {
@@ -1000,12 +1001,11 @@ $(document).ready(function(){
 					if (!e.workingNow) {
 						active++
 						$('#workedTable').append(`
-							<tr>
+							<tr class='clickable' onclick="getTimesheet(${e.id})">
 								<td>${active}</td>
 								<td>${todayHours}</td>
 								<td>${e.name}</td>
 								<td>${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
-								<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 							</tr>
 						`)
 					} else {
@@ -1038,16 +1038,16 @@ $(document).ready(function(){
 					let breakTime = (e.breakTime/60).toFixed(2)
 					nonActive.push(e)
 					$('#totalTable').append(`
-						<tr>
+						<tr class='clickable' onclick="getTimesheet(${e.id})">
 							<td>${totalHours}</td>
 							<td>${e.name} ${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
 							<td><td><input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/></td></td>
-							<td><a class="btn btn-default" onclick="getTimesheet(${e.id})">Timesheet</a></td>
 						</tr>
 					`)
 				}
 			})
 			let columns = [
+					{ data: 'id'},
 					{ data: 'startTime', render: data => { return moment.unix(data).format('h:mm a') }, width: '12%'  },
 					{ data: 'name', width: '24%' },
 					{ data: 'todayHours', width: '10%' },
@@ -1057,14 +1057,20 @@ $(document).ready(function(){
 					{ data: 'role', width: '18%' },
 					{ data: 'totalHours', render: data => { return `<span class="${data > 40 ? 'red' : '' }">${data}</span>`}, width: '10%' },
 					{ data: 'id', render: (data, type, e) => { return `<input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/>` }, width: '8%' },
-					{ data: 'id', render: data => { return `<a class="btn btn-default" onclick="getTimesheet(${data})">Timesheet</a>`}, width: '12%' },
+			],
+			columnDefs = [
+				{
+					targets: [0],
+					visible: false
+				}
 			]
 
 			$('#managementCard table').DataTable( {
 					data: managers,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#detailCard table').DataTable( {
 					data: detail,
@@ -1076,43 +1082,50 @@ $(document).ready(function(){
 					data: power,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#boothCard table').DataTable( {
 					data: booth,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#washCard table').DataTable( {
 					data: washExit,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#foodCard table').DataTable( {
 					data: food,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#storeCard table').DataTable( {
 					data: store,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#lubeCard table').DataTable( {
 					data: lube,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#otherCard table').DataTable( {
 					data: other,
 					destroy: true,
 					order: [[ 1, "desc" ]],
-					columns
+					columns,
+					columnDefs
 			} );
 			$('#washTotalCount').text(wash)
 			$('#detailTotalCount').text(detail.length)
@@ -1131,6 +1144,13 @@ $(document).ready(function(){
 			$('#workingCount').text(wash + detail.length + food.length + store.length + lube.length + other.length)
 			$('#activeCount').text(active.length)
 			$('#nonActiveCount').text(nonActive.length)
+
+
+			$('.dataTable tr').on('click', e => {
+				console.log($(e.target).parents("input"));
+				if (($(e.target).parents("input").attr('id') && $(e.target).parents("input").attr('id').split('-')[1] != 'notes') || !$(e.target).parents("input").attr('id'))
+					getTimesheet($(e.target).parents("tr").children().last().children().attr('id').split('-')[0])
+			})
 		} else {
 			$('#employees').html('No Employees found for you')
 		}
@@ -1197,8 +1217,11 @@ $(document).ready(function(){
 			roles.forEach(r => {
 				$('#punchRole').append(`<option value=${r.job_code} ${r.primaryjob == 'Y' ? 'selected' : ''}>${r.job_desc}</option>`)
 			})
-
+				console.log(timezone);
             timeslots.forEach((timeslot, index) => {
+								timeslot.punchintimezone = timeslot.punchintimezone ? timeslot.punchintimezone : timezone
+								timeslot.punchouttimezone = timeslot.punchouttimezone ? timeslot.punchouttimezone : timezone
+								console.log(timeslot.punchintimezone);
                 let hoursSum = 0,
                     weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
                     $htmlDay = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][0],

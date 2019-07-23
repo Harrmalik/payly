@@ -91,6 +91,14 @@ tr, th {
 	cursor: pointer;
 }
 
+#dashboard {
+	margin: auto -10%;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
 #userTimesheet th {
 	/* width: 20%; */
 }

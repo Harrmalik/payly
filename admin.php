@@ -145,6 +145,7 @@
                                       <table class="table table-condensed table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th>id</th>
                                                 <th>Start Time</th>
                                                 <th>Name</th>
                                                 <th>Day Hrs</th>
@@ -153,8 +154,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th></th>
-                                                <th></th>
+                                                <th>Notes</th>
                                             </tr>
                                         </thead>
                                         <tbody id="boothTable">
@@ -168,6 +168,7 @@
                                       <table class="table table-condensed table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th>id</th>
                                                 <th>Start Time</th>
                                                 <th>Name</th>
                                                 <th>Day Hrs</th>
@@ -176,8 +177,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th></th>
-                                                <th></th>
+                                                <th>Notes</th>
                                             </tr>
                                         </thead>
                                         <tbody id="powerTable">
@@ -191,6 +191,7 @@
                                       <table class="table table-condensed table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th>id</th>
                                                 <th>Start Time</th>
                                                 <th>Name</th>
                                                 <th>Day Hrs</th>
@@ -199,8 +200,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th></th>
-                                                <th></th>
+                                                <th>Notes</th>
                                             </tr>
                                         </thead>
                                         <tbody id="washTable">
@@ -214,6 +214,7 @@
                                       <table class="table table-condensed table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th>id</th>
                                               <th>Start Time</th>
                                               <th>Name</th>
                                               <th>Day Hrs</th>
@@ -222,8 +223,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th></th>
-                                              <th></th>
+                                              <th>Notes</th>
                                             </tr>
                                         </thead>
                                         <tbody id="managementTable">
@@ -238,6 +238,7 @@
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
+                                              <th>id</th>
                                               <th>Start Time</th>
                                               <th>Name</th>
                                               <th>Day Hrs</th>
@@ -246,8 +247,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th></th>
-                                              <th></th>
+                                              <th>Notes</th>
                                           </tr>
                                       </thead>
                                       <tbody id="detailTable">
@@ -261,6 +261,7 @@
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
+                                              <th>id</th>
                                               <th>Start Time</th>
                                               <th>Name</th>
                                               <th>Day Hrs</th>
@@ -269,8 +270,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th></th>
-                                              <th></th>
+                                              <th>Notes</th>
                                           </tr>
                                       </thead>
                                       <tbody id="storeTable">
@@ -284,6 +284,7 @@
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
+                                              <th>id</th>
                                               <th>Start Time</th>
                                               <th>Name</th>
                                               <th>Day Hrs</th>
@@ -292,8 +293,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th></th>
-                                              <th></th>
+                                              <th>Notes</th>
                                           </tr>
                                       </thead>
                                       <tbody id="foodTable">
@@ -307,6 +307,7 @@
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
+                                              <th>id</th>
                                               <th>Start Time</th>
                                               <th>Name</th>
                                               <th>Day Hrs</th>
@@ -315,8 +316,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th></th>
-                                              <th></th>
+                                              <th>Notes</th>
                                           </tr>
                                       </thead>
                                       <tbody id="lubeTable">
@@ -330,6 +330,7 @@
                                     <table class="table table-condensed table-hover table-striped">
                                       <thead>
                                           <tr>
+                                              <th>id</th>
                                             <th>Start Time</th>
                                             <th>Name</th>
                                             <th>Day Hrs</th>
@@ -338,8 +339,7 @@
                                             <th>Minor</th>
                                             <th>Role</th>
                                             <th>Wk Hrs</th>
-                                            <th></th>
-                                            <th></th>
+                                            <th>Notes</th>
                                           </tr>
                                       </thead>
                                       <tbody id="otherTable">
@@ -357,7 +357,6 @@
                                           <th>Hrs</th>
                                           <th>Name</th>
                                           <th>Break</th>
-                                          <th></th>
                                       </tr>
                                   </thead>
                                   <tbody id="workedTable">
@@ -372,7 +371,6 @@
                                           <th>Hrs</th>
                                           <th>Name</th>
                                           <th>Note</th>
-                                          <th></th>
                                       </tr>
                                   </thead>
                                   <tbody id="totalTable">
@@ -790,7 +788,7 @@
                 <section className="hero hero-page gray-bg padding-small" style={{margin: "-2em",padding: "50px 0",background:"#f5f5f5"}}>
                   <div className="container">
                       <button class="btn btn-default btn-top" id="back" onclick="back()"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
-                      <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print</button>
+                      <button class="btn btn-default btn-top no-print" onclick="printTimesheet()"><i class="glyphicon glyphicon-print"></i> Print Timesheet</button>
                       <form class="form-horizontal">
                           <div class="form-group">
                             <label for="end" class="col-sm-2 control-label">Week Ending</label>

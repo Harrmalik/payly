@@ -21,6 +21,7 @@ autologout,
 checkIn,
 checkOut,
 openTips,
+hasNotClaimed = false,
 timer = () => {
 	autologout = setTimeout(IdleTimeout, 300000)
 },
@@ -71,6 +72,21 @@ let login = (e) => {
 			let ipaddress = ip.responseText.trim()
 			if (empid && user.empname) {
 				getInitialState();
+				var data = {
+					id: empid,
+					startDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD'),
+					endDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD')
+				};
+
+				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
+					response.timeslots.forEach(t => {
+						if (t.istipped ==1 && response.tips.length == 0) {
+							$('.mainBtns').empty()
+							$('#roleButtons').hide()
+							$('.mainBtns').append('<h2>Must claim tips to continue using kissklock</h2>')
+						}
+					})
+				})
 				$('#auth').hide();
 				$('#nav').show();
 				$('#appname').text(user.deltasonic ? 'Kiss Klock' : 'Benderson Timeclock')
