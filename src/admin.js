@@ -1147,8 +1147,7 @@ $(document).ready(function(){
 
 
 			$('.dataTable tr').on('click', e => {
-				console.log($(e.target).parents("input"));
-				if (($(e.target).parents("input").attr('id') && $(e.target).parents("input").attr('id').split('-')[1] != 'notes') || !$(e.target).parents("input").attr('id'))
+				if (($(e.target).closest("input").attr('id') && $(e.target).closest("input").attr('id').split('-')[1] != 'notes') || !$(e.target).closest("input").attr('id'))
 					getTimesheet($(e.target).parents("tr").children().last().children().attr('id').split('-')[0])
 			})
 		} else {
