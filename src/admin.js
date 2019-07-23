@@ -114,7 +114,7 @@ let getTimesheet = (userid, endDate = null) => {
 			// TODO: show application
 			$('#username').html(user.empname);
 			empSite = user.site
-			timezone = user.timezone ? user.timezone : 'America/New_York',
+			timezone = user.timezone ? user.timezone : moment.tz.guess(),
 			deltasonic = user.deltasonic
 			buildTable();
 			makeTimesheet();
