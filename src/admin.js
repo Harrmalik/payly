@@ -114,7 +114,7 @@ let getTimesheet = (userid, endDate = null) => {
 			// TODO: show application
 			$('#username').html(user.empname);
 			empSite = user.site
-			timezone = user.timezone ? user.timezone : 'America/New_York',
+			timezone = user.timezone ? user.timezone : moment.tz.guess(),
 			deltasonic = user.deltasonic
 			buildTable();
 			makeTimesheet();
@@ -1147,8 +1147,7 @@ $(document).ready(function(){
 
 
 			$('.dataTable tr').on('click', e => {
-				console.log($(e.target).parents("input"));
-				if (($(e.target).parents("input").attr('id') && $(e.target).parents("input").attr('id').split('-')[1] != 'notes') || !$(e.target).parents("input").attr('id'))
+				if (($(e.target).closest("input").attr('id') && $(e.target).closest("input").attr('id').split('-')[1] != 'notes') || !$(e.target).closest("input").attr('id'))
 					getTimesheet($(e.target).parents("tr").children().last().children().attr('id').split('-')[0])
 			})
 		} else {
