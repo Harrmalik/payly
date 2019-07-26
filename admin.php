@@ -723,6 +723,8 @@
                           <option value="dailyNoSignOutReport">Autosigned out</option>
                           <!-- <option value="totalHours">Weekly Hours</option> -->
                           <option value="laborReport">Labor Report</option>
+                          <option value="laborReportByRole">Labor Report by role</option>
+                          <option value="laborReportByEmployee">Labor Report by employee</option>
                           <!-- <option value="nightHours">Night Hours</option> -->
                           <!-- <option value="supportHours">Support Hours</option> -->
                           <option value="minorReport">Minors Report</option>
