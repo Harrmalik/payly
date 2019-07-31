@@ -409,9 +409,6 @@ $('#savingMassUsers').on('click', () => {
 				});
 			});
 		})
-
-
-		console.log(users);
 })
 
 $('#removeUser').on('click', () => {
@@ -697,7 +694,6 @@ $(document).ready(function(){
 						$.ajax({
 							url: `./php/main.php?module=admin&action=getMyEmployees&empid=${supervisor.employeeid}`
 						}).done((employees) => {
-							console.log(employees);
 							$("#supervisorEmployees").val(employees.map(employee => {
 								return employee.id
 							}))
@@ -771,6 +767,7 @@ $(document).ready(function(){
 		$.ajax({
 	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
 	  }).done((result) => {
+			let keys = []
 			$('#reportData').empty()
 			console.log(result);
 			if (result.length == 0 ){
@@ -797,11 +794,104 @@ $(document).ready(function(){
 							$('#reportData').append(`<p>${e.employeename} - ${moment(e.punchintime).format('h:mm a')} - ${moment(e.punchouttime).format('h:mm a')} :<b>TOTAL HOURS</b> -> ${e.totalhours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
 						})
 						break;
-						case "laborReport":
-							result.forEach(e => {
-								$('#reportData').append(`<p>${e.userid}, ${e.name} : ${e.hours} <a class="" onclick="getTimesheet(${e.userid}, '${$('#startDate').data("DateTimePicker").date().format('MMMM Do YYYY')}')">View Timesheet</a></p></p>`)
+					case "laborReport":
+						keys = Object.keys(result)
+						$('#reportData').append(`
+							<table class="table">
+								<thead>
+									<tr>
+										<th></th>
+										<th>Labor Hour</th>
+									</tr>
+								</thead>
+
+								<tbody id="reportRows">
+									<tr
+								</tbody>
+
+								<tfoot>
+
+								</tfoot>
+							</table>
+						`)
+						keys.forEach(e => {
+							if (e == 'total') {
+
+							} else {
+								$('#reportRows').append(`
+									<tr>
+										<td>${e > 12 ? e - 12 : e} ${e > 12 ? 'PM' : 'AM'}</td>
+										<td>${result[e] ? (result[e]/60).toFixed(2) : 0}</td>
+									</tr>
+								`)
+							}
+						})
+						break;
+					case "laborReportByRole":
+						keys = Object.keys(result)
+						$('#reportData').append(`
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Role</th>
+										<th>Regular</th>
+										<th>Vacation</th>
+										<th>Total</th>
+									</tr>
+								</thead>
+
+								<tbody id="reportRows">
+
+								</tbody>
+
+								<tfoot id="reportFoot">
+
+								</tfoot>
+							</table>
+						`)
+						keys.forEach(e => {
+							if (e == 'total') {
+								$('#reportFoot').append(`
+									<tr>
+										<td><b>${e}</b></td>
+										<td>${result[e].regular.toFixed(2)}</td>
+										<td>${result[e].vacation ? result[e].vacation.toFixed(2) : 0}</td>
+										<td>${result[e].total}</td>
+									</tr>
+								`)
+							} else {
+								$('#reportRows').append(`
+									<tr>
+										<td>${e}</td>
+										<td>${result[e].regular.toFixed(2)}</td>
+										<td>${result[e].vacation ? result[e].vacation.toFixed(2) : 0}</td>
+										<td>${result[e].total.toFixed(2)}</td>
+									</tr>
+								`)
+							}
+						})
+						break;
+					case "laborReportByEmployee":
+						keys = Object.keys(result)
+
+						keys.forEach(e => {
+							let roles = Object.keys(result[e])
+							$('#reportData').append(`
+								<div id="${result[e].employeeId}">
+									<h3>${e}</h3>
+								</div>
+							`)
+
+							roles.forEach(r => {
+								if (r == 'total') {
+								} else if (r == 'employeeId') {
+								} else {
+									$(`#reportData`).append(`<p>${r}: ${result[e][r].toFixed(2)}</p>`)
+								}
 							})
-							break;
+							$(`#reportData`).append(`<p><b>Total</b>: ${result[e].total.toFixed(2)}</p>`)
+						})
+						break;
 						default:
 				}
 			}
@@ -1038,9 +1128,9 @@ $(document).ready(function(){
 					let breakTime = (e.breakTime/60).toFixed(2)
 					nonActive.push(e)
 					$('#totalTable').append(`
-						<tr class='clickable' onclick="getTimesheet(${e.id})">
-							<td>${totalHours}</td>
-							<td>${e.name} ${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
+						<tr class='clickable'>
+							<td onclick="getTimesheet(${e.id})">${totalHours}</td>
+							<td onclick="getTimesheet(${e.id})">${e.name} ${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
 							<td><td><input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/></td></td>
 						</tr>
 					`)
@@ -1216,11 +1306,10 @@ $(document).ready(function(){
 			roles.forEach(r => {
 				$('#punchRole').append(`<option value=${r.job_code} ${r.primaryjob == 'Y' ? 'selected' : ''}>${r.job_desc}</option>`)
 			})
-				console.log(timezone);
             timeslots.forEach((timeslot, index) => {
 								timeslot.punchintimezone = timeslot.punchintimezone ? timeslot.punchintimezone : timezone
 								timeslot.punchouttimezone = timeslot.punchouttimezone ? timeslot.punchouttimezone : timezone
-								console.log(timeslot.punchintimezone);
+
                 let hoursSum = 0,
                     weekday = moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday() === 6 ? -1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday(),
                     $htmlDay = days[deltasonic ? weekday + 1 : moment.unix(timeslot.punchintime).tz(timeslot.punchintimezone).weekday()][0],

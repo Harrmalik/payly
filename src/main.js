@@ -299,7 +299,8 @@ $(document).ready(function () {
 				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
 				timezone : timezone,
-				alerts   : alerts
+				alerts   : alerts,
+				deltasonic
 			}
 		}).success((hours) => {
 			if (deltasonic == 1) {
@@ -915,7 +916,8 @@ $(document).ready(function () {
 				empid    : empid,
 				timezone : timezone,
 				alerts   : alerts,
-				role     : role
+				role     : role,
+				deltasonic
 			}
 		}).success((checkin) => {
 			checkInIds.push(checkin);
@@ -958,7 +960,8 @@ $(document).ready(function () {
 				id       : checkInIds[checkInIds.length - 1],
 				empid    : empid,
 				timezone : timezone,
-				alerts   : alerts
+				alerts   : alerts,
+				deltasonic
 			}
 		}).success((hours) => {
 			$('.iziToast').hide()
