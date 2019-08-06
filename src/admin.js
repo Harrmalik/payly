@@ -769,7 +769,6 @@ $(document).ready(function(){
 	  }).done((result) => {
 			let keys = []
 			$('#reportData').empty()
-			console.log(result);
 			if (result.length == 0 ){
 				$('#reportData').append('No Employees');
 			} else {
@@ -1104,7 +1103,7 @@ $(document).ready(function(){
 							wash++
 						} else if (r.match(/c-store/g) || e.profitcenter == 4) {
 							store.push(e)
-						} else if (!r.match(/detail u/g) && (r.match(/detail|quality|paint/g) || e.profitcenter == 2)) {
+						} else if (!r.match(/detail u|kiss univ detail/g) && (r.match(/detail|quality|paint/g) || e.profitcenter == 2)) {
 							detail.push(e)
 						} else if (r.match(/power|program/g)) {
 							power.push(e)
@@ -1535,6 +1534,8 @@ $(document).ready(function(){
 	};
 
 	// EVENT LISTENERS
+	$('#back').on('click', getInitialState)
+
 	$('#dDate').on('dp.change', () => {
 		getInitialState();
 	});
