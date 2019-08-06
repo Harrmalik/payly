@@ -75,7 +75,7 @@ let login = (e) => {
 				var data = {
 					id: empid,
 					startDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD'),
-					endDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD')
+					endDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD')
 				};
 
 				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
@@ -302,7 +302,8 @@ $(document).ready(function () {
 				alerts   : alerts,
 				deltasonic
 			}
-		}).success((hours) => {
+		}).success((checkoutTime) => {
+			checkOutTime = moment(checkoutTime)
 			if (deltasonic == 1) {
 				iziToast.info({
 					timeout: 60000 * 60,
@@ -920,7 +921,8 @@ $(document).ready(function () {
 				deltasonic
 			}
 		}).success((checkin) => {
-			checkInIds.push(checkin);
+			checkInIds.push(checkin.checkInId);
+			checkInTime = moment(checkin.checkInTime)
 			makeUpdate();
 			ga('send', 'event', 'CheckIn', empid, 'Successful')
 			$('.iziToast').hide()
@@ -963,7 +965,8 @@ $(document).ready(function () {
 				alerts   : alerts,
 				deltasonic
 			}
-		}).success((hours) => {
+		}).success((checkoutTime) => {
+			checkOutTime = moment(checkoutTime)
 			$('.iziToast').hide()
 			if (deltasonic == 1) {
 				iziToast.info({
