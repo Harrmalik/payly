@@ -74,7 +74,7 @@ let login = (e) => {
 				getInitialState();
 				var data = {
 					id: empid,
-					startDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD'),
+					startDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD'),
 					endDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD')
 				};
 
