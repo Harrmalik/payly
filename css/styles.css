@@ -55,7 +55,13 @@ h2 {
 
 section.mainBtns {
 	margin: 1em auto 5%;
-    max-width: 35em;
+  max-width: 35em;
+}
+
+section#hasNotClaimed {
+	margin: 1em auto 5%;
+  max-width: 35em;
+	display: none;
 }
 
 #checkIn, #checkOut, #lunchBreak {

@@ -136,6 +136,9 @@
                             <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
                         <?php } ?>
                     </section>
+                    <section id="hasNotClaimed">
+                      <h2>Must claim tips to continue using kissklock</h2>
+                    </section>
                 </section>
 
                 <section id="sidebar">
