@@ -27,7 +27,12 @@ timer = () => {
 },
 removeTimer = () => {
 	clearTimeout(autologout)
-};
+},
+serverTime = moment();
+
+$.get('./php/main.php?action=getServerTime&module=kissklock').done((time) => {
+	serverTime = moment.unix(time)
+})
 
 $('body').css("overflow", "hidden")
 if (!ga) {
@@ -81,11 +86,11 @@ let login = (e) => {
 				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
 					response.timeslots.forEach(t => {
 						if (t.istipped ==1 && response.tips.length == 0) {
-							$('.mainBtns').empty()
-							$('#roleButtons').hide()
-							$('.mainBtns').append('<h2>Must claim tips to continue using kissklock</h2>')
+							hasNotClaimed = true
 						}
 					})
+
+					toggleHasNotClaimedTips()
 				})
 				$('#auth').hide();
 				$('#nav').show();
@@ -219,6 +224,18 @@ let unknownSignin = () => {
 
 let clearEmpId = () => {
 	empid = '';
+}
+
+let toggleHasNotClaimedTips = () => {
+	if (hasNotClaimed == true) {
+		$('.mainBtns').hide()
+		$('#roleButtons').hide()
+		$('#hasNotClaimed').show()
+	} else {
+		$('.mainBtns').show()
+		$('#roleButtons').show()
+		$('#hasNotClaimed').hide()
+	}
 }
 
 // Logout the user.
@@ -1016,12 +1033,13 @@ $(document).ready(function () {
 });
 
 function startTime() {
-	var today = moment();
+	var today = serverTime;
 	$('#clock').html(today.format('hh:mm:ss') + `<span>${today.format('A')}</span>`)
 	$('#date').text(today.format('dddd, MMMM Do'))
 	var time = setTimeout(function () {
+			serverTime.add(1, 'seconds')
 			startTime()
-		}, 500);
+		}, 1000);
 }
 
 function openWarning() {
@@ -1157,7 +1175,8 @@ function saveTips(){
 		    			window.close();
 
 						}, 3000);
-
+						hasNotClaimed = false
+						toggleHasNotClaimedTips()
 
 				} else {
 					showMsg("bg-danger", "An error has occurred while saving the tips' data.");
