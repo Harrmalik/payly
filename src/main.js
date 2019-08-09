@@ -90,7 +90,7 @@ let login = (e) => {
 						}
 					})
 
-					toggleHasNotClaimedTips()
+					if (user.field) toggleHasNotClaimedTips()
 				})
 				$('#auth').hide();
 				$('#nav').show();
