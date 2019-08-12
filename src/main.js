@@ -85,7 +85,7 @@ let login = (e) => {
 
 				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
 					response.timeslots.forEach(t => {
-						if (t.istipped ==1 && response.tips.length == 0) {
+						if (t.istipped ==1 && response.tips.length == 0 && t.punchouttime) {
 							hasNotClaimed = true
 						}
 					})
