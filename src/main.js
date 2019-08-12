@@ -628,7 +628,7 @@ $(document).ready(function () {
 							}
 						}
 					} else {
-						hoursSum = moment().diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
+						hoursSum = serverTime.diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
 						totalTime += hoursSum;
 
 						days[weekday + 1][2] += hoursSum;

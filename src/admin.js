@@ -765,7 +765,7 @@ $(document).ready(function(){
 	$('#runReport').on('click', () => {
 		$('#reportData').empty().append('Running report.....');
 		$.ajax({
-	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
+	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}&profitcenter=${$('#reportsProfitCenter').val()}`
 	  }).done((result) => {
 			let keys = []
 			$('#reportData').empty()
@@ -795,17 +795,17 @@ $(document).ready(function(){
 						break;
 					case "laborReport":
 						keys = Object.keys(result)
+						let baseHours = Object.keys(result[$('#reportsProfitCenter').val()])
 						$('#reportData').append(`
 							<table class="table">
 								<thead>
 									<tr>
-										<th></th>
-										<th>Labor Hour</th>
+										<th>Hour</th>
+										<th>${$('#reportsProfitCenter').find(":selected").text()}</th>
 									</tr>
 								</thead>
 
 								<tbody id="reportRows">
-									<tr
 								</tbody>
 
 								<tfoot>
@@ -813,17 +813,27 @@ $(document).ready(function(){
 								</tfoot>
 							</table>
 						`)
-						keys.forEach(e => {
-							if (e == 'total') {
 
-							} else {
-								$('#reportRows').append(`
-									<tr>
-										<td>${e > 12 ? e - 12 : e} ${e > 12 ? 'PM' : 'AM'}</td>
-										<td>${result[e] ? (result[e]/60).toFixed(2) : 0}</td>
-									</tr>
-								`)
-							}
+						baseHours.forEach(e => {
+							let currentHour = `${e > 12 ? e - 12 : e} ${e > 12 ? 'PM' : 'AM'}`
+							$('#reportRows').append(`
+								<tr>
+									<td>${e == 'total' ? 'Total' : currentHour}</td>
+									<td id="${$('#reportsProfitCenter').val()}${currentHour.replace(' ','')}">0.00</td>
+								</tr>
+							`)
+							})
+						keys.forEach(e => {
+							let hours = Object.keys(result[e])
+
+							hours.forEach(h => {
+								let currentHour = `${h > 12 ? h - 12 : h} ${h > 12 ? 'PM' : 'AM'}`
+								if (e == 'total') {
+
+								} else {
+									$(`#${e}${currentHour.replace(' ','')}`).html(`${result[e][h] ? (result[e][h]/60).toFixed(2) : '0.00'}`)
+								}
+							})
 						})
 						break;
 					case "laborReportByRole":

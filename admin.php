@@ -442,6 +442,7 @@
                       <label for="inputPassword3" class=" control-label">Location</label>
                       <select name="location" class="form-control">
                           <option value="">Select a Location</option>
+                          <option value="900">900. Office</option>
                           <option value="807">807. Main Street</option>
                       </select>
                     </div>
@@ -736,16 +737,21 @@
                   <div class="col-sm-4">
                       <select class="form-control" id="reportsCompany">
                           <option value="dailyAutosignOutReport">Deltasonic</option>
-                          <option value="dailyUnderEightHoursReport">Benderson</option>\
+                          <option value="dailyUnderEightHoursReport">Benderson</option>
                       </select>
                   </div>
                 </div>
                 <div class="form-group" style="clear:both; margin:1em 0;">
-                  <label for="reportsLocation" class="col-sm-2 control-label">Location</label>
+                  <label for="reportsLocation" class="col-sm-2 control-label">Profit Center</label>
                   <div class="col-sm-4">
-                      <select class="form-control" id="reportsLocation">
-                          <option value="dailyAutosignOutReport">Office</option>
-                          <option value="dailyUnderEightHoursReport">Main Street</option>
+                      <select class="form-control" id="reportsProfitCenter">
+                          <option value="1">Wash</option>
+                          <option value="2">Detail</option>
+                          <option value="3">Lube</option>
+                          <option value="4">C-Store</option>
+                          <option value="5">Deli</option>
+                          <option value="7">Coffee</option>
+                          <option value="9">Office</option>
                       </select>
                   </div>
                 </div>
@@ -905,4 +911,4 @@
 </body>
 
 
-<script src="./dist/admin.js"></script>
+<script src="./src/admin.js"></script>
