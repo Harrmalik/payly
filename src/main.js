@@ -27,12 +27,55 @@ timer = () => {
 },
 removeTimer = () => {
 	clearTimeout(autologout)
-},
-serverTime = moment();
+};
 
-$.get('./php/main.php?action=getServerTime&module=kissklock').done((time) => {
-	serverTime = moment.unix(time)
-})
+let tc = new TimeKeeper();
+tc.addUpdateHadler(updateDateTime);
+
+function TimeKeeper() {
+
+	let _ = this;
+
+	let isRunning = false;
+	let currentTime = null;
+	let interval = null;
+	let updateHandlers = [];
+
+	this.start = function(){
+		if(isRunning){
+			_.stop();
+		}
+		$.get('./php/main.php?action=getServerTime&module=kissklock').done((time) => {
+			currentTime = moment.unix(time);
+			isRunning = true;
+			updateTime();
+			setInterval(updateTime, 1000);
+		});
+	};
+
+	this.stop = function() {
+		isRunning = false;
+		if(interval){
+			clearInterval(interval);
+		}
+	};
+
+	this.addUpdateHadler = function(func){
+		updateHandlers.push(func);
+	};
+
+	function updateTime() {
+		currentTime.add(1, 'seconds');
+		updateHandlers.forEach(handler => {
+			handler(currentTime.format('dddd, MMMM Do'), currentTime.format("hh:mm:ss A"))
+		})
+	}
+}
+
+function updateDateTime(date, time){
+	$('#date').html(date);
+	$('#clock').text(time);
+}
 
 $('body').css("overflow", "hidden")
 if (!ga) {
@@ -44,7 +87,7 @@ if (!ga) {
 // Only show timer if screen is wide enough
 if ($(window).width() >= 1000) {
 	$('#clockdate').show()
-	startTime()
+	tc.start();
 }
 
 function update(input) {
