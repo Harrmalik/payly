@@ -49,7 +49,7 @@ function TimeKeeper() {
 			currentTime = moment.unix(time);
 			isRunning = true;
 			updateTime();
-			setInterval(updateTime, 1000);
+			interval = setInterval(updateTime, 1000);
 		});
 	};
 
