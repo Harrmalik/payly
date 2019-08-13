@@ -63,6 +63,7 @@
               <ul class="nav navbar-nav">
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show();$('#laborBreakdown').hide();">Dashboard</a></li>
+                  <li role="presentation"><a href="#inout" aria-controls="inout" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();getInOuts();$('#employees').show();">In/Out</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheets</a></li>
                   <li role="presentation"><a class="trainerBtn" href="#addusers" aria-controls="addusers" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Add users</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Users</a></li>
@@ -154,7 +155,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th>Notes</th>
+                                                <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="boothTable">
@@ -177,7 +178,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th>Notes</th>
+                                                <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="powerTable">
@@ -200,7 +201,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th>Notes</th>
+                                                <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="washTable">
@@ -223,7 +224,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="managementTable">
@@ -247,7 +248,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="detailTable">
@@ -270,7 +271,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="storeTable">
@@ -293,7 +294,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="foodTable">
@@ -316,7 +317,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="lubeTable">
@@ -339,7 +340,7 @@
                                             <th>Minor</th>
                                             <th>Role</th>
                                             <th>Wk Hrs</th>
-                                            <th>Notes</th>
+                                            <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="otherTable">
@@ -370,7 +371,7 @@
                                       <tr>
                                           <th>Hrs</th>
                                           <th>Name</th>
-                                          <th>Note</th>
+                                          <th>In</th>
                                       </tr>
                                   </thead>
                                   <tbody id="totalTable">
@@ -399,6 +400,37 @@
                         <?php } ?>
                     </section>
                 </div>
+
+              <div role="tabpanel" class="tab-pane" id="inout">
+                <div style="width:50%;float: left">
+                  <h2>IN</h2>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td>IN AT</td>
+                        <td>Employee</td>
+                      </tr>
+                    </thead>
+                    <tbody id="inusers">
+
+                    </tbody>
+                  </table>
+                </div>
+                <div style="width:50%;float: left">
+                  <h2>Out</h2>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td>IN AT</td>
+                        <td>Employee</td>
+                      </tr>
+                    </thead>
+                    <tbody id="outusers">
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
               <div role="tabpanel" class="tab-pane" id="home">
                   <form class="form-horizontal" onsubmit="return getTimesheet();">
@@ -911,4 +943,4 @@
 </body>
 
 
-<script src="./src/admin.js"></script>
+<script src="./dist/admin.js"></script>
