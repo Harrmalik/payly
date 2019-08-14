@@ -141,6 +141,8 @@ let getInOuts = () => {
 			module: 'admin'
 		}
 	}).done((data) => {
+		$('#inusers').empty()
+		$('#outusers').empty()
 		let ins = Object.keys(data.ins)
 		let outs = Object.keys(data.outs)
 
