@@ -53,11 +53,11 @@ let empid,
 	});
 	$('#startDate').datetimepicker({
 		defaultDate: moment().day() == 6 ? moment().day() : moment().weekday(-1),
-		format: 'MMMM Do YYYY',
+		format: 'MMMM Do YYYY h:mm a',
 	});
 	$('#endDate').datetimepicker({
 		defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
-		format: 'MMMM Do YYYY',
+		format: 'MMMM Do YYYY h:mm a',
 	});
 
 	var glbDataTable = '';
@@ -890,7 +890,7 @@ $(document).ready(function(){
 					case "laborReportByRole":
 						keys = Object.keys(result)
 						$('#reportData').append(`
-							<table class="table">
+							<table class="table table-condensed">
 								<thead>
 									<tr>
 										<th>Role</th>
@@ -950,6 +950,34 @@ $(document).ready(function(){
 								}
 							})
 							$(`#reportData`).append(`<p><b>Total</b>: ${result[e].total.toFixed(2)}</p>`)
+						})
+						break;
+					case "employeesWorking":
+						$('#reportData').append(`
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Role</th>
+										<th>Punch in</th>
+										<th>Punch out</th>
+									</tr>
+								</thead>
+
+								<tbody id="reportRows">
+
+								</tbody>
+							</table>
+						`)
+						result.forEach(e => {
+							$('#reportRows').append(`
+								<tr>
+									<td>${e.employeename}</td>
+									<td>${e.rolename}</td>
+									<td>${moment(e.punchintime).format('hh:mm a')}</td>
+									<td>${e.punchouttime ? moment(e.punchouttime).format('hh:mm a') : 'Currently working'}</td>
+								</tr>
+							`)
 						})
 						break;
 						default:
