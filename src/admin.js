@@ -53,11 +53,11 @@ let empid,
 	});
 	$('#startDate').datetimepicker({
 		defaultDate: moment().day() == 6 ? moment().day() : moment().weekday(-1),
-		format: 'MMMM Do YYYY',
+		format: 'MMMM Do YYYY h:mm a',
 	});
 	$('#endDate').datetimepicker({
 		defaultDate: moment().day() == 6 ? moment().weekday(12) : moment().weekday(5),
-		format: 'MMMM Do YYYY',
+		format: 'MMMM Do YYYY h:mm a',
 	});
 
 	var glbDataTable = '';
@@ -129,6 +129,51 @@ let getTimesheet = (userid, endDate = null) => {
 		}
 	});
 	return false;
+}
+
+let getInOuts = () => {
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'get',
+		data: {
+			currentLocation,
+			action: 'getInOuts',
+			module: 'admin'
+		}
+	}).done((data) => {
+		$('#inusers').empty()
+		$('#outusers').empty()
+		let ins = Object.keys(data.ins)
+		let outs = Object.keys(data.outs)
+
+		ins.forEach(inKey => {
+			if (inKey != 'null') {
+				data.ins[inKey].forEach(emp => {
+					let currentHour = `${emp.intime > 12 ? emp.intime - 12 : emp.intime} ${emp.intime > 12 ? 'PM' : 'AM'}`
+					$('#inusers').append(`
+						<tr>
+							<td>${currentHour}</td>
+							<td>${emp.employeename}</td>
+						</tr>
+					`)
+				})
+			}
+		})
+
+		outs.forEach(outKey => {
+			if (outKey != 'null') {
+				data.outs[outKey].forEach(emp => {
+					let currentHour = `${emp.outtime > 12 ? emp.outtime - 12 : emp.outtime} ${emp.outtime > 12 ? 'PM' : 'AM'}`
+					$('#outusers').append(`
+						<tr>
+							<td>${currentHour}</td>
+							<td>${emp.employeename}</td>
+						</tr>
+					`)
+				})
+			}
+		})
+	});
 }
 
 $('#addTimeslot').on('click', () => {
@@ -294,25 +339,31 @@ let deleteTimeslot = (row) => {
 	});
 }
 
-let saveNotes = (empid,noteid) => {
-	if ($(`#${empid}-notes`).val()) {
-		$.ajax({
-			url: `./php/main.php`,
-			method: 'post',
-			data: {
-				module: 'admin',
-				action: 'saveNote',
-				noteid,
-				empid,
-				notes: $(`#${empid}-notes`).val()
-			}
-		}).done((data) => {
-			iziToast.success({
-				title: 'Success',
-				message: `Note saved.`,
-			});
-		});
+let saveNotes = (isOut, empid,noteid) => {
+	let data = {
+		module: 'admin',
+		action: 'saveNote',
+		noteid,
+		empid,
+		currentLocation
 	}
+
+	if (isOut) {
+		data.outtime = $(`#${empid}-notes`).val()
+	} else {
+		data.intime = $(`#${empid}-notes`).val()
+	}
+
+	$.ajax({
+		url: `./php/main.php`,
+		method: 'post',
+		data
+	}).done((data) => {
+		iziToast.success({
+			title: 'Success',
+			message: `time saved.`,
+		});
+	});
 }
 
 
@@ -765,7 +816,7 @@ $(document).ready(function(){
 	$('#runReport').on('click', () => {
 		$('#reportData').empty().append('Running report.....');
 		$.ajax({
-	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}`
+	  	url: `./php/main.php?module=admin&action=runReport&report=${$('#reportsDropdown').val()}&location=${currentLocation}&startDate=${$('#startDate').data("DateTimePicker").date().unix()}&endDate=${$('#endDate').data("DateTimePicker").date().unix()}&profitcenter=${$('#reportsProfitCenter').val()}`
 	  }).done((result) => {
 			let keys = []
 			$('#reportData').empty()
@@ -795,17 +846,17 @@ $(document).ready(function(){
 						break;
 					case "laborReport":
 						keys = Object.keys(result)
+						let baseHours = Object.keys(result[$('#reportsProfitCenter').val()])
 						$('#reportData').append(`
 							<table class="table">
 								<thead>
 									<tr>
-										<th></th>
-										<th>Labor Hour</th>
+										<th>Hour</th>
+										<th>${$('#reportsProfitCenter').find(":selected").text()}</th>
 									</tr>
 								</thead>
 
 								<tbody id="reportRows">
-									<tr
 								</tbody>
 
 								<tfoot>
@@ -813,23 +864,33 @@ $(document).ready(function(){
 								</tfoot>
 							</table>
 						`)
-						keys.forEach(e => {
-							if (e == 'total') {
 
-							} else {
-								$('#reportRows').append(`
-									<tr>
-										<td>${e > 12 ? e - 12 : e} ${e > 12 ? 'PM' : 'AM'}</td>
-										<td>${result[e] ? (result[e]/60).toFixed(2) : 0}</td>
-									</tr>
-								`)
-							}
+						baseHours.forEach(e => {
+							let currentHour = `${e > 12 ? e - 12 : e} ${e > 12 ? 'PM' : 'AM'}`
+							$('#reportRows').append(`
+								<tr>
+									<td>${e == 'total' ? 'Total' : currentHour}</td>
+									<td id="${$('#reportsProfitCenter').val()}${currentHour.replace(' ','')}">0.00</td>
+								</tr>
+							`)
+							})
+						keys.forEach(e => {
+							let hours = Object.keys(result[e])
+
+							hours.forEach(h => {
+								let currentHour = `${h > 12 ? h - 12 : h} ${h > 12 ? 'PM' : 'AM'}`
+								if (e == 'total') {
+
+								} else {
+									$(`#${e}${currentHour.replace(' ','')}`).html(`${result[e][h] ? (result[e][h]/60).toFixed(2) : '0.00'}`)
+								}
+							})
 						})
 						break;
 					case "laborReportByRole":
 						keys = Object.keys(result)
 						$('#reportData').append(`
-							<table class="table">
+							<table class="table table-condensed">
 								<thead>
 									<tr>
 										<th>Role</th>
@@ -889,6 +950,34 @@ $(document).ready(function(){
 								}
 							})
 							$(`#reportData`).append(`<p><b>Total</b>: ${result[e].total.toFixed(2)}</p>`)
+						})
+						break;
+					case "employeesWorking":
+						$('#reportData').append(`
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Role</th>
+										<th>Punch in</th>
+										<th>Punch out</th>
+									</tr>
+								</thead>
+
+								<tbody id="reportRows">
+
+								</tbody>
+							</table>
+						`)
+						result.forEach(e => {
+							$('#reportRows').append(`
+								<tr>
+									<td>${e.employeename}</td>
+									<td>${e.rolename}</td>
+									<td>${moment(e.punchintime).format('hh:mm a')}</td>
+									<td>${e.punchouttime ? moment(e.punchouttime).format('hh:mm a') : 'Currently working'}</td>
+								</tr>
+							`)
 						})
 						break;
 						default:
@@ -1130,7 +1219,26 @@ $(document).ready(function(){
 						<tr class='clickable'>
 							<td onclick="getTimesheet(${e.id})">${totalHours}</td>
 							<td onclick="getTimesheet(${e.id})">${e.name} ${breakTime > 0 ? '<i class="fas fa-check"></i>' : ''}</td>
-							<td><td><input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/></td></td>
+							<td>
+								<select class="form-control" id="${e.id}-notes" onChange="saveNotes(false,${e.id}, ${e.noteid})" value="${e.intime}">
+									<option value="0">Select In</option>
+									<option value="7" ${e.intime == 7 ? 'selected' : '' }>7 AM</option>
+									<option value="8" ${e.intime == 8 ? 'selected' : '' }>8 AM</option>
+									<option value="9" ${e.intime == 9 ? 'selected' : '' }>9 AM</option>
+									<option value="10" ${e.intime == 10 ? 'selected' : '' }>10 AM</option>
+									<option value="11" ${e.intime == 11 ? 'selected' : '' }>11 AM</option>
+									<option value="12" ${e.intime == 12 ? 'selected' : '' }>12 AM</option>
+									<option value="13" ${e.intime == 13 ? 'selected' : '' }>1 PM</option>
+									<option value="14" ${e.intime == 14 ? 'selected' : '' }>2 PM</option>
+									<option value="15" ${e.intime == 15 ? 'selected' : '' }>3 PM</option>
+									<option value="16" ${e.intime == 16 ? 'selected' : '' }>4 PM</option>
+									<option value="17" ${e.intime == 17 ? 'selected' : '' }>5 PM</option>
+									<option value="18" ${e.intime == 18 ? 'selected' : '' }>6 PM</option>
+									<option value="19" ${e.intime == 19 ? 'selected' : '' }>7 PM</option>
+									<option value="20" ${e.intime == 20 ? 'selected' : '' }>8 PM</option>
+									<option value="21" ${e.intime == 21 ? 'selected' : '' }>9 PM</option>
+								</select>
+							</td>
 						</tr>
 					`)
 				}
@@ -1145,7 +1253,26 @@ $(document).ready(function(){
 					{ data: 'isMinor', render: data => { return data ? '<i class="fas fa-child"></i>' : '' }, width: '6%' },
 					{ data: 'role', width: '18%' },
 					{ data: 'totalHours', render: data => { return `<span class="${data > 40 ? 'red' : '' }">${data}</span>`}, width: '10%' },
-					{ data: 'id', render: (data, type, e) => { return `<input class="form-control" id="${e.id}-notes" type="text" onblur="saveNotes(${e.id}, ${e.noteid})" value="${e.notes}"/>` }, width: '8%' },
+					{ data: 'id', render: (data, type, e) => { return `
+						<select class="form-control" id="${e.id}-notes" onChange="saveNotes(true, ${e.id}, ${e.noteid})" value="${e.outtime}">
+							<option value="0">Select Out</option>
+							<option value="7" ${e.outtime == 7 ? 'selected' : '' }>7 AM</option>
+							<option value="8" ${e.outtime == 8 ? 'selected' : '' }>8 AM</option>
+							<option value="9" ${e.outtime == 9 ? 'selected' : '' }>9 AM</option>
+							<option value="10" ${e.outtime == 10 ? 'selected' : '' }>10 AM</option>
+							<option value="11" ${e.outtime == 11 ? 'selected' : '' }>11 AM</option>
+							<option value="12" ${e.outtime == 12 ? 'selected' : '' }>12 AM</option>
+							<option value="13" ${e.outtime == 13 ? 'selected' : '' }>1 PM</option>
+							<option value="14" ${e.outtime == 14 ? 'selected' : '' }>2 PM</option>
+							<option value="15" ${e.outtime == 15 ? 'selected' : '' }>3 PM</option>
+							<option value="16" ${e.outtime == 16 ? 'selected' : '' }>4 PM</option>
+							<option value="17" ${e.outtime == 17 ? 'selected' : '' }>5 PM</option>
+							<option value="18" ${e.outtime == 18 ? 'selected' : '' }>6 PM</option>
+							<option value="19" ${e.outtime == 19 ? 'selected' : '' }>7 PM</option>
+							<option value="20" ${e.outtime == 20 ? 'selected' : '' }>8 PM</option>
+							<option value="21" ${e.outtime == 21 ? 'selected' : '' }>9 PM</option>
+						</select>
+					`}, width: '8%' },
 			],
 			columnDefs = [
 				{
@@ -1236,7 +1363,7 @@ $(document).ready(function(){
 
 
 			$('.dataTable tr').on('click', e => {
-				if (($(e.target).closest("input").attr('id') && $(e.target).closest("input").attr('id').split('-')[1] != 'notes') || !$(e.target).closest("input").attr('id'))
+				if ((($(e.target).closest("input").attr('id') && $(e.target).closest("input").attr('id').split('-')[1] != 'notes') || !$(e.target).closest("input").attr('id')) && !$(e.target).closest("select").attr('id'))
 					getTimesheet($(e.target).parents("tr").children().last().children().attr('id').split('-')[0])
 			})
 		} else {

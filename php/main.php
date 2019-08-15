@@ -17,7 +17,7 @@
             $response->raw_body = $_SERVER['REMOTE_ADDR'];
             break;
         case 'admin':
-            $response = doGetRequest($NodeServer . "/admin?action=" . $_REQUEST['action'] . "&empid=" . $_REQUEST['empid'] . "&startDate=" . $_REQUEST['startDate'] . "&endDate=" . $_REQUEST['endDate'] . "&report=" . $_REQUEST['report'] . "&location=" . $_REQUEST['location'] . "&offset=" . $_REQUEST['offset'] . "&query=" . $_REQUEST['query'], $username, $password);
+            $response = doGetRequest($NodeServer . "/admin?action=" . $_REQUEST['action'] . "&empid=" . $_REQUEST['empid'] . "&startDate=" . $_REQUEST['startDate'] . "&endDate=" . $_REQUEST['endDate'] . "&report=" . $_REQUEST['report'] . "&location=" . $_REQUEST['location'] . "&offset=" . $_REQUEST['offset'] . "&query=" . $_REQUEST['query'] . "&profitcenter=" . $_REQUEST['profitcenter'], $username, $password);
             break;
       }
 

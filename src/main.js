@@ -128,7 +128,7 @@ let login = (e) => {
 
 				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
 					response.timeslots.forEach(t => {
-						if (t.istipped ==1 && response.tips.length == 0 && t.punchouttime) {
+						if (t.istipped ==1 && response.tips.length == 0) {
 							hasNotClaimed = true
 						}
 					})
@@ -671,7 +671,7 @@ $(document).ready(function () {
 							}
 						}
 					} else {
-						hoursSum = moment().diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
+						hoursSum = serverTime.diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
 						totalTime += hoursSum;
 
 						days[weekday + 1][2] += hoursSum;
@@ -1218,9 +1218,13 @@ function saveTips(){
 		    			window.close();
 
 						}, 3000);
-						hasNotClaimed = false
-						toggleHasNotClaimedTips()
-
+					hasNotClaimed = false
+					toggleHasNotClaimedTips()
+					$('#home').click()
+					if (counter % 2 == 1) {
+						checkOut()
+						$('#roleButtons h2').text('Punch back in')
+					}
 				} else {
 					showMsg("bg-danger", "An error has occurred while saving the tips' data.");
 					//$("#msg-status").removeClass("bg-success");
@@ -1308,6 +1312,7 @@ function lookupHours(){
 			wash = false;
 
 		response.timeslots.forEach((timeslot) => {
+			timeslot.totalHours = timeslot.totalHours ? timeslot.totalHours : moment().diff(moment.unix(timeslot.punchintime), 'minutes')/60
 			if (timeslot.istipped) {
 				tippedHours += timeslot.totalHours
 			} else {

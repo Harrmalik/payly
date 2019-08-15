@@ -63,6 +63,7 @@
               <ul class="nav navbar-nav">
                   <li><a href="./" role="button">Kissklock</a></li>
                   <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#employees').show();$('#laborBreakdown').hide();">Dashboard</a></li>
+                  <li role="presentation"><a href="#inout" aria-controls="inout" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();getInOuts();$('#employees').show();">In/Out</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#home" aria-controls="home" role="tab" data-toggle="tab">Timesheets</a></li>
                   <li role="presentation"><a class="trainerBtn" href="#addusers" aria-controls="addusers" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Add users</a></li>
                   <li role="presentation"><a class="adminsBtn" href="#users" aria-controls="users" role="tab" data-toggle="tab" onclick="$('#userTimesheet').hide();$('#laborBreakdown').hide();">Users</a></li>
@@ -154,7 +155,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th>Notes</th>
+                                                <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="boothTable">
@@ -177,7 +178,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th>Notes</th>
+                                                <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="powerTable">
@@ -200,7 +201,7 @@
                                                 <th>Minor</th>
                                                 <th>Role</th>
                                                 <th>Wk Hrs</th>
-                                                <th>Notes</th>
+                                                <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="washTable">
@@ -223,7 +224,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                             </tr>
                                         </thead>
                                         <tbody id="managementTable">
@@ -247,7 +248,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="detailTable">
@@ -270,7 +271,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="storeTable">
@@ -293,7 +294,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="foodTable">
@@ -316,7 +317,7 @@
                                               <th>Minor</th>
                                               <th>Role</th>
                                               <th>Wk Hrs</th>
-                                              <th>Notes</th>
+                                              <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="lubeTable">
@@ -339,7 +340,7 @@
                                             <th>Minor</th>
                                             <th>Role</th>
                                             <th>Wk Hrs</th>
-                                            <th>Notes</th>
+                                            <th>Out</th>
                                           </tr>
                                       </thead>
                                       <tbody id="otherTable">
@@ -370,7 +371,7 @@
                                       <tr>
                                           <th>Hrs</th>
                                           <th>Name</th>
-                                          <th>Note</th>
+                                          <th>In</th>
                                       </tr>
                                   </thead>
                                   <tbody id="totalTable">
@@ -399,6 +400,37 @@
                         <?php } ?>
                     </section>
                 </div>
+
+              <div role="tabpanel" class="tab-pane" id="inout">
+                <div style="width:50%;float: left">
+                  <h2>IN</h2>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td>IN AT</td>
+                        <td>Employee</td>
+                      </tr>
+                    </thead>
+                    <tbody id="inusers">
+
+                    </tbody>
+                  </table>
+                </div>
+                <div style="width:50%;float: left">
+                  <h2>Out</h2>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td>IN AT</td>
+                        <td>Employee</td>
+                      </tr>
+                    </thead>
+                    <tbody id="outusers">
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
               <div role="tabpanel" class="tab-pane" id="home">
                   <form class="form-horizontal" onsubmit="return getTimesheet();">
@@ -442,6 +474,7 @@
                       <label for="inputPassword3" class=" control-label">Location</label>
                       <select name="location" class="form-control">
                           <option value="">Select a Location</option>
+                          <option value="900">900. Office</option>
                           <option value="807">807. Main Street</option>
                       </select>
                     </div>
@@ -689,71 +722,79 @@
               </div>
 
               <div role="tabpanel" class="tab-pane" id="reports">
-                <div class="form-group" style="clear:both; margin:1em 0;">
-                    <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">Start Date</label>
+                <div class="form no-print">
+                  <div class="form-group" style="clear:both; margin:1em 0;">
+                      <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">Start Date</label>
+                      <div class="col-sm-4">
+                          <div class='input-group date' id='startDate'>
+                              <input type='text' class="form-control" />
+                              <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                              </span>
+                          </div>
+                      </div>
+                  </div>
+                  <br/>
+                  <div class="form-group" style="clear:both; margin:1em 0;">
+                      <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">End Date</label>
+                      <div class="col-sm-4">
+                          <div class='input-group date' id='endDate'>
+                              <input type='text' class="form-control" />
+                              <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                              </span>
+                          </div>
+                      </div>
+                  </div>
+                  <br/>
+                  <div class="form-group" style="clear:both; margin:1em 0;">
+                    <label for="reportsDropdown" class="col-sm-2 control-label">Reports</label>
                     <div class="col-sm-4">
-                        <div class='input-group date' id='startDate'>
-                            <input type='text' class="form-control" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
+                        <select class="form-control" id="reportsDropdown">
+                            <option value="dailyAutosignOutReport">Forgot to sign out</option>
+                            <option value="dailyUnderEightHoursReport">Under 8 Hours</option>
+                            <option value="dailyNoLunchBreakReport">No Lunch Break</option>
+                            <option value="dailyNoSignOutReport">Autosigned out</option>
+                            <!-- <option value="totalHours">Weekly Hours</option> -->
+                            <option value="laborReport">Labor Report</option>
+                            <option value="laborReportByRole">Labor Report by role</option>
+                            <option value="laborReportByEmployee">Labor Report by employee</option>
+                            <option value="employeesWorking">Employee's Working</option>
+                            <!-- <option value="nightHours">Night Hours</option> -->
+                            <!-- <option value="supportHours">Support Hours</option> -->
+                            <option value="minorReport">Minors Report</option>
+                        </select>
                     </div>
-                </div>
-                <br/>
-                <div class="form-group" style="clear:both; margin:1em 0;">
-                    <label for="punchouttime" style="text-align: left;" class="col-sm-2 control-label">End Date</label>
+                  </div>
+                  <div class="form-group" style="clear:both; margin:1em 0;">
+                    <label for="reportsCompany" class="col-sm-2 control-label">Company</label>
                     <div class="col-sm-4">
-                        <div class='input-group date' id='endDate'>
-                            <input type='text' class="form-control" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
+                        <select class="form-control" id="reportsCompany">
+                            <option value="dailyAutosignOutReport">Deltasonic</option>
+                            <option value="dailyUnderEightHoursReport">Benderson</option>
+                        </select>
                     </div>
-                </div>
-                <br/>
-                <div class="form-group" style="clear:both; margin:1em 0;">
-                  <label for="reportsDropdown" class="col-sm-2 control-label">Reports</label>
-                  <div class="col-sm-4">
-                      <select class="form-control" id="reportsDropdown">
-                          <option value="dailyAutosignOutReport">Forgot to sign out</option>
-                          <option value="dailyUnderEightHoursReport">Under 8 Hours</option>
-                          <option value="dailyNoLunchBreakReport">No Lunch Break</option>
-                          <option value="dailyNoSignOutReport">Autosigned out</option>
-                          <!-- <option value="totalHours">Weekly Hours</option> -->
-                          <option value="laborReport">Labor Report</option>
-                          <option value="laborReportByRole">Labor Report by role</option>
-                          <option value="laborReportByEmployee">Labor Report by employee</option>
-                          <!-- <option value="nightHours">Night Hours</option> -->
-                          <!-- <option value="supportHours">Support Hours</option> -->
-                          <option value="minorReport">Minors Report</option>
-                      </select>
                   </div>
-                </div>
-                <div class="form-group" style="clear:both; margin:1em 0;">
-                  <label for="reportsCompany" class="col-sm-2 control-label">Company</label>
-                  <div class="col-sm-4">
-                      <select class="form-control" id="reportsCompany">
-                          <option value="dailyAutosignOutReport">Deltasonic</option>
-                          <option value="dailyUnderEightHoursReport">Benderson</option>\
-                      </select>
+                  <div class="form-group" style="clear:both; margin:1em 0;">
+                    <label for="reportsLocation" class="col-sm-2 control-label">Profit Center</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="reportsProfitCenter">
+                            <option value="1">Wash</option>
+                            <option value="2">Detail</option>
+                            <option value="3">Lube</option>
+                            <option value="4">C-Store</option>
+                            <option value="5">Deli</option>
+                            <option value="7">Coffee</option>
+                            <option value="9">Office</option>
+                        </select>
+                    </div>
                   </div>
-                </div>
-                <div class="form-group" style="clear:both; margin:1em 0;">
-                  <label for="reportsLocation" class="col-sm-2 control-label">Location</label>
-                  <div class="col-sm-4">
-                      <select class="form-control" id="reportsLocation">
-                          <option value="dailyAutosignOutReport">Office</option>
-                          <option value="dailyUnderEightHoursReport">Main Street</option>
-                      </select>
-                  </div>
+
+                  <br/><br/>
+                  <div class="btn btn-primary" id="runReport">Run Report</div>
+                  <hr/>
                 </div>
 
-                <br/><br/>
-                <div class="btn btn-primary" id="runReport">Run Report</div>
-
-                <hr/>
                 <div id="reportData" style="margin: 2em 0">
 
                 </div>
