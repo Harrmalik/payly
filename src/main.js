@@ -22,6 +22,7 @@ checkIn,
 checkOut,
 openTips,
 hasNotClaimed = false,
+currentTime = null,
 timer = () => {
 	autologout = setTimeout(IdleTimeout, 300000)
 },
@@ -37,7 +38,6 @@ function TimeKeeper() {
 	let _ = this;
 
 	let isRunning = false;
-	let currentTime = null;
 	let interval = null;
 	let updateHandlers = [];
 
@@ -671,7 +671,7 @@ $(document).ready(function () {
 							}
 						}
 					} else {
-						hoursSum = serverTime.diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
+						hoursSum = currentTime.diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
 						totalTime += hoursSum;
 
 						days[weekday + 1][2] += hoursSum;
@@ -1076,11 +1076,11 @@ $(document).ready(function () {
 });
 
 function startTime() {
-	var today = serverTime;
+	var today = currentTime;
 	$('#clock').html(today.format('hh:mm:ss') + `<span>${today.format('A')}</span>`)
 	$('#date').text(today.format('dddd, MMMM Do'))
 	var time = setTimeout(function () {
-			serverTime.add(1, 'seconds')
+			currentTime.add(1, 'seconds')
 			startTime()
 		}, 1000);
 }
