@@ -68,7 +68,7 @@ function TimeKeeper(timeProvider) {
 
 	this.addUpdateHandler = function(handler){
 		if(eventHandlers.indexOf(handler) > -1){
-			throw 'Element already listening to TimeKeeper';
+			throw 'already listening to TimeKeeper';
 		}
 		eventHandlers.push(handler);
 	};
