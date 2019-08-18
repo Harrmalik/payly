@@ -22,7 +22,7 @@ checkIn,
 checkOut,
 openTips,
 hasNotClaimed = false,
-currentTime = null,
+
 timer = () => {
 	autologout = setTimeout(IdleTimeout, 300000)
 },
@@ -1190,15 +1190,6 @@ $(document).ready(function () {
 	}
 });
 
-function startTime() {
-	var today = currentTime;
-	$('#clock').html(today.format('hh:mm:ss') + `<span>${today.format('A')}</span>`)
-	$('#date').text(today.format('dddd, MMMM Do'))
-	var time = setTimeout(function () {
-			currentTime.add(1, 'seconds')
-			startTime()
-		}, 1000);
-}
 
 function openWarning() {
 	$('#warning').modal()
