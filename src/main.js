@@ -48,7 +48,7 @@ function TimeKeeper(timeProvider) {
 
 		currentTime = null;
 		if(timeProvider){
-		    getServerTime(start);
+		    timeProvider(start);
         }
 		else{
 		    start();
