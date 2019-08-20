@@ -1117,7 +1117,7 @@ $(document).ready(function () {
 		});
 	}
 
-	checkOut = (doneForDay = false) => {
+	checkOut = (doneForDay = false, savedTips = false) => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
 		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
 		iziToast.show({
@@ -1158,7 +1158,7 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			if ((isField && tippedRole) || (isField && doneForDay))
+			if ((isField && tippedRole && !savedTips) || (isField && doneForDay))
 				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
 			$('.iziToast').hide()
@@ -1328,7 +1328,7 @@ function saveTips(){
 					toggleHasNotClaimedTips()
 					$('#home').click()
 					if (counter % 2 == 1) {
-						checkOut()
+						checkOut(false, true)
 						$('#roleButtons h2').text('Punch back in')
 					}
 				} else {
