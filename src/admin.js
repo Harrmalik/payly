@@ -149,7 +149,7 @@ let getInOuts = () => {
 		ins.forEach(inKey => {
 			if (inKey != 'null') {
 				data.ins[inKey].forEach(emp => {
-					let currentHour = `${emp.intime > 12 ? emp.intime - 12 : emp.intime} ${emp.intime > 12 ? 'PM' : 'AM'}`
+					let currentHour = `${emp.intime > 12 ? emp.intime - 12 : emp.intime} ${emp.intime > 12 ? 'PM' : 'AM'}`.replace('.5', ':30')
 					$('#inusers').append(`
 						<tr>
 							<td>${currentHour}</td>
@@ -163,7 +163,7 @@ let getInOuts = () => {
 		outs.forEach(outKey => {
 			if (outKey != 'null') {
 				data.outs[outKey].forEach(emp => {
-					let currentHour = `${emp.outtime > 12 ? emp.outtime - 12 : emp.outtime} ${emp.outtime > 12 ? 'PM' : 'AM'}`
+					let currentHour = `${emp.outtime > 12 ? emp.outtime - 12 : emp.outtime} ${emp.outtime > 12 ? 'PM' : 'AM'}`.replace('.5', ':30')
 					$('#outusers').append(`
 						<tr>
 							<td>${currentHour}</td>
@@ -1223,20 +1223,35 @@ $(document).ready(function(){
 								<select class="form-control" id="${e.id}-notes" onChange="saveNotes(false,${e.id}, ${e.noteid})" value="${e.intime}">
 									<option value="0">Select In</option>
 									<option value="7" ${e.intime == 7 ? 'selected' : '' }>7 AM</option>
+									<option value="7.5" ${e.intime == 7.5 ? 'selected' : '' }>7:30 AM</option>
 									<option value="8" ${e.intime == 8 ? 'selected' : '' }>8 AM</option>
+									<option value="8.5" ${e.intime == 8.5 ? 'selected' : '' }>8:30 AM</option>
 									<option value="9" ${e.intime == 9 ? 'selected' : '' }>9 AM</option>
+									<option value="9.5" ${e.intime == 9.5 ? 'selected' : '' }>9:30 AM</option>
 									<option value="10" ${e.intime == 10 ? 'selected' : '' }>10 AM</option>
+									<option value="10.5" ${e.intime == 10.5 ? 'selected' : '' }>10:30 AM</option>
 									<option value="11" ${e.intime == 11 ? 'selected' : '' }>11 AM</option>
+									<option value="11.5" ${e.intime == 11.5 ? 'selected' : '' }>11:30 AM</option>
 									<option value="12" ${e.intime == 12 ? 'selected' : '' }>12 AM</option>
+									<option value="12.5" ${e.intime == 12.5 ? 'selected' : '' }>12:30 AM</option>
 									<option value="13" ${e.intime == 13 ? 'selected' : '' }>1 PM</option>
+									<option value="13.5" ${e.intime == 13.5 ? 'selected' : '' }>1:30 PM</option>
 									<option value="14" ${e.intime == 14 ? 'selected' : '' }>2 PM</option>
+									<option value="14.5" ${e.intime == 14.5 ? 'selected' : '' }>2:30 PM</option>
 									<option value="15" ${e.intime == 15 ? 'selected' : '' }>3 PM</option>
+									<option value="15.5" ${e.intime == 15.5 ? 'selected' : '' }>3:30 PM</option>
 									<option value="16" ${e.intime == 16 ? 'selected' : '' }>4 PM</option>
+									<option value="16.5" ${e.intime == 16.5 ? 'selected' : '' }>4:30 PM</option>
 									<option value="17" ${e.intime == 17 ? 'selected' : '' }>5 PM</option>
+									<option value="17.5" ${e.intime == 17.5 ? 'selected' : '' }>5:30 PM</option>
 									<option value="18" ${e.intime == 18 ? 'selected' : '' }>6 PM</option>
+									<option value="18.5" ${e.intime == 18.5 ? 'selected' : '' }>6:30 PM</option>
 									<option value="19" ${e.intime == 19 ? 'selected' : '' }>7 PM</option>
+									<option value="19.5" ${e.intime == 19.5 ? 'selected' : '' }>7:30 PM</option>
 									<option value="20" ${e.intime == 20 ? 'selected' : '' }>8 PM</option>
+									<option value="20.5" ${e.intime == 20.5 ? 'selected' : '' }>8:30 PM</option>
 									<option value="21" ${e.intime == 21 ? 'selected' : '' }>9 PM</option>
+									<option value="21.5" ${e.intime == 21.5 ? 'selected' : '' }>9:30 PM</option>
 								</select>
 							</td>
 						</tr>
@@ -1257,20 +1272,35 @@ $(document).ready(function(){
 						<select class="form-control" id="${e.id}-notes" onChange="saveNotes(true, ${e.id}, ${e.noteid})" value="${e.outtime}">
 							<option value="0">Select Out</option>
 							<option value="7" ${e.outtime == 7 ? 'selected' : '' }>7 AM</option>
+							<option value="7.5" ${e.outtime == 7.5 ? 'selected' : '' }>7:30 AM</option>
 							<option value="8" ${e.outtime == 8 ? 'selected' : '' }>8 AM</option>
+							<option value="8.5" ${e.outtime == 8.5 ? 'selected' : '' }>8:30 AM</option>
 							<option value="9" ${e.outtime == 9 ? 'selected' : '' }>9 AM</option>
+							<option value="9.5" ${e.outtime == 9.5 ? 'selected' : '' }>9:30 AM</option>
 							<option value="10" ${e.outtime == 10 ? 'selected' : '' }>10 AM</option>
+							<option value="10.5" ${e.outtime == 10.5 ? 'selected' : '' }>10:30 AM</option>
 							<option value="11" ${e.outtime == 11 ? 'selected' : '' }>11 AM</option>
+							<option value="11.5" ${e.outtime == 11.5 ? 'selected' : '' }>11:30 AM</option>
 							<option value="12" ${e.outtime == 12 ? 'selected' : '' }>12 AM</option>
+							<option value="12.5" ${e.outtime == 12.5 ? 'selected' : '' }>12:30 AM</option>
 							<option value="13" ${e.outtime == 13 ? 'selected' : '' }>1 PM</option>
+							<option value="13.5" ${e.outtime == 13.5 ? 'selected' : '' }>1:30 PM</option>
 							<option value="14" ${e.outtime == 14 ? 'selected' : '' }>2 PM</option>
+							<option value="14.5" ${e.outtime == 14.5 ? 'selected' : '' }>2:30 PM</option>
 							<option value="15" ${e.outtime == 15 ? 'selected' : '' }>3 PM</option>
+							<option value="15.5" ${e.outtime == 15.5 ? 'selected' : '' }>3:30 PM</option>
 							<option value="16" ${e.outtime == 16 ? 'selected' : '' }>4 PM</option>
+							<option value="16.5" ${e.outtime == 16.5 ? 'selected' : '' }>4:30 PM</option>
 							<option value="17" ${e.outtime == 17 ? 'selected' : '' }>5 PM</option>
+							<option value="17.5" ${e.outtime == 17.5 ? 'selected' : '' }>5:30 PM</option>
 							<option value="18" ${e.outtime == 18 ? 'selected' : '' }>6 PM</option>
+							<option value="18.5" ${e.outtime == 18.5 ? 'selected' : '' }>6:30 PM</option>
 							<option value="19" ${e.outtime == 19 ? 'selected' : '' }>7 PM</option>
+							<option value="19.5" ${e.outtime == 19.5 ? 'selected' : '' }>7:30 PM</option>
 							<option value="20" ${e.outtime == 20 ? 'selected' : '' }>8 PM</option>
+							<option value="20.5" ${e.outtime == 20.5 ? 'selected' : '' }>8:30 PM</option>
 							<option value="21" ${e.outtime == 21 ? 'selected' : '' }>9 PM</option>
+							<option value="21.5" ${e.outtime == 21.5 ? 'selected' : '' }>9:30 PM</option>
 						</select>
 					`}, width: '8%' },
 			],
