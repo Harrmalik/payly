@@ -22,7 +22,7 @@ checkIn,
 checkOut,
 openTips,
 hasNotClaimed = false,
-currentTime = null,
+
 timer = () => {
 	autologout = setTimeout(IdleTimeout, 300000)
 },
@@ -30,52 +30,166 @@ removeTimer = () => {
 	clearTimeout(autologout)
 };
 
-let tc = new TimeKeeper();
-tc.addUpdateHadler(updateDateTime);
+//TODO: Externalize TimeKeeper
+function TimeKeeper(timeProvider) {
 
-function TimeKeeper() {
+	if(typeof moment === 'undefined'){
+		throw "TimeKeeper requires Moment.js";
+	}
 
 	let _ = this;
 
-	let isRunning = false;
+	let currentTime = null;
 	let interval = null;
-	let updateHandlers = [];
+	let eventHandlers = [];
 
 	this.start = function(){
-		if(isRunning){
-			_.stop();
-		}
-		$.get('./php/main.php?action=getServerTime&module=kissklock').done((time) => {
-			currentTime = moment.unix(time);
-			isRunning = true;
-			updateTime();
-			interval = setInterval(updateTime, 1000);
-		});
+		if(interval){_.stop();}
+
+		currentTime = null;
+		if(timeProvider){
+		    timeProvider(start);
+        }
+		else{
+		    start();
+        }
 	};
 
 	this.stop = function() {
-		isRunning = false;
 		if(interval){
 			clearInterval(interval);
 		}
 	};
 
-	this.addUpdateHadler = function(func){
-		updateHandlers.push(func);
+	/**@return moment.Moment*/
+	this.getTime = function(){
+		return currentTime;
 	};
 
+	this.addUpdateHandler = function(handler){
+		if(eventHandlers.indexOf(handler) > -1){
+			throw 'already listening to TimeKeeper';
+		}
+		eventHandlers.push(handler);
+	};
+	this.removeUpdateHandler = function(handler){
+		let index;
+		if((index = eventHandlers.indexOf(handler)) === -1){
+			console.warn('invalid handler');
+			return;
+		}
+		eventHandlers.splice(index,1);
+	};
+
+    function start(time = null){
+        console.log(`Time Provider: ${time ? 'SERVER' : 'LOCAL'}`);
+        currentTime = time ? moment.unix(time) : moment();
+
+        updateTime();
+        interval = setInterval(updateTime, 1000);
+    }
 	function updateTime() {
+		eventHandlers.forEach(handler => {
+			handler(currentTime.format('dddd, MMMM Do'), currentTime.format("hh:mm:ss A"));
+		});
 		currentTime.add(1, 'seconds');
-		updateHandlers.forEach(handler => {
-			handler(currentTime.format('dddd, MMMM Do'), currentTime.format("hh:mm:ss A"))
-		})
 	}
 }
+Element.prototype.timeKeeper = function(timeKeeper = null, startingTime = null){
 
-function updateDateTime(date, time){
-	$('#date').html(date);
-	$('#clock').text(time);
+	let ele = this;
+	let type = {
+		date:0,
+		time:1,
+		dateTime:2
+	};
+
+	if(this._timeKeeper && timeKeeper){
+		throw "TimeKeeper already set"
+	}
+	ele._timeKeeper = this._timeKeeper || timeKeeper || new TimeKeeper(startingTime);
+
+	function keep(keeperType, start){
+        clearHandler();
+        createHandler(keeperType);
+        ele._timeKeeper.addUpdateHandler(ele.handler);
+        if(start){ele._timeKeeper.start()}
+    }
+	function createHandler(valueType){
+		ele.handler = function (date, time) {
+			let value = null;
+			switch (valueType) {
+				case type.date:
+					value = date;
+					break;
+				case type.time:
+					value = time;
+					break;
+				case type.dateTime:
+					value = `${date}, ${time}`;
+					break;
+			}
+			ele.innerHTML = value;
+		};
+	}
+	function clearHandler(){
+		if(ele.handler){
+			ele._timeKeeper.removeUpdateHandler(ele.handler);
+		}
+	}
+
+	return {
+		start:function(){
+		    ele._timeKeeper.start();
+		    return this;
+        },
+		stop:function(){
+		    ele._timeKeeper.stop();
+		    return this;
+        },
+		keepTime:function(start = null){
+            keep(type.time, start);
+            return this;
+		},
+		keepDate:function(start = null){
+            keep(type.date, start);
+            return this;
+		},
+		keepDateTime:function(start = null){
+            keep(type.dateTime, start);
+            return this;
+		},
+		clear:function(){
+            ele._timeKeeper.stop();
+			ele.innerHTML = '';
+			return this;
+		},
+		setTimeKeeper:function(replacement){
+		    if(ele.handler){
+                replacement.addUpdateHandler(ele.handler);
+                ele._timeKeeper.removeUpdateHandler(ele.handler);
+            }
+            ele._timeKeeper = replacement;
+            return this;
+		}
+	}
+};
+
+let timeKeeper = new TimeKeeper(getServerTime);
+timeKeeper.addUpdateHandler(updateDateTime);
+
+function getServerTime(callback){
+    let result = null;
+    $.get('./php/main.php?action=getServerTime&module=kissklock').done(r => {result = r}).always(() => {
+        callback(result);
+    });
 }
+function updateDateTime(date, time){
+    let timeSplit = time.split(' ');
+    document.getElementById('date').innerHTML = date;
+    document.getElementById('clock').innerHTML = `${timeSplit[0]}<span>${timeSplit[1]}</span>`;
+}
+
 
 $('body').css("overflow", "hidden")
 if (!ga) {
@@ -87,7 +201,7 @@ if (!ga) {
 // Only show timer if screen is wide enough
 if ($(window).width() >= 1000) {
 	$('#clockdate').show()
-	tc.start();
+	timeKeeper.start();
 }
 
 function update(input) {
@@ -671,7 +785,8 @@ $(document).ready(function () {
 							}
 						}
 					} else {
-						hoursSum = currentTime.diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
+						hoursSum = timeKeeper.getTime().diff(moment.unix(timeslot.punchintime), 'minutes') / 60;
+
 						totalTime += hoursSum;
 
 						days[weekday + 1][2] += hoursSum;
@@ -1002,7 +1117,7 @@ $(document).ready(function () {
 		});
 	}
 
-	checkOut = (doneForDay = false) => {
+	checkOut = (doneForDay = false, savedTips = false) => {
 		ga('send', 'event', 'CheckOut', empid, 'Attempted')
 		checkOutTime = deltasonic ? moment().seconds(0) : moment().minute(Math.round(moment().minute() / 15) * 15).second(0);
 		iziToast.show({
@@ -1043,7 +1158,7 @@ $(document).ready(function () {
 			}
 			makeUpdate(true);
 			ga('send', 'event', 'CheckOut', empid, 'Successful')
-			if ((isField && tippedRole) || (isField && doneForDay))
+			if ((isField && tippedRole && !savedTips) || (isField && doneForDay))
 				openTips($('#tips')[0], $('#tipsPage'))
 		}).fail((result) => {
 			$('.iziToast').hide()
@@ -1075,15 +1190,6 @@ $(document).ready(function () {
 	}
 });
 
-function startTime() {
-	var today = currentTime;
-	$('#clock').html(today.format('hh:mm:ss') + `<span>${today.format('A')}</span>`)
-	$('#date').text(today.format('dddd, MMMM Do'))
-	var time = setTimeout(function () {
-			currentTime.add(1, 'seconds')
-			startTime()
-		}, 1000);
-}
 
 function openWarning() {
 	$('#warning').modal()
@@ -1222,7 +1328,7 @@ function saveTips(){
 					toggleHasNotClaimedTips()
 					$('#home').click()
 					if (counter % 2 == 1) {
-						checkOut()
+						checkOut(false, true)
 						$('#roleButtons h2').text('Punch back in')
 					}
 				} else {

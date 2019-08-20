@@ -524,4 +524,9 @@ div#tipContainer_wrapper div.dt-buttons{
 	.no-print, .no-print * {
 			display: none !important;
 	}
+
+	.panel-body {
+		padding: 0px !important;
+		margin: 0px !important;
+	}
 }
