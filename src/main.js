@@ -236,8 +236,8 @@ let login = (e) => {
 				getInitialState();
 				var data = {
 					id: empid,
-					startDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD'),
-					endDate: $('#tipDate').data("DateTimePicker").date().format('YYYY-MM-DD')
+					startDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD'),
+					endDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD')
 				};
 
 				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
@@ -274,7 +274,7 @@ let login = (e) => {
 						}
 
 						$('#roleButtons').append(`
-							<div class="role-button ${color}" id="${role.job_code}">${role.job_desc}</div>
+							<div class="role-button ${color}" id="${role.job_code}" data-istipped="${role.istipped}">${role.job_desc}</div>
 						`)
 					})
 					$('#roleButtons .role-button').on('click', (e) => {
@@ -284,10 +284,16 @@ let login = (e) => {
 						if (counter % 2 == 1) {
 							$('.dropdown-toggle').prop('disabled', true);
 							checkOut()
-							checkIn()
+							if (tippedRole) {
+								hasNotClaimed = true
+								toggleHasNotClaimedTips()
+							} else {
+								checkIn()
+							}
 						} else {
 							checkIn()
 						}
+						tippedRole = $(e.target).data('istipped') == 1 ? true : false
 						$('#roleButtons').hide()
 					})
 				}
@@ -1054,7 +1060,7 @@ $(document).ready(function () {
 	let addRow = (start, end, total, role='') => {
 		$todayHours.append(`
 			<tr>
-				<td>${role}</td>
+				<td>${role ? role : $('#primaryJob').html()}</td>
 				<td>${start.format('h:mm a')}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'timeout'}">${ end ? end.format('h:mm a') : '- -'}</td>
 				<td id="${checkInIds[checkInIds.length - 1] + 'hours'}" class="${total > 6 ? 'red' : ''}">${total ? total.toFixed(2) : '- -'}</td>
