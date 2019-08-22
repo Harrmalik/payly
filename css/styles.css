@@ -27,9 +27,21 @@ h2 {
 	color: red;
 }
 
-#app, section#auth, #timesheetPage, #tipsPage {
+#app, section#auth, #timesheetPage {
     display: none;
     position: relative;
+}
+
+#tipsPage {
+	/* display: block;
+	z-index: 2;
+	position: absolute;
+	padding: 3em;
+	background: white;
+	border-radius: 15px;
+	top: 20%;
+	margin: auto;
+	width: 800px; */
 }
 
 #auth {
@@ -204,7 +216,7 @@ tr, th {
 	bottom: 10em;
 }
 
-#roleButtons {
+#locationModal {
 	display: none;
 	position: absolute;
 	background: white;
