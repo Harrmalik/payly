@@ -240,15 +240,6 @@ let login = (e) => {
 					endDate: $('#tipDate').data("DateTimePicker").date().subtract(1, 'days').format('YYYY-MM-DD')
 				};
 
-				$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
-					response.timeslots.forEach(t => {
-						if (t.istipped ==1 && response.tips.length == 0) {
-							hasNotClaimed = true
-						}
-					})
-
-					if (user.field) toggleHasNotClaimedTips()
-				})
 				$('#auth').hide();
 				$('#nav').show();
 				$('#appname').text(user.deltasonic ? 'Kiss Klock' : 'Benderson Timeclock')
@@ -277,6 +268,17 @@ let login = (e) => {
 							<div class="role-button ${color}" id="${role.job_code}" data-istipped="${role.istipped}">${role.job_desc}</div>
 						`)
 					})
+
+					$.get("./php/main.php?module=kissklock&action=getHoursByRole",data).done(function(response){
+						response.timeslots.forEach(t => {
+							if (t.istipped ==1 && response.tips.length == 0) {
+								hasNotClaimed = true
+							}
+						})
+
+						if (user.field) toggleHasNotClaimedTips()
+					})
+
 					$('#roleButtons .role-button').on('click', (e) => {
 						$('#primaryJob').html(`${$(e.target).text()}`)
 						role = e.target.id
@@ -294,7 +296,7 @@ let login = (e) => {
 							checkIn()
 						}
 						tippedRole = $(e.target).data('istipped') == 1 ? true : false
-						$('#roleButtons').hide()
+						$('#locationModal').hide()
 					})
 				}
 				employeename = user.empname
@@ -390,14 +392,27 @@ let clearEmpId = () => {
 }
 
 let toggleHasNotClaimedTips = () => {
-	if (hasNotClaimed == true) {
-		$('.mainBtns').hide()
-		$('#roleButtons').hide()
-		$('#hasNotClaimed').show()
-	} else {
+	if (tippedRole) {
 		$('.mainBtns').show()
-		$('#roleButtons').show()
-		$('#hasNotClaimed').hide()
+		$('#locationModal').show()
+		openTips($('#tips')[0], $('#tipsPage'))
+		$('#roleButtons').hide()
+
+	} else {
+		if (hasNotClaimed == true) {
+			$('#tipDate').data("DateTimePicker").date($('#tipDate').data("DateTimePicker").date().subtract(1,'days'))
+			$('.mainBtns').hide()
+			$('#locationModal').hide()
+			$('#locationModal').show()
+			openTips($('#tips')[0], $('#tipsPage'))
+			$('#roleButtons').hide()
+			// $('#hasNotClaimed').show()
+		} else {
+			$('.mainBtns').show()
+			$('#locationModal').show()
+			$('#roleButtons').show()
+			// $('#hasNotClaimed').hide()
+		}
 	}
 }
 
@@ -1002,7 +1017,7 @@ $(document).ready(function () {
 			}
 
 			if (counter % 2 == 0 && isField) {
-				$('#roleButtons').show()
+				$('#locationModal').show()
 			}
 		});
 	};
@@ -1074,6 +1089,7 @@ $(document).ready(function () {
 		$('#timesheetPage').hide()
 		$('#clockdate').hide()
 		$('#tipsPage').hide()
+		$('#locationModal').hide()
 		page.show()
 		$('nav li').removeClass('active')
 		$(e.target).parent().addClass('active')
@@ -1179,10 +1195,14 @@ $(document).ready(function () {
 	}
 
 	openTips = (e) => {
-		nextPage(e, $('#tipsPage'))
-		$('#kissklock-app').hide()
+		// nextPage(e, $('#tipsPage'))
+		// $('#kissklock-app').hide()
+		$('#locationModal').show()
+		$('#tipsPage').show()
+		$('#roleButtons').hide()
 
 		lookupHours()
+
 
 		setQuestionNumber(1);
 
@@ -1288,7 +1308,7 @@ function setQ1(val){
 	}
 }
 
-function saveTips(){
+function saveTips(e){
 	if(!$("#btnCommand").hasClass("disabled")){
 		$('.disabled').attr('disabled', false);
 		var formData = $("#frmtips").serialize() + "&command=savetip";

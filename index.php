@@ -113,16 +113,160 @@
             </section>
 
             <section id="app">
-              <div id="roleButtons">
-                <i class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#roleButtons').hide()"></i>
-                <h2>Select a Role</h2>
+              <div id="locationModal">
+                <i class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#locationModal').hide()"></i>
+                <div id="roleButtons">
+                  <h2>Select a Role</h2>
+                </div>
+
+                <section id="tipsPage">
+                  <div class="row text-center">
+                      <div id="slide1" style="display:none;">
+                          <div id="msg-status"><br/></div>
+
+
+
+                          <form class="form" style="margin:auto;width:500px;">
+                              <div><b>Employee</b>: <span id="employeeNameDisplay"></span></div>
+                              <div class="form-group">
+                                  <label for="end" style="text-align: left;" class="col-sm-2 control-label">Date</label>
+
+                                  <div class='input-group date' id='tipDate'>
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                  </div>
+                              </div>
+                          </form>
+                          <hr/>
+
+                          <form id="frmtips">
+                          <div id="todaystips">
+                              <div>
+                                  <input type="hidden" name="tipid" value=""/>
+                                  <input type="hidden" name="employeeid" id="employeeid"/>
+                                  <input type="hidden" id="site" value="<?php echo $site;?>"/>
+                                  <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>
+                                  <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value="1"/>
+
+                                  <div id="tipsection1" style="display:none;margin:auto;" class="container text-left">
+                                      <p><b>Shifts Worked</b></p>
+                                      <ol id="shiftsWorked">
+
+                                      </ol>
+                                      <br/>
+
+                                      <div class="row">
+                                          <div class="col-sm-12">
+                                              <div class="form-group">
+                                                  <label for="tippedHours" class="col-sm-3"><b>Tipped hours</b></label>
+                                                  <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="tippedHours" style="width:100px;"/>
+                                              </div>
+                                          </div>
+                                          <br/><br/>
+
+                                          <div class="col-sm-12">
+                                              <div class="form-group">
+                                                  <label for="nonTippedHours" class="col-sm-3"><b>Non Tipped hours</b></label>
+                                                      <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="nonTippedHours" style="width:100px;"/>
+                                              </div>
+                                          </div>
+                                          <br/><br/>
+
+                                          <div class="col-sm-12">
+                                              <div class="form-group">
+                                                  <label for="nonTippedHours" class="col-sm-3"><b>Total Hours</b></label>
+                                                      <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="totalDayHours" style="width:100px;"/>
+                                              </div>
+                                          </div>
+                                          <br/><br/>
+                                      </div>
+                                      <div class="row">
+                                          <div class="col-sm-12" id="detailInput" style="display:none;">
+                                              <div class="form-group">
+                                                  <label for="detailTTips" class="col-sm-3"><b>Detail T</b> tips earned</label>
+                                                  <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" name="detailTTips" style="width:100px;"/>
+                                              </div>
+                                              <br/><br/>
+                                          </div>
+                                          <div class="col-sm-12" id="washInput" style="display:none;">
+                                              <div class="form-group">
+                                                  <label for="washTTips" class="col-sm-3"><b>Wash T</b> tips earned</label>
+                                                  <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" name="washTTips" style="width:100px;"/>
+                                              </div>
+                                              <br/><br/>
+                                          </div>
+                                      </div>
+
+                                      <div class="row text-center">
+                                          <b>Please check and verify your above time entries and notify management of any errors. <span class="hasTips" style="display:none;">Please claim all your tips you've earned today, no more no less.</span></b>
+                                          <div id="underFourText" style="display:none;">
+                                              <p>On today’s date, I have voluntarily decided to work less than four (4) hours.  It is my voluntary decision to leave without working a minimum four-hour shift. Management is not requiring me to leave at this time.  I understand that I can work a minimum four-hour shift, but am voluntarily choosing to not do so on today's date. </p>
+                                              <p>By clicking the box below, I am acknowledging my understanding and decision to work less than a four-hour minimum shift. </p>
+                                          </div>
+                                          <br/>
+                                      </div>
+
+                                      <div class="questionRow row">
+                                          <div class="text-right col-sm-offset-1 col-sm-5">
+                                              <button type="button" class="btn btn-primary btn-lg" id='btnSigDisplay'>
+                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;&nbsp;Sign
+                                              </button>
+                                          </div>
+                                          <div class="col-sm-5">
+                                              <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()" style="padding:3em">Submit</div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+
+
+                          </form>
+                      </div>
+
+                      <div class="row" id="signatureContainer" style="display:none;background-color:#fff;">
+                          <div class="modal-body">
+                              <div id="signature-pad-container"><canvas id="signature-pad" class="signature-pad" width="400px" height="200px"></canvas></div>
+                              <img id="imgSig" style="display:none;" height="200px" width="400px"/>
+
+                              <div>
+                                  By my signature, I certify that the information I entered on this form is true, accurate, and complete based on my own check of my time entries on a daily basis
+                              </div>
+
+                              <div class="text-right">
+                                  <button class="btn btn-primary" id="btnSigHide">Apply Signature</button>
+                              </div>
+                          </div>
+                      </div>
+
+                  </div>
+
+                  <div class="modal fade" id="msgContainer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="overflow-y:hidden;">
+                      <div class="modal-dialog" role="document" style="width:30%;">
+                          <div class="modal-content">
+                              <div class="modal-body">
+                                  <div id="modal-status" class="text-center" style="font-size:150%;">
+
+                                  </div>
+                              </div>
+
+                              <div class="modal-footer text-right">
+                                  <div class="btn btn-primary" id="btnHideMsg" onClick="closeModal('msgContainer')">[X] Close</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </section>
 
               </div>
                 <section id="main-content">
                     <section class="mainBtns">
 
 
-                        <button type="button" class="btn btn-primary btn-lg isField" onclick="$('#roleButtons').show()"><h3>Switch Roles</h3></button>
+                        <button type="button" class="btn btn-primary btn-lg isField" onclick="$('#tipsPage').hide();$('#locationModal').show();$('#roleButtons').show()"><h3>Switch Roles</h3></button>
                         <button type="button" class="btn btn-primary btn-lg" id="checkIn"><h3>Punch In</h3></button>
                         <button type="button" class="btn btn-primary btn-lg isField" id="lunchBreak"><h3>Lunch Break</h3></button>
                         <button type="button" class="btn btn-primary btn-lg" id="checkOut">
@@ -215,147 +359,6 @@
           </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
-        <section id="tipsPage">
-            <div class="row text-center">
-                <div id="slide1" style="display:none;">
-                    <div id="msg-status"><br/></div>
-
-
-
-                    <form class="form" style="margin:auto;width:500px;">
-                        <div><b>Employee</b>: <span id="employeeNameDisplay"></span></div>
-                        <div class="form-group">
-                            <label for="end" style="text-align: left;" class="col-sm-2 control-label">Date</label>
-
-                            <div class='input-group date' id='tipDate'>
-                              <input type='text' class="form-control" />
-                              <span class="input-group-addon">
-                                  <span class="glyphicon glyphicon-calendar"></span>
-                              </span>
-                            </div>
-                        </div>
-                    </form>
-                    <hr/>
-
-                    <form id="frmtips">
-                    <div id="todaystips">
-                        <div>
-                            <input type="hidden" name="tipid" value=""/>
-                            <input type="hidden" name="employeeid" id="employeeid"/>
-                            <input type="hidden" id="site" value="<?php echo $site;?>"/>
-                            <input type="hidden" name="lessthanfourhours" id="lessthanfourhours" value="1"/>
-                            <input type="hidden" name="lessthanfourhoursunderstand" id="lessthanfourhoursunderstand" value="1"/>
-
-                            <div id="tipsection1" style="display:none;margin:auto;" class="container text-left">
-                                <p><b>Shifts Worked</b></p>
-                                <ol id="shiftsWorked">
-
-                                </ol>
-                                <br/>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="tippedHours" class="col-sm-3"><b>Tipped hours</b></label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="tippedHours" style="width:100px;"/>
-                                        </div>
-                                    </div>
-                                    <br/><br/>
-
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="nonTippedHours" class="col-sm-3"><b>Non Tipped hours</b></label>
-                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="nonTippedHours" style="width:100px;"/>
-                                        </div>
-                                    </div>
-                                    <br/><br/>
-
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="nonTippedHours" class="col-sm-3"><b>Total Hours</b></label>
-                                                <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3 disabled" disabled name="totalDayHours" style="width:100px;"/>
-                                        </div>
-                                    </div>
-                                    <br/><br/>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12" id="detailInput" style="display:none;">
-                                        <div class="form-group">
-                                            <label for="detailTTips" class="col-sm-3"><b>Detail T</b> tips earned</label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" name="detailTTips" style="width:100px;"/>
-                                        </div>
-                                        <br/><br/>
-                                    </div>
-                                    <div class="col-sm-12" id="washInput" style="display:none;">
-                                        <div class="form-group">
-                                            <label for="washTTips" class="col-sm-3"><b>Wash T</b> tips earned</label>
-                                            <input type="number" step=".01" autocomplete="off" class="form-control col-sm-3" name="washTTips" style="width:100px;"/>
-                                        </div>
-                                        <br/><br/>
-                                    </div>
-                                </div>
-
-                                <div class="row text-center">
-                                    <b>Please check and verify your above time entries and notify management of any errors. <span class="hasTips" style="display:none;">Please claim all your tips you've earned today, no more no less.</span></b>
-                                    <div id="underFourText" style="display:none;">
-                                        <p>On today’s date, I have voluntarily decided to work less than four (4) hours.  It is my voluntary decision to leave without working a minimum four-hour shift. Management is not requiring me to leave at this time.  I understand that I can work a minimum four-hour shift, but am voluntarily choosing to not do so on today's date. </p>
-                                        <p>By clicking the box below, I am acknowledging my understanding and decision to work less than a four-hour minimum shift. </p>
-                                    </div>
-                                    <br/>
-                                </div>
-
-                                <div class="questionRow row">
-                                    <div class="text-right col-sm-offset-1 col-sm-5">
-                                        <button type="button" class="btn btn-primary btn-lg" id='btnSigDisplay'>
-                                          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;&nbsp;Sign
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()">Submit</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    </form>
-                </div>
-
-                <div class="row" id="signatureContainer" style="display:none;background-color:#fff;">
-                    <div class="modal-body">
-                        <div id="signature-pad-container"><canvas id="signature-pad" class="signature-pad" width="400px" height="200px"></canvas></div>
-                        <img id="imgSig" style="display:none;" height="200px" width="400px"/>
-
-                        <div>
-                            By my signature, I certify that the information I entered on this form is true, accurate, and complete based on my own check of my time entries on a daily basis
-                        </div>
-
-                        <div class="text-right">
-                            <div class="btn btn-primary" id="btnSigHide">Apply Signature</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="modal fade" id="msgContainer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="overflow-y:hidden;">
-                <div class="modal-dialog" role="document" style="width:30%;">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div id="modal-status" class="text-center" style="font-size:150%;">
-
-                            </div>
-                        </div>
-
-                        <div class="modal-footer text-right">
-                            <div class="btn btn-primary" id="btnHideMsg" onClick="closeModal('msgContainer')">[X] Close</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <section id="timesheetPage">
             <form class="form-horizontal">
