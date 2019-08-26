@@ -396,22 +396,23 @@ let toggleHasNotClaimedTips = () => {
 		$('.mainBtns').show()
 		$('#locationModal').show()
 		openTips($('#tips')[0], $('#tipsPage'))
+		$('#closeLocationModalButton').hide()
 		$('#roleButtons').hide()
 
 	} else {
 		if (hasNotClaimed == true) {
 			$('#tipDate').data("DateTimePicker").date($('#tipDate').data("DateTimePicker").date().subtract(1,'days'))
 			$('.mainBtns').hide()
-			$('#locationModal').hide()
 			$('#locationModal').show()
 			openTips($('#tips')[0], $('#tipsPage'))
 			$('#roleButtons').hide()
-			// $('#hasNotClaimed').show()
+			$('#hasNotClaimed').show()
+			$('#closeLocationModalButton').hide()
 		} else {
 			$('.mainBtns').show()
-			$('#locationModal').show()
-			$('#roleButtons').show()
-			// $('#hasNotClaimed').hide()
+			// $('#locationModal').hide()
+			// $('#roleButtons').hide()
+			$('#hasNotClaimed').hide()
 		}
 	}
 }
@@ -471,7 +472,11 @@ $(document).ready(function () {
 	});
 
 	$checkOutBtn.on("click", () => {
-		checkOut(true)
+		if (isField) {
+			openTips($('#tips')[0], $('#tipsPage'))
+		} else {
+			checkOut()
+		}
 	})
 
 	$lunchBreakBtn.on("click", () => {
@@ -1016,9 +1021,9 @@ $(document).ready(function () {
 				toggleButtons();
 			}
 
-			if (counter % 2 == 0 && isField) {
-				$('#locationModal').show()
-			}
+			// if (counter % 2 == 0 && isField) {
+			// 	$('#locationModal').show()
+			// }
 		});
 	};
 
@@ -1322,7 +1327,7 @@ function saveTips(e){
 		var signatureData = encodeURIComponent(glbSignaturePad.toDataURL('image/png'));
 		formData += "&signatureData=" + signatureData;
 
-		if(!glbSignaturePad.isEmpty() || $('[name=tipid]').val()){
+		if(!glbSignaturePad.isEmpty() && $('[name=tipid]').val()){
 			$("#btnCommand").addClass("disabled");
 			$.ajax({
 				url: "./php/call.php",
