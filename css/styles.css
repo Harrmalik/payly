@@ -86,6 +86,10 @@ section#app .btn {
 	margin-bottom: 1em;
 }
 
+section#app #tipsPage .btn {
+	width: 100%;
+}
+
 section#app .btn-primary {
 	background: #039FF1;
 }
@@ -225,7 +229,7 @@ tr, th {
 	left: 10%;
 	border-radius: 15px;
 	box-shadow: 0 0 10px;
-	padding: 5em;
+	padding: 1em;
 }
 
 .role-button {

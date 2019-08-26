@@ -114,13 +114,17 @@
 
             <section id="app">
               <div id="locationModal">
-                <i class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#locationModal').hide()"></i>
+                <i id="closeLocationModalButton" class="glyphicon glyphicon-remove" style="float:right;font-size:1.5em;cursor:pointer;" onclick="$('#locationModal').hide()"></i>
                 <div id="roleButtons">
                   <h2>Select a Role</h2>
                 </div>
 
                 <section id="tipsPage">
                   <div class="row text-center">
+
+                      <div id="hasNotClaimed">
+                        <h2>Must claim tips to continue using kissklock</h2>
+                      </div>
                       <div id="slide1" style="display:none;">
                           <div id="msg-status"><br/></div>
 
@@ -215,7 +219,7 @@
                                               </button>
                                           </div>
                                           <div class="col-sm-5">
-                                              <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()" style="padding:3em">Submit</div>
+                                              <div class="btn btn-primary btn-lg" id="btnCommand" onClick="saveTips()" style="padding:3em">Submit & Punch Out</div>
                                           </div>
                                       </div>
                                   </div>
@@ -279,9 +283,6 @@
                         <?php if ($_SERVER['SERVER_ADDR'] != '172.18.100.7') { ?>
                             <button type="button" class="btn btn-block btn-lg btn-default" onclick="openWarning()" id="setuser" style="display:none; width:97%; height:3em">This is my local machine</button>
                         <?php } ?>
-                    </section>
-                    <section id="hasNotClaimed">
-                      <h2>Must claim tips to continue using kissklock</h2>
                     </section>
                 </section>
 
