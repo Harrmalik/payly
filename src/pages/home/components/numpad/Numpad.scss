@@ -1,0 +1,17 @@
+#numpad {
+  width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+
+  .column {
+    display: flex;
+    flex-direction: column;
+
+    button {
+      flex: 1;
+      width: 200px;
+      height: 300px;
+    }
+  }
+}
